@@ -1,0 +1,278 @@
+#############################################################################
+# Don't touch these...
+#############################################################################
+
+this_makefile := ${lastword ${MAKEFILE_LIST}}
+SHELL = @bash@ -o pipefail -o errexit -o nounset
+# generated dependencies for things derived from the NDR doc
+dependencies_mk := @builddir@/dependencies.mk
+.SECONDARY:
+.DELETE_ON_ERROR:
+
+#############################################################################
+# things to set / override
+#############################################################################
+
+#HELP:Variable 'depend':
+#HELP:    'build': Build new dependencies file (the default)
+#HELP:    anything else: If dependencies file exists, include it
+depend = build
+
+#HELP:Default target is "all". Targets include:
+.DEFAULT_GOAL = all
+
+#############################################################################
+# dirs
+
+srcdir = @srcdir@
+builddir = @builddir@
+output_dir = @output_dir@
+
+#############################################################################
+# COMMANDS
+
+# unix stuff
+MKDIR_P = @MKDIR_P@
+fgrep = @fgrep@
+find = @find@
+head = @head@
+install = @INSTALL@
+m4 = @m4@
+sed = @SED@
+tail = @tail@
+touch = @touch@
+aspell = aspell
+
+# webb stuff
+csv_to_gc = @csv_to_gc@
+csv_to_xml = @csv_to_xml@
+get_xml_catalog = @get_xml_catalog@
+process_doc = @process_doc@
+saxon = @saxon@
+xs_validate = xs-validate
+check_genericode = check-genericode
+check_csv = ${srcdir}/check-csv
+
+#############################################################################
+
+process_doc_flags = --catalog=${xml_catalog}
+process_doc_required_files = ${xml_catalog_required_files}
+
+doc_xml = ${builddir}/build/niem-code-lists-spec.xml
+
+m4_required_files = ${srcdir}/src/macros.m4
+m4_flags = --prefix-builtins --include=${builddir}/build ${m4_required_files}
+
+xml_catalog = ${builddir}/build/xml-catalog.xml
+xml_catalog_schema_files = 
+xml_catalog_required_files = ${xml_catalog} ${xml_catalog_schema_files}
+
+subset_files_steps := ${shell ${find} ${srcdir}/src/example/niem -type f}
+subset_files_steps := ${subset_files_steps:${srcdir}/src/%=%}
+subset_files_steps := ${filter-out %.csv,${subset_files_steps}}
+subset_files = ${subset_files_steps}
+
+output_files = \
+  niem-code-lists-spec.html \
+  niem-code-lists-spec.txt \
+  code-lists-instance.xsd \
+  code-lists-schema-appinfo.xsd \
+  example/directions/directions.csv \
+  example/directions/extension.xsd \
+  example/directions/instance.xml \
+  example/directions/xml-catalog.xml \
+  example/make-model/make-model.csv \
+  example/make-model/make-model.gc \
+  example/make-model/run-time/extension.xsd \
+  example/make-model/run-time/instance.xml \
+  example/make-model/run-time/xml-catalog.xml \
+  example/make-model/schema-time/extension.xsd \
+  example/make-model/schema-time/instance.xml \
+  example/make-model/schema-time/xml-catalog.xml \
+  ${subset_files} \
+
+#############################################################################
+# depend
+
+ifeq (${depend},build)
+.PHONY: depend #    build dependencies file
+depend: ${dependencies_mk}
+
+${dependencies_mk}: ${doc_xml} ${xml_catalog_required_files}
+	@ ${MKDIR_P} ${dir $@}
+	${process_doc} --in=$< --out=$@ --format=makedepend --catalog=${xml_catalog}
+
+-include ${dependencies_mk}
+
+else
+# don't include if it doesn't exist, so that 'make clean' works w/o rebuilding dependencies
+ifeq (${wildcard ${dependencies_mk}},${dependencies_mk})
+include ${dependencies_mk}
+endif
+endif
+
+#############################################################################
+# real targets
+
+.PHONY: all #    build everything
+all: ${output_files:%=${builddir}/build/%}
+
+.PHONY: install #    install everything to $output_dir
+install: ${output_files:%=${output_dir}/%}
+
+${output_dir}/%: ${builddir}/build/%
+	@ ${MKDIR_P} ${dir $@}
+	${install} -m 644 $< $@
+
+#############################################################################
+# build
+
+${builddir}/build/niem-code-lists-spec.html: ${doc_xml} ${doc_html_required_files} ${process_doc_required_files}
+	${process_doc} ${process_doc_flags} --in=$< --out=$@
+
+${builddir}/build/niem-code-lists-spec.txt: ${doc_xml} ${doc_text_required_files} ${process_doc_required_files}
+	${process_doc} ${process_doc_flags} --format=text --in=$< --out=$@
+
+${builddir}/build/%: ${builddir}/build/%.m4 ${m4_required_files}
+	@ ${MKDIR_P} ${dir $@}
+	${m4} ${m4_flags} $< > $@
+	@ if ${fgrep} MACRO_ $@; then echo found unexpanded macro in $@; false; fi
+
+${builddir}/build/niem-code-lists-spec.xml: ${builddir}/build/example/directions/directions.doc-table.txt
+${builddir}/build/niem-code-lists-spec.xml: ${builddir}/build/example/make-model/make-model.doc-table.txt
+
+${builddir}/build/%.doc-table.txt: ${builddir}/build/%.table.xml \
+  ${srcdir}/src/table-to-doc-table.xsl
+	@ ${MKDIR_P} ${dir $@}
+	${saxon} --xsl=${srcdir}/src/table-to-doc-table.xsl --in=$< | ${tail} --lines=+5 | ${head} --lines=-1 > $@
+
+${builddir}/build/%.table.xml: ${builddir}/build/%.csv
+	${csv_to_xml} --output-file=$@ $<
+
+# xml catalog for testing xml in the doc
+${xml_catalog}: ${xml_catalog_schema_files}
+	@ ${MKDIR_P} ${dir $@}
+	${get_xml_catalog} $^ > $@
+
+${builddir}/build/example-directions-instance-run-time.txt: ${builddir}/build/example/directions/instance.xml
+	@ ${MKDIR_P} ${dir $@}
+	${sed} -e '2,13p;d' $< > $@
+
+${builddir}/build/example-make-model-instance-run-time.txt: ${builddir}/build/example/make-model/run-time/instance.xml
+	@ ${MKDIR_P} ${dir $@}
+	${sed} -e '2,$$p;d' $< > $@
+
+${builddir}/build/example-make-model-instance-schema-time.txt: \
+  ${builddir}/build/example/make-model/schema-time/instance.xml
+	@ ${MKDIR_P} ${dir $@}
+	${sed} -e '2,$$p;d' $< \
+	  | ${sed} -e 's/ xmlns:[^ ]*//' > $@
+
+${builddir}/build/example-make-model-extension-schema-time-simple.txt: \
+  ${builddir}/build/example/make-model/schema-time/extension.xsd
+	@ ${MKDIR_P} ${dir $@}
+	${sed} -e '37,47p;d' $< \
+	  | ${sed} -e 's/^  //' > $@
+
+${builddir}/build/example-make-model-extension-schema-time-complex.txt: \
+  ${builddir}/build/example/make-model/schema-time/extension.xsd
+	@ ${MKDIR_P} ${dir $@}
+	${sed} -e '22,35p;d' $< \
+	  | ${sed} -e 's/^  //' > $@
+
+${builddir}/build/%.csv.txt: ${builddir}/build/%.csv
+	${srcdir}/to-lf -o $@ $<
+
+%.gc: %.csv %.gch.xml
+	${csv_to_gc} --output-file=$@ $< $*.gch.xml
+
+#############################################################################
+# import from source
+
+# import from src
+${builddir}/build/%: ${srcdir}/src/%
+	@ ${MKDIR_P} ${dir $@}
+	${install} -m 644 $< $@
+
+#############################################################################
+# valid
+
+valid_xml_files = ${filter %/instance.xml,${output_files}}
+valid_xsd_files = ${filter %.xsd,${output_files}}
+valid_xsd_xml_catalog = ${builddir}/build/xml-catalog-for-xsd.xml
+valid_gc_files = ${filter %.gc,${output_files}}
+valid_csv_files = ${filter %.csv,${output_files}}
+
+valid_targets = \
+  ${valid_xml_files:%=${builddir}/valid/xsd-valid/%} \
+  ${valid_xsd_files:%=${builddir}/valid/xsd-valid/%} \
+  ${valid_gc_files:%=${builddir}/valid/gc-valid/%} \
+  ${valid_csv_files:%=${builddir}/valid/csv-valid/%} \
+
+.PHONY: valid #    validate artifacts against relevant schemas
+valid: ${valid_targets}
+
+${builddir}/valid/xsd-valid/%.xsd: ${builddir}/build/%.xsd ${valid_xsd_xml_catalog}
+	${xs_validate} \
+		--catalog=${HOME}/r/by-topic/schemas/xml-schema/xml-catalog-strict.xml \
+		--catalog=${valid_xsd_xml_catalog} \
+		--catalog=${HOME}/r/by-topic/schemas/niem-conformance-targets/xml-catalog.xml \
+		$<
+	@ ${MKDIR_P} ${dir $@}
+	@ ${touch} $@
+
+${valid_xsd_xml_catalog}: ${builddir}/build/code-lists-schema-appinfo.xsd
+	@ ${MKDIR_P} ${dir $@}
+	( cd ${dir $@} && ${get_xml_catalog} ${patsubst ${dir $@}%,%,$^} ) > $@
+
+${builddir}/valid/xsd-valid/%/instance.xml: ${output_dir}/%/instance.xml
+	${xs_validate} --catalog=${output_dir}/$*/xml-catalog.xml $<
+	@ ${MKDIR_P} ${dir $@}
+	@ ${touch} $@
+
+${builddir}/valid/gc-valid/%.gc: ${output_dir}/%.gc
+	${check_genericode} $<
+	@ ${MKDIR_P} ${dir $@}
+	@ ${touch} $@
+
+${builddir}/valid/csv-valid/%.csv: ${output_dir}/%.csv
+	${check_csv} $<
+	@ ${MKDIR_P} ${dir $@}
+	@ ${touch} $@
+
+#############################################################################
+# check spelling
+
+.PHONY: spell #    check spelling of text doc
+spell:
+	cat ${output_dir}/niem-code-lists-spec.txt \
+	  | aspell --home-dir=${srcdir} -p aspell-exceptions.txt list \
+	  | sort -uf
+
+#############################################################################
+# convenience targets
+
+.PHONY: clean #    clean regular build products
+clean:
+	${RM} -r ${builddir}/build ${builddir}/valid
+
+.PHONY: clean-valid #    remove evidence of validity checks
+clean-valid:
+	${RM} -r ${builddir}/valid
+
+.PHONY: clean-output #    clean output products
+clean-output:
+	${RM} ${output_files:%=${output_dir}/%}
+
+.PHONY: distclean #    Clean all products
+distclean: clean
+	${RM} ${dependencies_mk} config.log config.status Makefile
+
+#############################################################################
+# make help: this must be the last target
+
+.PHONY: help #    Print this help
+help:
+	@ ${sed} -e '/^\.PHONY:/s/^\.PHONY: *\([^ #]*\) *\#\( *\)\([^ ].*\)/\2\1: \3/p;/^[^#]*#HELP:/s/[^#]*#HELP:\(.*\)/\1/p;d' ${this_makefile}
+
+# don't put anything after this
