@@ -3,7 +3,8 @@
 targets = \
   nc/PersonType/diagram.svg \
   nc/PersonType/diagram.map \
-  nc/PersonType/index.md \
+
+
 
 default: ${targets}
 
@@ -16,7 +17,7 @@ default: ${targets}
 %/index.html: %/index.html.m4 %/diagram.map
 	m4 --prefix-builtins --include=$* $< > $@
 
-%/index.md: %/index.md.m4 %/diagram.map
-	m4 --prefix-builtins --include=$* $< > $@
+# %/index.md: %/index.md.m4 %/diagram.map
+# 	m4 --prefix-builtins --include=$* $< > $@
 
 # dot -Tsvg -o"$git_graphviz"/graph.svg -Tcmapx -o"$git_graphviz"/graph.map "$git_graphviz"/graph.dot

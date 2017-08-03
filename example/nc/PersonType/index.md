@@ -1,24 +1,120 @@
 ---
-title: Example
+title: Complex type nc:PersonType
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a turpis felis. In nec quam pellentesque, ullamcorper risus ac, luctus tellus. Suspendisse elementum libero vitae tortor bibendum, vel interdum diam vulputate. Nam id magna dapibus, sollicitudin neque eu, lacinia neque. Nullam auctor felis a ligula pharetra euismod. Curabitur fringilla egestas quam et luctus. Etiam tristique tellus nec velit rutrum, nec bibendum purus venenatis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Praesent facilisis augue lacus, eu scelerisque ipsum laoreet eget.
+# Complex type nc:PersonType
+
+## Definition
+
+A data type for a human being.
+
+## Diagram
 
 <object data="diagram.svg" type="image/svg+xml">
 <img src="diagram.svg" usemap="#diagram"/>
-<map id="diagram" name="diagram">
-<area shape="rect" id="node1_9" href="https://tools.niem.gov/niemtools/ssgt/SSGT-GetType.iepd?typeKey=nz-6y" target="SSGT" title="on the NIEM SSGT" alt="" coords="601,244,611,259"/>
-<area shape="rect" id="node1_10" href="../../nc/PersonBirthDate" target="_top" title="A date a person was born." alt="" coords="332,261,448,276"/>
-<area shape="rect" id="node1_11" href="../../nc/DateType" target="_top" title="A data type for a calendar date." alt="" coords="473,261,599,276"/>
-<area shape="rect" id="node1_12" href="https://tools.niem.gov/niemtools/ssgt/SSGT-GetProperty.iepd?propertyKey=nz-11r" target="SSGT" title="&lt;TABLE&gt;" alt="" coords="601,261,611,276"/>
-<area shape="rect" id="node1_13" href="https://beta.movement.niem.gov/#/details?entityID=nc:PersonBirthDate" target="Movement" title="&lt;TABLE&gt;" alt="" coords="613,261,625,276"/>
-<area shape="rect" id="node1_14" href="../../nc/PersonName" title="&lt;TABLE&gt;" alt="" coords="332,279,448,293"/>
-<area shape="rect" id="node1_15" href="../../nc/PersonNameType" title="&lt;TABLE&gt;" alt="" coords="473,279,599,293"/>
-<area shape="rect" id="node1_16" href="https://tools.niem.gov/niemtools/ssgt/SSGT-GetProperty.iepd?propertyKey=nz-158" target="SSGT" title="&lt;TABLE&gt;" alt="" coords="601,279,611,293"/>
-<area shape="rect" id="node1_17" href="https://beta.movement.niem.gov/#/details?entityID=nc:PersonName" target="Movement" title="&lt;TABLE&gt;" alt="" coords="613,279,625,293"/>
-</map>
-
+{% include_relative diagram.map %}
 </object>
+
+
+## XML Schema fragment
+
+```xml
+<xs:complexType name="PersonType">
+  <xs:annotation>
+    <xs:documentation>A data type for a human being.</xs:documentation>
+  </xs:annotation>
+  <xs:complexContent>
+    <xs:extension base="structures:ObjectType">
+      <xs:sequence>
+        <xs:element ref="nc:PersonAccentText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonAgeDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonAgeMeasure" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonBirthDate" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonBirthLocation" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonBloodTypeAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonBodyXRaysAvailableAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonBuildAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonCapability" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonCircumcisionIndicator" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonCitizenshipAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonComplexionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonDeathDate" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonDependentQuantity" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonDigitalImage" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonDigitizedSignatureImage" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonDisguiseDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonOrganDonorAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonEducationLevelText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonEthnicityAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonEyeColorAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonEyewearAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonFacialHairAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHairLengthAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHairStyleAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonGeneralAppearanceDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHairAppearanceText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHairCategoryText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHairColorAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHandednessText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHeightDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHeightMeasure" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHumanResourceIdentification" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonInjury" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonJewelryDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonLanguageEnglishIndicator" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonLearningDisabilityText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonLicenseIdentification" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonLivingIndicator" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonMedicalCondition" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonMedicalDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonMedicalFileIndicator" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonMedicationRequiredText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonMentalStateText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonMilitarySummary" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonMoodDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonName" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonNationalIdentification" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonOrganDonatorIndicator" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonOtherIdentification" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonPassportIdentification" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonPhysicalDisabilityText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonPhysicalFeature" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonPrimaryLanguage" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonRaceAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonReligionAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonResidentAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonSecondaryLanguage" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonSecurityClearanceAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonSexAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonSexualOrientationText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonSkinToneAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonSpeechDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonSSNIdentification" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonStateIdentification" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonTaxIdentification" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonUnionStatusAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonUSCitizenIndicator" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonVisionPrescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonWeightDescriptionText" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonWeightMeasure" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonXRayImage" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonNationalityAbstract" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:EmploymentContactInformation" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonEmergencyContactInformation" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonHomeContactInformation" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="nc:PersonAugmentationPoint" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:extension>
+  </xs:complexContent>
+</xs:complexType>
+```
+
+## JSON Schema fragment
+
+
+
+# Notes
 
 Vivamus sagittis mi nec turpis porta fermentum. Mauris quis euismod est, non rutrum ante. Vivamus consequat ornare mi, vel porttitor libero fringilla id. Nulla ac elementum urna. Nulla at leo hendrerit, blandit lorem eu, pharetra nunc. Vivamus cursus orci quis eros dignissim, a ultrices metus porttitor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
 
