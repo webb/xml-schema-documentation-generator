@@ -19,6 +19,21 @@
 1. Include in the source dir, or another dir, a set of pages that augment the documentation for a given component. This could be a pile of markdown and images that is somehow integrated with the generated pages. This might include, for example, specific examples of use of a component. That would be in a page within the hierarchy for the component, with a given name.
 2. Provide sample JSON schema for a component as it appears in the XML schema.
 
+* Issues
+- How to narrow down visibility of components when viewing the full model? For example, PersonType has (1) a ton of properties, and (2) is the type of a ton of properties.
+- Do we distinguish between attributes and elements?
+
+* Page conventions
+
+** Fonts
+CSS fonts: https://www.w3.org/TR/css-fonts-3/
+ ‘serif’, ‘sans-serif’, ‘cursive’, ‘fantasy’, and ‘monospace’
+
+http://code.stephenmorley.org/html-and-css/the-myth-of-web-safe-fonts/
+
+- sans-serif: font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+- mono: font-family:'Courier New',Courier,monospace;
+
 * Graph conventions
 ** Lists
 - e.g., lists of elements, lists of types, etc.

@@ -29,10 +29,11 @@ AC_DEFUN([WR_check_prog_options],[AC_PATH_PROGS($1,$2)
 
 # unix stuff
 WR_check_prog(bash)
+WR_check_prog_options(find,gfind find)
+
 #WR_check_prog(fgrep)
 #WR_check_prog(tail)
 #WR_check_prog(touch)
-#WR_check_prog_options(find,gfind find)
 #WR_check_prog_options(head,ghead head)
 #WR_check_prog_options(m4,gm4 m4)
 
@@ -71,4 +72,5 @@ else AC_MSG_RESULT([xml_catalog set to ${xml_catalog}])
 fi
 
 AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])
+AC_CONFIG_FILES([example.mk], [chmod 444 example.mk])
 AC_OUTPUT

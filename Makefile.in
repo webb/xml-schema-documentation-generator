@@ -9,15 +9,6 @@ dependencies_mk := @builddir@/dependencies.mk
 .SECONDARY:
 .DELETE_ON_ERROR:
 
-#############################################################################
-# things to set / override
-#############################################################################
-
-#HELP:Variable 'depend':
-#HELP:    'build': Build new dependencies file (the default)
-#HELP:    anything else: If dependencies file exists, include it
-depend = build
-
 #HELP:Default target is "all". Targets include:
 .DEFAULT_GOAL = all
 
