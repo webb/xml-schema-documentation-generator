@@ -1,4 +1,11 @@
 
+* Order
+
+1. develop makefile dependencies
+   1. get a list of namespaces
+      1. one prefix per namespace
+      2. one schemalocation per namespace
+
 * Strategy:
 
 1. One prefix per namespace.
