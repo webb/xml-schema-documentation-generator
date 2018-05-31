@@ -1,34 +1,53 @@
-
-# Copyright 2015-2017 Georgia Tech Research Corporation (GTRC). All rights reserved.
+#############################################################################
+# Don't touch these...
+#############################################################################
 
 this_makefile := ${lastword ${MAKEFILE_LIST}}
+SHELL = bash -o pipefail -o errexit -o nounset
+.SECONDARY:
 
+# autoconf variables
+SED = sed
+# autoconf apps
 autoreconf = autoreconf
-find = find
 glibtoolize = glibtoolize
-sed = sed
 
-.PHONY: default #Default target is "all".
-default: all
+# Use "autoreconf_flags=--force" to override cached values.
+autoreconf_flags = 
+
+all_files = \
+  install-sh \
+  configure \
+
+#############################################################################
+#HELP:Default target is "all". Targets include:
+.DEFAULT_GOAL = all
 
 #HELP:Targets include:
 
-.PHONY: help #  Print this help
-help:
-	@ ${sed} -e '/^\.PHONY:/s/^\.PHONY: *\([^ #]*\) *\#\( *\)\([^ ].*\)/\2\1: \3/p;/^[^#]*#HELP:/s/[^#]*#HELP:\(.*\)/\1/p;d' ${this_makefile}
-
 .PHONY: all #  build everything so that ./configure will work
-all: install-sh configure
+all: ${all_files}
 
-.PHONY: clean #  Remove everything built by make
+.PHONY: clean #  Remove things build by this makefile
 clean:
-	${RM} configure install-sh ${wildcard *~ .*~} 
+	${RM} ${all_files}
 	${RM} -r autom4te.cache
-	- if [[ -f Makefile ]]; then make distclean; fi
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# build 
 
 configure: configure.ac
-	${autoreconf} --install --verbose
+	${autoreconf} ${autoreconf_flags} --install --verbose
 
 install-sh:
 	${glibtoolize} -icf
 	${RM} ltmain.sh config.guess config.sub
+
+#############################################################################
+# make help: this must be the last target
+
+.PHONY: help #  Print this help
+help:
+	@ ${SED} -e '/^\.PHONY:/s/^\.PHONY: *\([^ #]*\) *\#\( *\)\([^ ].*\)/\2\1: \3/p;/^[^#]*#HELP:/s/[^#]*#HELP:\(.*\)/\1/p;d' ${this_makefile}
+
+# don't put anything after this
