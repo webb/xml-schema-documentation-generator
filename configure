@@ -1681,10 +1681,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-if test -f Makefile.in
-then as_fn_error $? "Do not build where you code (found Makefile.in)" "$LINENO" 5
-fi
-
 # Checks for programs.
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
@@ -2032,7 +2028,7 @@ done
 #WR_check_prog_options(doc_to_schematron,doc-to-schematron)
 #WR_check_prog_options(schematron_compile,schematron-compile)
 
-default_output_dir=${srcdir}/../repo
+default_output_dir=${srcdir}/../publish
 if test "x$output_dir" = "x"
 then { $as_echo "$as_me:${as_lineno-$LINENO}: Variable output_dir not set. Using default ($default_output_dir)" >&5
 $as_echo "$as_me: Variable output_dir not set. Using default ($default_output_dir)" >&6;}
@@ -2047,7 +2043,7 @@ $as_echo "$as_me: WARNING: output_dir ${output_dir} does not exist" >&2;}
      fi
 fi
 
-default_xml_catalog=${srcdir}/../../niem-releases/niem/xml-catalog.xml
+default_xml_catalog=${srcdir}/../../distro/niem/xml-catalog.xml
 if test "x$xml_catalog" = "x"
 then { $as_echo "$as_me:${as_lineno-$LINENO}: Variable xml_catalog not set. Using default ($default_xml_catalog)" >&5
 $as_echo "$as_me: Variable xml_catalog not set. Using default ($default_xml_catalog)" >&6;}
@@ -2062,8 +2058,6 @@ $as_echo "xml_catalog set to ${xml_catalog}" >&6; }
 fi
 
 ac_config_files="$ac_config_files Makefile"
-
-ac_config_files="$ac_config_files example.mk"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -2773,7 +2767,6 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "example.mk") CONFIG_FILES="$CONFIG_FILES example.mk" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -3201,7 +3194,6 @@ which seems to be undefined.  Please make sure it is defined" >&2;}
 
   case $ac_file$ac_mode in
     "Makefile":F) chmod 444 Makefile ;;
-    "example.mk":F) chmod 444 example.mk ;;
 
   esac
 done # for ac_tag

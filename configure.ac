@@ -1,13 +1,8 @@
 # Process this file with autoconf to produce a configure script.
 
-
 AC_PREREQ([2.69])
 AC_INIT([niem-release-model], [0], [wr@gatech.edu])
 AC_COPYRIGHT
-
-if test -f Makefile.in
-then AC_MSG_ERROR([Do not build where you code (found Makefile.in)])
-fi
 
 # Checks for programs.
 AC_PROG_INSTALL
@@ -49,7 +44,7 @@ WR_check_prog_options(find,gfind find)
 #WR_check_prog_options(doc_to_schematron,doc-to-schematron)
 #WR_check_prog_options(schematron_compile,schematron-compile)
 
-default_output_dir=${srcdir}/../repo
+default_output_dir=${srcdir}/../publish
 if test "x$output_dir" = "x"
 then AC_MSG_NOTICE([Variable output_dir not set. Using default ($default_output_dir)])
   output_dir=$default_output_dir
@@ -60,7 +55,7 @@ else AC_MSG_RESULT([output_dir set to ${output_dir}])
      fi
 fi
 
-default_xml_catalog=${srcdir}/../../niem-releases/niem/xml-catalog.xml
+default_xml_catalog=${srcdir}/../../distro/niem/xml-catalog.xml
 if test "x$xml_catalog" = "x"
 then AC_MSG_NOTICE([Variable xml_catalog not set. Using default ($default_xml_catalog)])
   xml_catalog=$default_xml_catalog
@@ -72,5 +67,4 @@ else AC_MSG_RESULT([xml_catalog set to ${xml_catalog}])
 fi
 
 AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])
-AC_CONFIG_FILES([example.mk], [chmod 444 example.mk])
 AC_OUTPUT
