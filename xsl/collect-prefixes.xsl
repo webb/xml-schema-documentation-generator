@@ -11,15 +11,19 @@
     <variable name="namespaces" as="element(ns:namespace)+">
       <apply-templates select="catalog:uri"/>
     </variable>
-    <variable name="sorted">
-      <for-each select="$namespaces">
-        <sort select="@uri"/>
-        <sort select="@prefix"/>
-        <copy-of select="."/>
-      </for-each>
-    </variable>
+    <for-each-group select="$namespaces" group-by="@uri">
+      <if test="count(distinct-values(current-group())) gt 1">
+        <message>Multiple prefixes for uri <value-of select="@uri"/>: <value-of select="distinct-values(current-group())"/>.</message>
+      </if>
+    </for-each-group>
+    <for-each-group select="$namespaces" group-by="@prefix">
+      <if test="count(distinct-values(current-group())) gt 1">
+        <message>Multiple prefixes for prefix <value-of select="@prefix"/>: <value-of select="distinct-values(current-group())"/>.</message>
+      </if>
+    </for-each-group>
     <ns:namespaces>
-      <for-each-group select="$namespaces" group-by="@uri">
+      <for-each-group select="$namespaces" group-by="@prefix">
+        <sort select="@prefix"/>
         <copy-of select="."/>
       </for-each-group>
     </ns:namespaces>

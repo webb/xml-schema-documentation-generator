@@ -18,6 +18,7 @@ dependencies_mk := @builddir@/dependencies.mk
 srcdir = @srcdir@
 builddir = @builddir@
 output_dir = @output_dir@
+xml_catalog = @xml_catalog@
 
 #############################################################################
 # COMMANDS
@@ -35,7 +36,11 @@ saxon = @saxon@
 #############################################################################
 # variables
 
-all_files = ${builddir}/build/prefixes.xml
+install_files_rel = \
+  index.md
+
+all_files = ${install_files_rel:%=${builddir}/build/%}
+install_files = ${install_files_rel:%=${output_dir}/%}
 
 #############################################################################
 # real targets
@@ -44,35 +49,35 @@ all_files = ${builddir}/build/prefixes.xml
 all: ${all_files}
 
 .PHONY: install #    install everything to $output_dir
-install: ${output_files:%=${output_dir}/%}
-
-${output_dir}/%: ${builddir}/build/%
-	@ ${MKDIR_P} ${dir $@}
-	${INSTALL} -m 644 $< $@
+install: ${install_files}
 
 #############################################################################
 # build
 
-${builddir}/build/prefixes.xml:
+${builddir}/build/index.md: ${builddir}/build/prefixes.xml
+	${MKDIR_P} ${dir $@}
+	${saxon} --xsl=${srcdir}/xsl/index-list-of-namespaces.xsl \
+	  --in=$< --out=$@
+
+${builddir}/build/prefixes.xml: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
 	${MKDIR_P} ${dir $@}
 	${saxon} --xsl=${srcdir}/xsl/collect-prefixes.xsl \
-	  --in=../../distro/niem/xml-catalog.xml \
+	  --in=${xml_catalog} \
 	  --out=$@
+
+#############################################################################
+# install
+
+${output_dir}/%: ${builddir}/build/%
+	${MKDIR_P} ${dir $@}
+	${INSTALL} -m 644 $< $@
 
 #############################################################################
 # convenience targets
 
 .PHONY: clean #    clean regular build products
 clean:
-	${RM} -r ${builddir}/build ${builddir}/valid
-
-.PHONY: clean-valid #    remove evidence of validity checks
-clean-valid:
-	${RM} -r ${builddir}/valid
-
-.PHONY: clean-output #    clean output products
-clean-output:
-	${RM} ${output_files:%=${output_dir}/%}
+	${RM} -r ${all_files}
 
 .PHONY: distclean #    Clean all products
 distclean: clean
