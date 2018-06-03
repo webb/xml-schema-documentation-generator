@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# set variables
+
+xml_catalog=../../distro/niem/xml-catalog.xml
+build_dir=build
+
+# other variables
+
+prefixes_file=${build_dir}/prefixes.xml
+
+# actions
+
+rm -rf ${build_dir}
+mkdir -p ${build_dir}
+
+saxon --in=${xml_catalog} \
+      --xsl=xsl/collect-prefixes.xsl \
+      --out=${prefixes_file}
+
+saxon --in=${prefixes_file} \
+      --xsl=xsl/generate-mkdir.xsl \
+      --out=${build_dir}/mkdir.bash
+
+( cd ${build_dir} && bash ./mkdir.bash )
+
+saxon --in=${xml_catalog} \
+      --xsl=xsl/generate.xsl \
+      --out=${build_dir}/report.txt \
+      +prefixes-file=${prefixes_file} \
+      root-path=$PWD/${build_dir}
+
+
+

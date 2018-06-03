@@ -7,6 +7,9 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns="http://www.w3.org/1999/xhtml">
 
+  <!-- context is an XML Catalog -->
+  <xsl:param name="prefixes" as="document()" required="yes"/>
+
   <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 
   <xsl:template match="ns:namespaces">

@@ -37,7 +37,7 @@ saxon = @saxon@
 # variables
 
 install_files_rel = \
-  index.md
+  index.html
 
 all_files = ${install_files_rel:%=${builddir}/build/%}
 install_files = ${install_files_rel:%=${output_dir}/%}
@@ -54,7 +54,7 @@ install: ${install_files}
 #############################################################################
 # build
 
-${builddir}/build/index.md: ${builddir}/build/prefixes.xml
+${builddir}/build/index.html: ${builddir}/build/prefixes.xml
 	${MKDIR_P} ${dir $@}
 	${saxon} --xsl=${srcdir}/xsl/index-list-of-namespaces.xsl \
 	  --in=$< --out=$@
