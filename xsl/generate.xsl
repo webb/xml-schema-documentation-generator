@@ -22,12 +22,17 @@
   <!-- functions -->
   <!-- ================================================================== -->
 
-  <xsl:function name="f:get-prefix" as="xs:string">
+  <xsl:function name="f:get-target-namespace" as="xs:string">
     <xsl:param name="context" as="element()"/>
     <xsl:variable name="target-namespace" as="xs:string"
                   select="root($context)/@targetNamespace"/>
+    <xsl:sequence select="$target-namespace"/>
+  </xsl:function>
+  
+  <xsl:function name="f:get-prefix" as="xs:string">
+    <xsl:param name="context" as="element()"/>
     <xsl:variable name="prefix" as="xs:string"
-                  select="$prefixes/ns:namespace[@uri=$target-namespace]/@prefix"/>
+                  select="$prefixes/ns:namespace[@uri=f:get-target-namespace($context)]/@prefix"/>
     <xsl:sequence select="$prefix"/>
   </xsl:function>
   
@@ -50,35 +55,23 @@
         </body>
       </html>
     </xsl:result-document>
-    <!-- <xsl:apply-templates select="xsl:uri[ends-with(@uri, '.xsd')]"/> -->
+    <xsl:apply-templates select="xsl:uri[ends-with(@uri, '.xsd')]"/>
   </xsl:template>
 
   <xsl:template match="ns:namespace" mode="index-of-namespaces">
     <li>
-      <a href="{@prefix}">
+      <a href="{@prefix}/index.html">
         <xsl:value-of select="@prefix"/>
       </a>
     </li>
   </xsl:template>
 
-<!-- 
   <xsl:template match="catalog:uri">
-    <xsl:apply-templates select="resolve-uri(@uri, base-uri(.))"/>
+    <xsl:apply-templates select="doc(resolve-uri(@uri, base-uri(.)))"
+                         mode="index-of-one-namespace"/>
   </xsl:template>
 
-  <xsl:template match="xs:schema">
-    <html>
-      <head>
-        <title>Index</title>
-      </head>
-      <body>
-        <ul>
-          <xsl:apply-templates select="ns:namespace"/>
-        </ul>
-      </body>
-    </html>
-    <xsl:apply-templates select="xs:complexType|xs:element"/>
-  </xsl:template>
+  <!--
 
   <xsl:template match="xs:complexType">
     <xsl:variable name="target-namespace" select="/xs:schema/@targetNamespace"/>
@@ -127,5 +120,32 @@
   </xsl:template>
 
   -->
+
+  <!-- ================================================================== -->
+  <!-- mode: index-of-one-namespace -->
+  <!-- ================================================================== -->
+
+  <xsl:template match="xs:schema" mode="index-of-one-namespace">
+    <html>
+      <head>
+        <title>Index for namespace <code><xsl:value-of select="f:get-target-namespace(.)"/></code></title>
+      </head>
+      <body>
+        <ul>
+          <xsl:apply-templates select="xs:*[@name]" mode="#current">
+            <xsl:sort select="@name"/>
+          </xsl:apply-templates>
+        </ul>
+      </body>
+    </html>
+  </xsl:template>
+
+  <xsl:template match="/xs:schema/xs:complexType[@name]" mode="index-of-one-namespace">
+    <li><a href="{@name}/index.html"><xsl:value-of select="@name"/></a></li>
+  </xsl:template>
+
+  <xsl:template match="*" mode="index-of-one-namespace" priority="-1">
+    <xsl:message terminate="yes">Unexpected element <value-of select="name()"/></xsl:message>
+  </xsl:template>
 
 </xsl:stylesheet>
