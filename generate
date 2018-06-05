@@ -34,6 +34,17 @@ echo "# run pre"
 
 ( cd ${build_dir} && bash ./pre.bash )
 
+echo "# run generate mode=component-diagram"
+
+saxon --in=${xml_catalog} \
+      --xsl=xsl/generate.xsl \
+      --out=${build_dir}/report.txt \
+      -- -im:"{}component-diagram" \
+      +prefixes-file=${prefixes_file} \
+      root-path=$PWD/${build_dir}
+
+make dot
+
 echo "# run generate"
 
 saxon --in=${xml_catalog} \

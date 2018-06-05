@@ -18,7 +18,6 @@ dependencies_mk := @builddir@/dependencies.mk
 srcdir = @srcdir@
 builddir = @builddir@
 output_dir = @output_dir@
-xml_catalog = @xml_catalog@
 
 #############################################################################
 # COMMANDS
@@ -26,74 +25,61 @@ xml_catalog = @xml_catalog@
 # autoconf stuff
 MKDIR_P = @MKDIR_P@
 INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
 SED = @SED@
+
 # unix stuff
 find = @find@
 
 # webb stuff
-saxon = @saxon@
 
 #############################################################################
-# variables
+# vars
 
-install_files_rel = \
-  index.html
+files_find_dot := ${shell ${find} ${srcdir}/example -type f -name 'diagram.dot'}
+files_find_index := ${shell ${find} ${srcdir}/example -type f -name 'index.md'}
 
-all_files = ${install_files_rel:%=${builddir}/build/%}
-install_files = ${install_files_rel:%=${output_dir}/%}
-
-dot_files = ${shell ${find} build -type f -name '*.dot'}
-svg_files = ${dot_files:%.dot=%.svg}
-map_files = ${dot_files:%.dot=%.map}
+output_files = ${foreach f,${files_find_dot:${srcdir}/example/%.dot=%},$f.svg $f.map} \
+  ${files_find_index:${srcdir}/example/%=%}
 
 #############################################################################
-# real targets
+# targets
 
-.PHONY: all #    build everything
-all: ${all_files}
+.PHONY: all #    build everything in $builddir/build, default @builddir@/build
+all: ${output_files:%=${builddir}/build/%}
 
-.PHONY: install #    install everything to $output_dir
-install: ${install_files}
+.PHONY: install #    install everything to $output_dir, default @output_dir@
+install: ${output_files:%=${output_dir}/%}
 
-.PHONY: dot #   build everything from dot files
-dot: ${svg_files} ${map_files}
+.PHONY: clean #    clean regular build products
+clean:
+	${RM} -r ${builddir}/build
+
+.PHONY: distclean #    Clean all products
+distclean: clean
+	${RM} ${dependencies_mk} config.log config.status Makefile
 
 #############################################################################
 # build
 
-${builddir}/build/index.html: ${builddir}/build/prefixes.xml
-	${MKDIR_P} ${dir $@}
-	${saxon} --xsl=${srcdir}/xsl/index-list-of-namespaces.xsl \
-	  --in=$< --out=$@
+# import from source
 
-${builddir}/build/prefixes.xml: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
-	${MKDIR_P} ${dir $@}
-	${saxon} --xsl=${srcdir}/xsl/collect-prefixes.xsl \
-	  --in=${xml_catalog} \
-	  --out=$@
+${builddir}/build/%: ${srcdir}/example/%
+	@ ${MKDIR_P} ${dir $@}
+	${INSTALL_DATA} -m 644 $< $@
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# build
 
-%.svg %.map: %.dot
-	dot -Tsvg -o$*.svg -Tcmapx -o $*.map $<
+${builddir}/build/%.map ${builddir}/build/%.svg: ${builddir}/build/%.dot
+	dot -Tsvg -o$*.svg -Tcmapx -o$*.map $*.dot
 
 #############################################################################
 # install
 
 ${output_dir}/%: ${builddir}/build/%
-	${MKDIR_P} ${dir $@}
-	${INSTALL} -m 644 $< $@
-
-#############################################################################
-# convenience targets
-
-.PHONY: clean #    clean regular build products
-clean:
-	${RM} -r ${all_files}
-
-.PHONY: distclean #    Clean all products
-distclean: clean
-	${RM} ${dependencies_mk} config.log config.status Makefile
+	@ ${MKDIR_P} ${dir $@}
+	${INSTALL_DATA} -m 644 $< $@
 
 #############################################################################
 # make help: this must be the last target

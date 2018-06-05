@@ -147,7 +147,20 @@
           <title><xsl:value-of select="$prefix"/>:<xsl:value-of select="$name"/></title>
         </head>
         <body>
-          <p class="title"><xsl:value-of select="$prefix"/>:<xsl:value-of select="$name"/></p>
+          <p class="title">
+            <a href="../index.html">
+              <xsl:value-of select="$prefix"/>
+            </a>
+            <xsl:text>:</xsl:text>
+            <xsl:value-of select="$name"/>
+          </p>
+          <h1>Definition</h1>
+          <p><xsl:value-of select="f:xs-component-get-definition(.)"/></p>
+          <h1>Diagram</h1>
+          <object data="diagram.svg" type="image/svg+xml">
+            <img src="diagram.svg" usemap="#diagram"/>
+            <!-- include diagram.map -->
+          </object>
         </body>
       </html>
     </xsl:result-document>
@@ -155,6 +168,133 @@
 
   <xsl:template match="*" mode="component-page" priority="-1">
     <xsl:message terminate="yes">Unexpected element <xsl:value-of select="name()"/></xsl:message>
+  </xsl:template>
+
+  <!-- ================================================================== -->
+  <!-- mode: component-diagram -->
+  <!-- ================================================================== -->
+
+  <xsl:template match="catalog:catalog" mode="component-diagram">
+    <xsl:apply-templates mode="#current"
+                         select="catalog:uri[ends-with(@uri, '.xsd')]"/>
+  </xsl:template>
+
+  <xsl:template match="catalog:uri" mode="component-diagram">
+    <xsl:apply-templates mode="#current"
+                         select="doc(resolve-uri(@uri, base-uri(.)))"/>
+  </xsl:template>
+
+  <xsl:template match="xs:schema" mode="component-diagram">
+    <xsl:apply-templates mode="#current"
+                         select="xs:complexType"/>
+  </xsl:template>
+
+  <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-diagram">
+    <xsl:variable name="prefix" select="f:get-prefix(.)"/>
+    <xsl:result-document href="{$root-path}/{$prefix}/{@name}/diagram.dot"
+                         method="text" encoding="US-ASCII">
+      <xsl:variable name="object" as="item()*" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0">
+          <TR>
+            <TD ALIGN="LEFT">
+              <B><xsl:value-of select="$prefix"/>:<xsl:value-of select="@name"/></B>
+            </TD>
+            <TD>#</TD>
+            <TD ALIGN="LEFT">Type</TD>
+          </TR>
+          <HR/>
+          <xsl:apply-templates mode="component-diagram-type-table"/>
+        </TABLE>
+      </xsl:variable>
+      
+      digraph diagram {
+        edge [fontname = "Helvetica", fontsize = 10, dir = forward];
+        node [fontname = "Helvetica", fontsize = 10, width = 0, height = 0, shape = plain];
+        rankdir=LR;
+
+      &quot;<xsl:value-of select="$prefix"/>:<xsl:value-of select="@name"/>&quot; [label = &lt;
+      <xsl:value-of select="f:to-dot-html($object)"/>
+      &gt;];
+      }
+    </xsl:result-document>
+  </xsl:template>
+
+  <xsl:template match="@*|node()" priority="-1" mode="component-diagram">
+    <xsl:message terminate="yes">Unexpected content (mode=component-diagram)</xsl:message>
+  </xsl:template>
+
+  <xsl:function name="f:to-dot-html" as="xs:string">
+    <xsl:param name="item" as="item()*"/>
+    <xsl:variable name="html" as="xs:string">
+      <xsl:value-of>
+        <xsl:apply-templates select="$item" mode="to-dot-html"/>
+      </xsl:value-of>
+    </xsl:variable>
+    <xsl:value-of select="$html"/>
+  </xsl:function>
+
+  <!-- ================================================================== -->
+  <!-- mode: component-diagram-type-table -->
+  <!-- ================================================================== -->
+
+  <xsl:template mode="component-diagram-type-table"
+                match="text()">
+  </xsl:template>
+
+  <xsl:template mode="component-diagram-type-table"
+                match="xs:annotation|xs:documentation|xs:complexContent">
+    <xsl:apply-templates select="*" mode="#current"/>
+  </xsl:template>
+
+  <xsl:template mode="component-diagram-type-table"
+                match="xs:extension[@base]">
+    <xsl:variable name="base-type" as="element()">
+      <!-- here -->
+    </xsl:variable>
+  </xsl:template>
+
+  <xsl:template match="*" priority="-1" mode="component-diagram-type-table">
+    <xsl:message terminate="yes">Unexpected element (mode=component-diagram, location=<xsl:value-of select="base-uri(.)"/>, name=<xsl:value-of select="name()"/>)</xsl:message>
+  </xsl:template>
+  
+  <xsl:template match="text()" priority="-1" mode="component-diagram-type-table">
+    <xsl:message terminate="yes">Unexpected text (mode=component-diagram, text=<xsl:value-of select="."/>)</xsl:message>
+  </xsl:template>
+  
+  <xsl:template match="@*|node()" priority="-2" mode="component-diagram-type-table">
+    <xsl:message terminate="yes">Unexpected content (mode=component-diagram-type-table)</xsl:message>
+  </xsl:template>
+  
+
+  <!-- ============================================================================= -->
+  <!-- mode to-dot-html -->
+  <!-- ============================================================================= -->
+
+  <xsl:template match="*" mode="to-dot-html">
+    <xsl:text>&lt;</xsl:text>
+    <xsl:value-of select="name()"/>
+    <xsl:apply-templates select="@*" mode="#current"/>
+    <xsl:text>&gt;</xsl:text>
+    <xsl:apply-templates select="node()" mode="#current"/>
+    <xsl:text>&lt;/</xsl:text>
+    <xsl:value-of select="name()"/>
+    <xsl:text>&gt;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="@*" mode="to-dot-html">
+    <xsl:text> </xsl:text>
+    <xsl:value-of select="name()"/>
+    <xsl:text>=&quot;</xsl:text>
+    <xsl:value-of select="replace(., '&quot;', '&amp;&quot;')"/>
+    <xsl:text>&quot;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="text()" mode="to-dot-html">
+    <xsl:value-of select="replace(., '&lt;', '&amp;&lt;')"/>
+  </xsl:template>
+
+  <xsl:template match="@*|node()" priority="-1" mode="to-dot-html">
+    <xsl:message terminate="yes">Unexpected content (mode=to-dot-html)</xsl:message>
   </xsl:template>
 
 </xsl:stylesheet>
