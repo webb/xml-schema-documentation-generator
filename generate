@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
+set -o errexit
+
 # set variables
 
-xml_catalog=../../distro/niem/xml-catalog.xml
+# xml_catalog=../../distro/niem/xml-catalog.xml
+xml_catalog=inputs/person-subset/niem/xml-catalog.xml
 build_dir=build
 
 # other variables
@@ -14,15 +17,24 @@ prefixes_file=${build_dir}/prefixes.xml
 rm -rf ${build_dir}
 mkdir -p ${build_dir}
 
+echo "# collect prefixes"
+
 saxon --in=${xml_catalog} \
       --xsl=xsl/collect-prefixes.xsl \
       --out=${prefixes_file}
 
-saxon --in=${prefixes_file} \
-      --xsl=xsl/generate-mkdir.xsl \
-      --out=${build_dir}/mkdir.bash
+echo "# generate pre"
 
-( cd ${build_dir} && bash ./mkdir.bash )
+saxon --in=${xml_catalog} \
+      --xsl=xsl/generate-pre.xsl \
+      --out=${build_dir}/pre.bash \
+      +prefixes-file=${prefixes_file}
+
+echo "# run pre"
+
+( cd ${build_dir} && bash ./pre.bash )
+
+echo "# run generate"
 
 saxon --in=${xml_catalog} \
       --xsl=xsl/generate.xsl \

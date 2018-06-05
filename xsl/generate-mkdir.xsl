@@ -13,6 +13,12 @@
     <text>&quot;&#10;</text>
   </template>
 
+  <template match="ns:namespace">
+    <text>mkdir -p &quot;</text>
+    <value-of select="@prefix"/>
+    <text>&quot;&#10;</text>
+  </template>
+
   <template match="text()"/>
 
 </stylesheet>

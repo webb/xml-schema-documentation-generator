@@ -9,38 +9,47 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns="http://www.w3.org/1999/xhtml">
 
-  <!-- context is an XML Catalog -->
-  <xsl:param name="prefixes-file" required="yes"/>
-  <xsl:variable name="prefixes" as="element(ns:namespace)+"
-                select="$prefixes-file/ns:namespaces/ns:namespace"/>
+  <xsl:include href="common.xsl"/>
 
   <xsl:param name="root-path" as="xs:string" required="yes"/>
 
   <xsl:output method="text" encoding="us-ascii"/>
 
   <!-- ================================================================== -->
-  <!-- functions -->
-  <!-- ================================================================== -->
-
-  <xsl:function name="f:get-target-namespace" as="xs:string">
-    <xsl:param name="context" as="element()"/>
-    <xsl:variable name="target-namespace" as="xs:string"
-                  select="root($context)/@targetNamespace"/>
-    <xsl:sequence select="$target-namespace"/>
-  </xsl:function>
-  
-  <xsl:function name="f:get-prefix" as="xs:string">
-    <xsl:param name="context" as="element()"/>
-    <xsl:variable name="prefix" as="xs:string"
-                  select="$prefixes/ns:namespace[@uri=f:get-target-namespace($context)]/@prefix"/>
-    <xsl:sequence select="$prefix"/>
-  </xsl:function>
-  
-  <!-- ================================================================== -->
   <!-- templates, in order of appearance -->
   <!-- ================================================================== -->
 
+  <!-- ================================================================== -->
+  <!-- default mode -->
+  <!-- ================================================================== -->
+
   <xsl:template match="catalog:catalog">
+    <xsl:apply-templates select="." mode="root-index"/>
+    <xsl:apply-templates select="catalog:uri[ends-with(@uri, '.xsd')]"/>
+  </xsl:template>
+
+  <xsl:template match="catalog:uri">
+    <xsl:apply-templates select="doc(resolve-uri(@uri, base-uri(.)))"/>
+  </xsl:template>
+
+  <xsl:template match="xs:schema">
+    <xsl:apply-templates select="." mode="namespace-index"/>
+    <xsl:apply-templates select="xs:complexType"/>
+  </xsl:template>
+
+  <xsl:template match="/xs:schema/xs:complexType[@name]">
+    <xsl:apply-templates select="." mode="component-page"/>
+  </xsl:template>
+
+  <xsl:template match="@*|node()" priority="-2">
+    <xsl:message terminate="yes">unexpected content (default mode)</xsl:message>
+  </xsl:template>
+
+  <!-- ================================================================== -->
+  <!-- mode: root-index -->
+  <!-- ================================================================== -->
+
+  <xsl:template match="catalog:catalog" mode="root-index">
     <xsl:result-document
        href="{$root-path}/index.html"
        method="xml" version="1.0" encoding="UTF-8" indent="yes">
@@ -50,102 +59,102 @@
         </head>
         <body>
           <ul>
-            <xsl:apply-templates select="$prefixes" mode="index-of-namespaces"/>
+            <xsl:variable name="context" as="element(catalog:catalog)"
+                          select="."/>
+            <xsl:for-each select="$prefixes">
+              <xsl:variable name="namespace" select="@uri" as="xs:string"/>
+              <xsl:variable name="catalog-uri" as="element(catalog:uri)?"
+                            select="$context/catalog:uri[@name = $namespace]"/>
+              <xsl:if test="exists($catalog-uri)">
+                <xsl:apply-templates mode="#current"
+                                     select="doc(resolve-uri($catalog-uri/@uri, base-uri($catalog-uri)))"/>
+              </xsl:if>
+            </xsl:for-each>
           </ul>
         </body>
       </html>
     </xsl:result-document>
-    <xsl:apply-templates select="xsl:uri[ends-with(@uri, '.xsd')]"/>
   </xsl:template>
 
-  <xsl:template match="ns:namespace" mode="index-of-namespaces">
+  <xsl:template match="xs:schema" mode="root-index">
+    <xsl:variable name="prefix" select="f:get-prefix(.)"/>
     <li>
-      <a href="{@prefix}/index.html">
-        <xsl:value-of select="@prefix"/>
+      <p>
+      <a href="{$prefix}/index.html">
+        <xsl:value-of select="$prefix"/>
       </a>
+      <xsl:text>: </xsl:text>
+      <xsl:value-of select="@targetNamespace"/>
+      </p>
+      <div style="margin-left: 1em;">
+        <p>
+          <xsl:value-of select="f:xs-component-get-definition(.)"/>
+        </p>
+      </div>
     </li>
   </xsl:template>
 
-  <xsl:template match="catalog:uri">
-    <xsl:apply-templates select="doc(resolve-uri(@uri, base-uri(.)))"
-                         mode="index-of-one-namespace"/>
+  <xsl:template match="*" priority="-2" mode="root-index">
+    <xsl:message terminate="yes">Unexpected element (mode = root-index, name= <xsl:value-of select="name()"/>).</xsl:message>
   </xsl:template>
 
-  <!--
+  <xsl:template match="@*|node()" priority="-3" mode="root-index">
+    <xsl:message terminate="yes">Unexpected content (mode = root-index).</xsl:message>
+  </xsl:template>
 
-  <xsl:template match="xs:complexType">
-    <xsl:variable name="target-namespace" select="/xs:schema/@targetNamespace"/>
-    <xsl:variable name="prefix" as="xs:string"
-                  select="$prefixes/ns:namespace[@uri=$target-namespace]/@prefix"/>
-    
+  <!-- ================================================================== -->
+  <!-- mode: namespace-index -->
+  <!-- ================================================================== -->
+
+  <xsl:template match="xs:schema" mode="namespace-index">
     <xsl:result-document
-       href="{f:get-prefix(.)}/{@name}"
-       method="xml" version="1.0" encoding="UTF-8" indent="yes">
-      <xsl:apply-templates select="." mode="page"/>
+      href="{f:get-prefix(.)}/index.html"
+      method="xml" version="1.0" encoding="UTF-8" indent="yes">
+      <html>
+        <head>
+          <title>Index for namespace <code><xsl:value-of select="f:get-target-namespace(.)"/></code></title>
+        </head>
+        <body>
+          <ul>
+            <xsl:apply-templates select="xs:*[@name]" mode="#current">
+              <xsl:sort select="@name"/>
+            </xsl:apply-templates>
+          </ul>
+        </body>
+      </html>
     </xsl:result-document>
   </xsl:template>
 
-  <xsl:template match="xs:complexType" mode="page">
-        <html>
-      <head>
-        <title>Index</title>
-      </head>
-      <body>
-        <ul>
-          <xsl:apply-templates select="ns:namespace"/>
-        </ul>
-      </body>
-    </html>
+  <xsl:template match="/xs:schema/xs:*[@name]" mode="namespace-index">
+    <li><a href="{@name}/index.html"><xsl:value-of select="@name"/> (<xsl:value-of select="local-name()"/>)</a></li>
   </xsl:template>
 
-  <xsl:template match="ns:namespaces">
-    <html>
-      <head>
-        <title>Index</title>
-      </head>
-      <body>
-        <ul>
-          <xsl:apply-templates select="ns:namespace"/>
-        </ul>
-      </body>
-    </html>
+  <xsl:template match="*" mode="namespace-index" priority="-1">
+    <xsl:message terminate="yes">Unexpected element <xsl:value-of select="name()"/></xsl:message>
   </xsl:template>
-
-  <xsl:template match="ns:namespace">
-    <li>
-      <a href="{@prefix}">
-        <xsl:value-of select="@prefix"/>
-      </a>
-    </li>
-  </xsl:template>
-
-  -->
 
   <!-- ================================================================== -->
-  <!-- mode: index-of-one-namespace -->
+  <!-- mode: component-page -->
   <!-- ================================================================== -->
 
-  <xsl:template match="xs:schema" mode="index-of-one-namespace">
-    <html>
-      <head>
-        <title>Index for namespace <code><xsl:value-of select="f:get-target-namespace(.)"/></code></title>
-      </head>
-      <body>
-        <ul>
-          <xsl:apply-templates select="xs:*[@name]" mode="#current">
-            <xsl:sort select="@name"/>
-          </xsl:apply-templates>
-        </ul>
-      </body>
-    </html>
+  <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-page">
+    <xsl:variable name="prefix" select="f:get-prefix(.)"/>
+    <xsl:variable name="name" select="@name"/>
+    <xsl:result-document href="{$root-path}/{$prefix}/{$name}/index.html"
+      method="xml" version="1.0" encoding="UTF-8" indent="yes">
+      <html>
+        <head>
+          <title><xsl:value-of select="$prefix"/>:<xsl:value-of select="$name"/></title>
+        </head>
+        <body>
+          <p class="title"><xsl:value-of select="$prefix"/>:<xsl:value-of select="$name"/></p>
+        </body>
+      </html>
+    </xsl:result-document>
   </xsl:template>
 
-  <xsl:template match="/xs:schema/xs:complexType[@name]" mode="index-of-one-namespace">
-    <li><a href="{@name}/index.html"><xsl:value-of select="@name"/></a></li>
-  </xsl:template>
-
-  <xsl:template match="*" mode="index-of-one-namespace" priority="-1">
-    <xsl:message terminate="yes">Unexpected element <value-of select="name()"/></xsl:message>
+  <xsl:template match="*" mode="component-page" priority="-1">
+    <xsl:message terminate="yes">Unexpected element <xsl:value-of select="name()"/></xsl:message>
   </xsl:template>
 
 </xsl:stylesheet>
