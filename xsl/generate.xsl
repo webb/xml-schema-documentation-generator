@@ -34,15 +34,24 @@
 
   <xsl:template match="xs:schema">
     <xsl:apply-templates select="." mode="namespace-index"/>
-    <xsl:apply-templates select="xs:complexType"/>
+    <xsl:apply-templates select="xs:complexType|xs:element"/>
   </xsl:template>
 
-  <xsl:template match="/xs:schema/xs:complexType[@name]">
+  <xsl:template match="/xs:schema/xs:complexType[@name]
+                       |/xs:schema/xs:element[@name]">
     <xsl:apply-templates select="." mode="component-page"/>
   </xsl:template>
 
+  <xsl:template match="*" priority="-1">
+    <xsl:message terminate="yes">unexpected element: mode=default
+      name=<xsl:value-of select="name()"/>
+    </xsl:message>
+  </xsl:template>
+
   <xsl:template match="@*|node()" priority="-2">
-    <xsl:message terminate="yes">unexpected content (default mode)</xsl:message>
+    <xsl:message terminate="yes">unexpected content: mode=default
+      name=
+    </xsl:message>
   </xsl:template>
 
   <!-- ================================================================== -->
@@ -115,6 +124,7 @@
           <title>Index for namespace <code><xsl:value-of select="f:get-target-namespace(.)"/></code></title>
         </head>
         <body>
+          <p><a href="../index.html">All namespaces</a></p>
           <ul>
             <xsl:apply-templates select="xs:*[@name]" mode="#current">
               <xsl:sort select="@name"/>
@@ -137,7 +147,7 @@
   <!-- mode: component-page -->
   <!-- ================================================================== -->
 
-  <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-page">
+  <xsl:template match="/xs:schema/xs:*[@name]" mode="component-page">
     <xsl:variable name="prefix" select="f:get-prefix(.)"/>
     <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="path" select="f:xs-component-get-relative-path(.)"/>
@@ -187,7 +197,7 @@
 
   <xsl:template match="xs:schema" mode="component-diagram">
     <xsl:apply-templates mode="#current"
-                         select="xs:complexType"/>
+                         select="xs:complexType|xs:element"/>
   </xsl:template>
 
   <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-diagram">
@@ -216,6 +226,32 @@
         rankdir=LR;
 
       &quot;<xsl:value-of select="$qname"/>&quot; [shape=plain, label = <xsl:value-of select="f:to-dot-html($object)"/>];
+      }
+    </xsl:result-document>
+  </xsl:template>
+
+  <xsl:template match="/xs:schema/xs:element[@name]" mode="component-diagram">
+    <xsl:variable name="prefix" select="f:get-prefix(.)"/>
+    <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <xsl:variable name="path" as="xs:string" select="f:xs-component-get-relative-path(.)"/>
+    <xsl:result-document href="{$root-path}/{$path}/diagram.dot"
+                         method="text" encoding="US-ASCII">
+      <xsl:variable name="element" as="item()*" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
+          <TR>
+            <TD ALIGN="LEFT">
+              <B><xsl:value-of select="$qname"/></B>
+            </TD>
+          </TR>
+        </TABLE>
+      </xsl:variable>
+      
+      digraph diagram {
+        edge [fontname = "Helvetica", fontsize = 12, dir = forward];
+        node [fontname = "Helvetica", fontsize = 12, shape = plain];
+        rankdir=LR;
+
+      &quot;<xsl:value-of select="$qname"/>&quot; [shape=plain, label = <xsl:value-of select="f:to-dot-html($element)"/>];
       }
     </xsl:result-document>
   </xsl:template>
