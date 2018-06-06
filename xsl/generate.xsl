@@ -245,15 +245,45 @@
           </TR>
         </TABLE>
       </xsl:variable>
-      
+      <xsl:text>
       digraph diagram {
         edge [fontname = "Helvetica", fontsize = 12, dir = forward];
         node [fontname = "Helvetica", fontsize = 12, shape = plain];
         rankdir=LR;
-
-      &quot;<xsl:value-of select="$qname"/>&quot; [shape=plain, label = <xsl:value-of select="f:to-dot-html($element)"/>];
-      }
+      </xsl:text>
+      
+      <xsl:value-of select="f:enquote(string($qname))"/>
+      <xsl:text>[shape=plain, label = </xsl:text>
+      <xsl:value-of select="f:to-dot-html($element)"/>
+      <xsl:text>];&#10;</xsl:text>
+      <xsl:apply-templates select="@type" mode="#current"/>
+      <xsl:text>}&#10;</xsl:text>
     </xsl:result-document>
+  </xsl:template>
+
+  <xsl:template match="xs:element/@type" mode="component-diagram">
+    <xsl:variable name="element-qname" as="xs:QName"
+                  select="f:xs-component-get-qname(..)"/>
+    <xsl:variable name="type" select="f:resolve-type(.., .)"/>
+    <xsl:variable name="type-qname" select="f:xs-component-get-qname($type)"/>
+    <xsl:variable name="type-path" select="f:xs-component-get-relative-path($type)"/>
+    <xsl:variable name="type-object" xmlns="">
+      <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
+        <TR>
+          <TD ALIGN="LEFT" HREF="../../{$type-path}/index.html">
+            <B><xsl:value-of select="$type-qname"/></B>
+          </TD>
+        </TR>
+      </TABLE>
+    </xsl:variable>
+    <xsl:value-of select="f:enquote(string($type-qname))"/>
+    <xsl:text> [shape=plain, label=</xsl:text>
+    <xsl:value-of select="f:to-dot-html($type-object)"/>
+    <xsl:text>];&#10;</xsl:text>
+    <xsl:value-of select="f:enquote(string($element-qname))"/>
+    <xsl:text> -&gt; </xsl:text>
+    <xsl:value-of select="f:enquote(string($type-qname))"/>
+    <xsl:text> [label="type"];&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="@*|node()" priority="-1" mode="component-diagram">

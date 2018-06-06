@@ -83,4 +83,9 @@
     <xsl:value-of select="concat(prefix-from-QName($qname), '/', local-name-from-QName($qname))"/>
   </xsl:function>
 
+  <xsl:function name="f:enquote" as="xs:string">
+    <xsl:param name="string" as="xs:string"/>
+    <xsl:value-of select="concat('&quot;', $string, '&quot;')"/>
+  </xsl:function>
+
 </xsl:stylesheet>
