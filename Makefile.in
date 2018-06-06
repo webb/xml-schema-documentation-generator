@@ -43,7 +43,7 @@ all_files = ${install_files_rel:%=${builddir}/build/%}
 install_files = ${install_files_rel:%=${output_dir}/%}
 
 dot_files = ${shell ${find} build -type f -name '*.dot'}
-svg_files = ${dot_files:%.dot=%.svg}
+png_files = ${dot_files:%.dot=%.png}
 map_files = ${dot_files:%.dot=%.map}
 
 #############################################################################
@@ -56,7 +56,7 @@ all: ${all_files}
 install: ${install_files}
 
 .PHONY: dot #   build everything from dot files
-dot: ${svg_files} ${map_files}
+dot: ${png_files} ${map_files}
 
 #############################################################################
 # build
@@ -74,8 +74,8 @@ ${builddir}/build/prefixes.xml: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xs
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-%.svg %.map: %.dot
-	dot -Tsvg -o$*.svg -Tcmapx -o $*.map $<
+%.png %.map: %.dot
+	dot -Tpng -o$*.png -Tcmapx -o $*.map $<
 
 #############################################################################
 # install

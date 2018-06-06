@@ -157,10 +157,10 @@
           <h1>Definition</h1>
           <p><xsl:value-of select="f:xs-component-get-definition(.)"/></p>
           <h1>Diagram</h1>
-          <object data="diagram.svg" type="image/svg+xml">
-            <img src="diagram.svg" usemap="#diagram"/>
-            <!-- include diagram.map -->
-          </object>
+          <img src="diagram.png" usemap="#diagram"/>
+          <xsl:apply-templates
+            mode="htmlify"
+            select="doc(concat($root-path,'/',$prefix,'/',$name,'/diagram.map'))"/>
         </body>
       </html>
     </xsl:result-document>
@@ -208,8 +208,8 @@
       </xsl:variable>
       
       digraph diagram {
-        edge [fontname = "Helvetica", fontsize = 10, dir = forward];
-        node [fontname = "Helvetica", fontsize = 10, width = 0, height = 0, shape = plain];
+        edge [fontname = "Helvetica", fontsize = 12, dir = forward];
+        node [fontname = "Helvetica", fontsize = 12, shape = plain];
         rankdir=LR;
 
       &quot;<xsl:value-of select="$prefix"/>:<xsl:value-of select="@name"/>&quot; [shape=plain, label = &lt;
@@ -253,7 +253,7 @@
 
   <xsl:template match="xs:sequence/xs:element[@ref]" mode="component-diagram-type-table">
     <TR>
-      <TD ALIGN="LEFT"><xsl:value-of select="@ref"/></TD>
+      <TD ALIGN="LEFT" HREF="http://www.google.com/"><xsl:value-of select="@ref"/></TD>
       <TD>
         <xsl:variable name="min" select="if (@minOccurs) then @minOccurs else '1'"/>
         <xsl:variable name="max" select="if (@maxOccurs) 
@@ -368,5 +368,30 @@
   <xsl:template match="@*|node()" priority="-2" mode="to-dot-html">
     <xsl:message terminate="yes">Unexpected content (mode=to-dot-html)</xsl:message>
   </xsl:template>
+
+  <!-- ============================================================================= -->
+  <!-- mode htmlify -->
+  <!-- convert un-namespaced content to html content -->
+  <!-- ============================================================================= -->
+
+  <xsl:template mode="htmlify"
+                match="*"
+                xmlns="">
+    <xsl:element
+      name="{local-name()}"
+      namespace="http://www.w3.org/1999/xhtml">
+      <xsl:apply-templates select="@*|node()" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+
+  <xsl:template mode="htmlify"
+                match="@*|node()"
+                priority="-1">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
+
 
 </xsl:stylesheet>
