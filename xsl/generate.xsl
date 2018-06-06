@@ -194,7 +194,7 @@
     <xsl:result-document href="{$root-path}/{$prefix}/{@name}/diagram.dot"
                          method="text" encoding="US-ASCII">
       <xsl:variable name="object" as="item()*" xmlns="">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
           <TR>
             <TD ALIGN="LEFT">
               <B><xsl:value-of select="$prefix"/>:<xsl:value-of select="@name"/></B>
@@ -212,7 +212,7 @@
         node [fontname = "Helvetica", fontsize = 10, width = 0, height = 0, shape = plain];
         rankdir=LR;
 
-      &quot;<xsl:value-of select="$prefix"/>:<xsl:value-of select="@name"/>&quot; [label = &lt;
+      &quot;<xsl:value-of select="$prefix"/>:<xsl:value-of select="@name"/>&quot; [shape=plain, label = &lt;
       <xsl:value-of select="f:to-dot-html($object)"/>
       &gt;];
       }
@@ -242,19 +242,84 @@
   </xsl:template>
 
   <xsl:template mode="component-diagram-type-table"
-                match="xs:annotation|xs:documentation|xs:complexContent">
+                match="xs:annotation
+                       |xs:documentation
+                       |xs:complexContent
+                       |xs:simpleContent
+                       |xs:sequence
+                       |xs:extension">
     <xsl:apply-templates select="*" mode="#current"/>
   </xsl:template>
 
-  <xsl:template mode="component-diagram-type-table"
-                match="xs:extension[@base]">
-    <xsl:variable name="base-type" as="element()">
-      <!-- here -->
-    </xsl:variable>
+  <xsl:template match="xs:sequence/xs:element[@ref]" mode="component-diagram-type-table">
+    <TR>
+      <TD ALIGN="LEFT"><xsl:value-of select="@ref"/></TD>
+      <TD>
+        <xsl:variable name="min" select="if (@minOccurs) then @minOccurs else '1'"/>
+        <xsl:variable name="max" select="if (@maxOccurs) 
+                                         then (if (@maxOccurs = 'unbounded')
+                                              then 'n'
+                                              else @maxOccurs)
+                                         else '1'"/>
+        <xsl:value-of select="if ($min = $max)
+                              then $min
+                              else concat($min, '-', $max)"/>
+      </TD>
+      <TD>unknown</TD>
+    </TR>
+  </xsl:template>
+
+  <xsl:template match="xs:attribute[@ref]" mode="component-diagram-type-table">
+    <TR>
+      <TD ALIGN="LEFT">@<xsl:value-of select="@ref"/></TD>
+      <TD>
+        <xsl:choose>
+          <xsl:when test="@use = 'required'">1</xsl:when>
+          <xsl:when test="@use = 'prohibited'">0</xsl:when>
+          <xsl:when test="@use = 'optional'">0-1</xsl:when>
+          <xsl:otherwise>0-1</xsl:otherwise>
+        </xsl:choose>
+      </TD>
+      <TD>unknown</TD>
+    </TR>
+  </xsl:template>
+
+  <xsl:template match="xs:anyAttribute" mode="component-diagram-type-table">
+    <TR>
+      <TD ALIGN="LEFT">anyAttribute</TD>
+      <TD></TD>
+      <TD></TD>
+    </TR>
+  </xsl:template>
+
+  <xsl:template match="xs:attributeGroup[@ref]" mode="component-diagram-type-table">
+    <TR>
+      <TD ALIGN="LEFT">attributeGroup <xsl:value-of select="@ref"/></TD>
+      <TD></TD>
+      <TD></TD>
+    </TR>
   </xsl:template>
 
   <xsl:template match="*" priority="-1" mode="component-diagram-type-table">
-    <xsl:message terminate="yes">Unexpected element (mode=component-diagram, location=<xsl:value-of select="base-uri(.)"/>, name=<xsl:value-of select="name()"/>)</xsl:message>
+    <xsl:message terminate="yes">
+      <xsl:text>Unexpected element (mode=component-diagram-type-table, location=</xsl:text>
+      <xsl:value-of select="base-uri(.)"/>
+      <xsl:text>, name=</xsl:text>
+      <xsl:value-of select="name()"/>
+      <xsl:if test="exists(ancestor::xs:*/@name)">
+        <xsl:text>, in @name=</xsl:text>
+        <xsl:value-of select="ancestor::xs:*[@name][1]/@name"/>
+      </xsl:if>
+      <xsl:if test="exists(@name)">
+        <xsl:text>, @name=</xsl:text>
+        <xsl:value-of select="@name"/>
+      </xsl:if>
+      <xsl:if test="exists(@ref)">
+        <xsl:text>, @ref=</xsl:text>
+        <xsl:value-of select="@ref"/>
+      </xsl:if>
+      <xsl:text>)</xsl:text>
+    </xsl:message>
   </xsl:template>
   
   <xsl:template match="text()" priority="-1" mode="component-diagram-type-table">
@@ -270,7 +335,14 @@
   <!-- mode to-dot-html -->
   <!-- ============================================================================= -->
 
-  <xsl:template match="*" mode="to-dot-html">
+  <xsl:template match="HR" xmlns="" mode="to-dot-html">
+    <xsl:choose>
+      <xsl:when test="following-sibling::*">&lt;HR/&gt;</xsl:when>
+      <xsl:otherwise></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="*" priority="-1" mode="to-dot-html">
     <xsl:text>&lt;</xsl:text>
     <xsl:value-of select="name()"/>
     <xsl:apply-templates select="@*" mode="#current"/>
@@ -281,7 +353,7 @@
     <xsl:text>&gt;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="@*" mode="to-dot-html">
+  <xsl:template match="@*" priority="-1" mode="to-dot-html">
     <xsl:text> </xsl:text>
     <xsl:value-of select="name()"/>
     <xsl:text>=&quot;</xsl:text>
@@ -289,11 +361,11 @@
     <xsl:text>&quot;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="text()" mode="to-dot-html">
+  <xsl:template match="text()" priority="-1" mode="to-dot-html">
     <xsl:value-of select="replace(., '&lt;', '&amp;&lt;')"/>
   </xsl:template>
 
-  <xsl:template match="@*|node()" priority="-1" mode="to-dot-html">
+  <xsl:template match="@*|node()" priority="-2" mode="to-dot-html">
     <xsl:message terminate="yes">Unexpected content (mode=to-dot-html)</xsl:message>
   </xsl:template>
 
