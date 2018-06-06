@@ -139,12 +139,13 @@
 
   <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-page">
     <xsl:variable name="prefix" select="f:get-prefix(.)"/>
-    <xsl:variable name="name" select="@name"/>
-    <xsl:result-document href="{$root-path}/{$prefix}/{$name}/index.html"
+    <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
+    <xsl:variable name="path" select="f:xs-component-get-relative-path(.)"/>
+    <xsl:result-document href="{$root-path}/{$path}/index.html"
       method="xml" version="1.0" encoding="UTF-8" indent="yes">
       <html>
         <head>
-          <title><xsl:value-of select="$prefix"/>:<xsl:value-of select="$name"/></title>
+          <title><xsl:value-of select="$qname"/></title>
         </head>
         <body>
           <p class="title">
@@ -152,7 +153,7 @@
               <xsl:value-of select="$prefix"/>
             </a>
             <xsl:text>:</xsl:text>
-            <xsl:value-of select="$name"/>
+            <xsl:value-of select="local-name-from-QName($qname)"/>
           </p>
           <h1>Definition</h1>
           <p><xsl:value-of select="f:xs-component-get-definition(.)"/></p>
@@ -160,7 +161,7 @@
           <img src="diagram.png" usemap="#diagram"/>
           <xsl:apply-templates
             mode="htmlify"
-            select="doc(concat($root-path,'/',$prefix,'/',$name,'/diagram.map'))"/>
+            select="doc(concat($root-path,'/',$path,'/diagram.map'))"/>
         </body>
       </html>
     </xsl:result-document>
@@ -191,13 +192,15 @@
 
   <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-diagram">
     <xsl:variable name="prefix" select="f:get-prefix(.)"/>
-    <xsl:result-document href="{$root-path}/{$prefix}/{@name}/diagram.dot"
+    <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <xsl:variable name="path" as="xs:string" select="f:xs-component-get-relative-path(.)"/>
+    <xsl:result-document href="{$root-path}/{$path}/diagram.dot"
                          method="text" encoding="US-ASCII">
       <xsl:variable name="object" as="item()*" xmlns="">
         <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
           <TR>
             <TD ALIGN="LEFT">
-              <B><xsl:value-of select="$prefix"/>:<xsl:value-of select="@name"/></B>
+              <B><xsl:value-of select="$qname"/></B>
             </TD>
             <TD>#</TD>
             <TD ALIGN="LEFT">Type</TD>
@@ -212,9 +215,7 @@
         node [fontname = "Helvetica", fontsize = 12, shape = plain];
         rankdir=LR;
 
-      &quot;<xsl:value-of select="$prefix"/>:<xsl:value-of select="@name"/>&quot; [shape=plain, label = &lt;
-      <xsl:value-of select="f:to-dot-html($object)"/>
-      &gt;];
+      &quot;<xsl:value-of select="$qname"/>&quot; [shape=plain, label = <xsl:value-of select="f:to-dot-html($object)"/>];
       }
     </xsl:result-document>
   </xsl:template>
@@ -227,7 +228,9 @@
     <xsl:param name="item" as="item()*"/>
     <xsl:variable name="html" as="xs:string">
       <xsl:value-of>
+        <xsl:text>&lt;</xsl:text>
         <xsl:apply-templates select="$item" mode="to-dot-html"/>
+        <xsl:text>&gt;</xsl:text>
       </xsl:value-of>
     </xsl:variable>
     <xsl:value-of select="$html"/>
@@ -251,9 +254,18 @@
     <xsl:apply-templates select="*" mode="#current"/>
   </xsl:template>
 
-  <xsl:template match="xs:sequence/xs:element[@ref]" mode="component-diagram-type-table">
+  <xsl:template match="xs:sequence/xs:element[@ref]" mode="component-diagram-type-table"
+                xmlns="">
+    <xsl:variable name="element" as="element(xs:element)"
+                  select="f:resolve-element(., @ref)"/>
+    <xsl:variable name="element-qname" as="xs:QName"
+                  select="f:xs-component-get-qname($element)"/>
+    <xsl:variable name="element-path" as="xs:string"
+                  select="f:xs-component-get-relative-path($element)"/>
     <TR>
-      <TD ALIGN="LEFT" HREF="http://www.google.com/"><xsl:value-of select="@ref"/></TD>
+      <TD ALIGN="LEFT" HREF="../../{$element-path}/index.html">
+        <xsl:value-of select="$element-qname"/>
+      </TD>
       <TD>
         <xsl:variable name="min" select="if (@minOccurs) then @minOccurs else '1'"/>
         <xsl:variable name="max" select="if (@maxOccurs) 
@@ -265,7 +277,14 @@
                               then $min
                               else concat($min, '-', $max)"/>
       </TD>
-      <TD>unknown</TD>
+      <TD>
+        <xsl:if test="$element/@type">
+          <xsl:variable name="type" select="f:resolve-type($element, $element/@type)"/>
+          <xsl:attribute name="ALIGN" select="'LEFT'"/>
+          <xsl:attribute name="HREF" select="concat('../../', f:xs-component-get-relative-path($type), '/index.html')"/>
+          <xsl:value-of select="f:xs-component-get-qname($type)"/>
+        </xsl:if>
+      </TD>
     </TR>
   </xsl:template>
 

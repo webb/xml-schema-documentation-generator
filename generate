@@ -5,7 +5,7 @@ set -o errexit
 # set variables
 
 # xml_catalog=../../distro/niem/xml-catalog.xml
-xml_catalog=inputs/person-subset/niem/xml-catalog.xml
+xml_catalog_file=inputs/person-subset/niem/xml-catalog.xml
 build_dir=build
 
 # other variables
@@ -19,16 +19,17 @@ mkdir -p ${build_dir}
 
 echo "# collect prefixes"
 
-saxon --in=${xml_catalog} \
+saxon --in=${xml_catalog_file} \
       --xsl=xsl/collect-prefixes.xsl \
       --out=${prefixes_file}
 
 echo "# generate pre"
 
-saxon --in=${xml_catalog} \
+saxon --in=${xml_catalog_file} \
       --xsl=xsl/generate-pre.xsl \
       --out=${build_dir}/pre.bash \
-      +prefixes-file=${prefixes_file}
+      +prefixes-file=${prefixes_file} \
+      +xml-catalog-file=${xml_catalog_file}
 
 echo "# run pre"
 
@@ -36,21 +37,23 @@ echo "# run pre"
 
 echo "# run generate mode=component-diagram"
 
-saxon --in=${xml_catalog} \
+saxon --in=${xml_catalog_file} \
       --xsl=xsl/generate.xsl \
       --out=${build_dir}/report.txt \
       -- -im:"{}component-diagram" \
       +prefixes-file=${prefixes_file} \
+      +xml-catalog-file=${xml_catalog_file} \
       root-path=$PWD/${build_dir}
 
 make dot
 
 echo "# run generate"
 
-saxon --in=${xml_catalog} \
+saxon --in=${xml_catalog_file} \
       --xsl=xsl/generate.xsl \
       --out=${build_dir}/report.txt \
       +prefixes-file=${prefixes_file} \
+      +xml-catalog-file=${xml_catalog_file} \
       root-path=$PWD/${build_dir}
 
 
