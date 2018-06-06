@@ -414,7 +414,23 @@
   <xsl:template match="@*|node()" priority="-2" mode="component-diagram-type-table">
     <xsl:message terminate="yes">Unexpected content (mode=component-diagram-type-table)</xsl:message>
   </xsl:template>
-  
+
+  <!-- ================================================================== -->
+  <!-- mode: component-diagram-base-type -->
+  <!-- ================================================================== -->
+
+  <!-- here -->
+  <xsl:template mode="component-diagram-base-type"
+                match="@base">
+    
+    <xsl:apply-templates select="*" mode="#current"/>
+  </xsl:template>
+
+  <xsl:template mode="component-diagram-base-type"
+                match="@*|node()" priority="-2">
+    <xsl:message terminate="yes">Unexpected content: mode component-diagram-base-type</xsl:message>
+  </xsl:template>
+
 
   <!-- ============================================================================= -->
   <!-- mode to-dot-html -->
