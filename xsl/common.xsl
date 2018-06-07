@@ -27,7 +27,14 @@
     <xsl:sequence select="$target-namespace"/>
   </xsl:function>
   
-  <xsl:function name="f:get-prefix" as="xs:string">
+  <xsl:function name="f:uri-get-prefix" as="xs:string">
+    <xsl:param name="uri" as="xs:string"/>
+    <xsl:variable name="prefix" as="xs:string"
+                  select="$prefixes[@uri = $uri]/@prefix"/>
+    <xsl:sequence select="$prefix"/>
+  </xsl:function>
+
+  <xsl:function name="f:xs-get-prefix" as="xs:string">
     <xsl:param name="context" as="element()"/>
     <xsl:variable name="target-namespace" select="f:get-target-namespace($context)"/>
     <xsl:variable name="prefix" as="xs:string"
@@ -63,14 +70,17 @@
 
   <xsl:function name="f:resolve-namespace" as="element(xs:schema)">
     <xsl:param name="namespace" as="xs:string"/>
-    <xsl:variable name="catalog-uri" as="element(catalog:uri)"
+    <xsl:variable name="catalog-uri" as="element(catalog:uri)?"
                   select="$xml-catalog-file/catalog:catalog/catalog:uri[@name = $namespace]"/>
+    <xsl:if test="empty($catalog-uri)">
+      <xsl:message>f:resolve-namespace(): no catalog uri found for namespace <xsl:value-of select="$namespace"/></xsl:message>
+    </xsl:if>
     <xsl:sequence select="doc(resolve-uri($catalog-uri/@uri, base-uri($catalog-uri)))/xs:schema"/>
   </xsl:function>
 
   <xsl:function name="f:xs-component-get-qname" as="xs:QName">
     <xsl:param name="context" as="element()"/>
-    <xsl:variable name="prefix" select="f:get-prefix($context)"/>
+    <xsl:variable name="prefix" select="f:xs-get-prefix($context)"/>
     <xsl:variable name="uri" select="f:get-target-namespace($context)"/>
     <xsl:variable name="local-name" as="xs:string"
                   select="$context/@name"/>
@@ -81,6 +91,49 @@
     <xsl:param name="context" as="element()"/>
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname($context)"/>
     <xsl:value-of select="concat(prefix-from-QName($qname), '/', local-name-from-QName($qname))"/>
+  </xsl:function>
+
+  <xsl:function name="f:ref-get-qname" as="xs:QName">
+    <xsl:param name="context" as="element()"/>
+    <xsl:param name="ref" as="xs:string"/>
+    <xsl:variable name="ref-qname" as="xs:QName"
+                  select="resolve-QName($ref, $context)"/>
+    <xsl:variable name="ref-uri" select="namespace-uri-from-QName($ref-qname)"/>
+    <xsl:sequence select="QName(
+                          $ref-uri,
+                          concat(f:uri-get-prefix($ref-uri), 
+                          ':', 
+                          local-name-from-QName($ref-qname)))"/>
+  </xsl:function>
+
+  <xsl:function name="f:get-href" as="xs:string">
+    <!-- e.g., '../..' -->
+    <xsl:param name="path-to-root" as="xs:string"/>
+    <xsl:param name="qname" as="xs:QName"/>
+    <xsl:choose>
+      <xsl:when test="namespace-uri-from-QName($qname) = 'http://www.w3.org/2001/XMLSchema'">
+        <!-- here here here -->
+        <xsl:value-of select=""></xsl:value-of>
+      </xsl:when>
+    </xsl:choose>
+    <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname($context)"/>
+    <xsl:value-of select="concat(prefix-from-QName($qname), '/', local-name-from-QName($qname))"/>
+
+    
+    <xsl:param name="context" as="element()"/>
+    <xsl:param name="ref" as="xs:string"/>
+    <xsl:variable name="ref-qname" as="xs:QName"
+                  select="resolve-QName($ref, $context)"/>
+    <xsl:variable name="ref-uri" select="namespace-uri-from-QName($ref-qname)"/>
+    <xsl:sequence select="QName(
+                          $ref-uri,
+                          concat(f:uri-get-prefix($ref-uri), 
+                          ':', 
+                          local-name-from-QName($ref-qname)))"/>
+  </xsl:function>
+
+
+
   </xsl:function>
 
   <xsl:function name="f:enquote" as="xs:string">

@@ -86,7 +86,7 @@
   </xsl:template>
 
   <xsl:template match="xs:schema" mode="root-index">
-    <xsl:variable name="prefix" select="f:get-prefix(.)"/>
+    <xsl:variable name="prefix" select="f:xs-get-prefix(.)"/>
     <li>
       <p>
       <a href="{$prefix}/index.html">
@@ -117,7 +117,7 @@
 
   <xsl:template match="xs:schema" mode="namespace-index">
     <xsl:result-document
-      href="{f:get-prefix(.)}/index.html"
+      href="{f:xs-get-prefix(.)}/index.html"
       method="xml" version="1.0" encoding="UTF-8" indent="yes">
       <html>
         <head>
@@ -148,7 +148,7 @@
   <!-- ================================================================== -->
 
   <xsl:template match="/xs:schema/xs:*[@name]" mode="component-page">
-    <xsl:variable name="prefix" select="f:get-prefix(.)"/>
+    <xsl:variable name="prefix" select="f:xs-get-prefix(.)"/>
     <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="path" select="f:xs-component-get-relative-path(.)"/>
     <xsl:result-document href="{$root-path}/{$path}/index.html"
@@ -201,7 +201,7 @@
   </xsl:template>
 
   <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-diagram">
-    <xsl:variable name="prefix" select="f:get-prefix(.)"/>
+    <xsl:variable name="prefix" select="f:xs-get-prefix(.)"/>
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="path" as="xs:string" select="f:xs-component-get-relative-path(.)"/>
     <xsl:result-document href="{$root-path}/{$path}/diagram.dot"
@@ -226,12 +226,14 @@
         rankdir=LR;
 
       &quot;<xsl:value-of select="$qname"/>&quot; [shape=plain, label = <xsl:value-of select="f:to-dot-html($object)"/>];
+
+      <xsl:apply-templates select=".//xs:*[@base]/@base" mode="component-diagram-base-type"/>
       }
     </xsl:result-document>
   </xsl:template>
 
   <xsl:template match="/xs:schema/xs:element[@name]" mode="component-diagram">
-    <xsl:variable name="prefix" select="f:get-prefix(.)"/>
+    <xsl:variable name="prefix" select="f:xs-get-prefix(.)"/>
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="path" as="xs:string" select="f:xs-component-get-relative-path(.)"/>
     <xsl:result-document href="{$root-path}/{$path}/diagram.dot"
@@ -289,18 +291,6 @@
   <xsl:template match="@*|node()" priority="-1" mode="component-diagram">
     <xsl:message terminate="yes">Unexpected content (mode=component-diagram)</xsl:message>
   </xsl:template>
-
-  <xsl:function name="f:to-dot-html" as="xs:string">
-    <xsl:param name="item" as="item()*"/>
-    <xsl:variable name="html" as="xs:string">
-      <xsl:value-of>
-        <xsl:text>&lt;</xsl:text>
-        <xsl:apply-templates select="$item" mode="to-dot-html"/>
-        <xsl:text>&gt;</xsl:text>
-      </xsl:value-of>
-    </xsl:variable>
-    <xsl:value-of select="$html"/>
-  </xsl:function>
 
   <!-- ================================================================== -->
   <!-- mode: component-diagram-type-table -->
@@ -419,11 +409,54 @@
   <!-- mode: component-diagram-base-type -->
   <!-- ================================================================== -->
 
-  <!-- here -->
   <xsl:template mode="component-diagram-base-type"
                 match="@base">
-    
-    <xsl:apply-templates select="*" mode="#current"/>
+    <!-- could be restriction... -->
+    <xsl:variable name="extension" as="element()"
+                  select=".."/>
+    <xsl:variable name="this" as="element()"
+                  select="ancestor::xs:*[@name][1]"/>
+    <xsl:variable name="this-qname" as="xs:QName"
+                  select="f:xs-component-get-qname($this)"/>
+    <xsl:variable name="base" as="element()"
+                  select="f:resolve-type(.., .)"/>
+    <xsl:variable name="base-qname" as="xs:QName"
+                  select="f:xs-component-get-qname($base)"/>
+    <xsl:value-of select="f:enquote(string($base-qname))"/>
+    <xsl:text> -&gt; </xsl:text>
+    <xsl:value-of select="f:enquote(string($this-qname))"/>
+    <xsl:text> [label=&quot;</xsl:text>
+    <xsl:value-of select="local-name($extension)"/>
+    <xsl:text>=&quot;];</xsl:text>
+    <xsl:apply-templates select="$base" mode="#current"/>
+  </xsl:template>
+
+  <xsl:template mode="component-diagram-base-type"
+                match="xs:complexType|xs:simpleType">
+    <xsl:variable name="qname" as="xs:QName"
+                  select="f:xs-component-get-qname(.)"/>
+    <xsl:variable name="path" as="xs:string"
+                  select="concat('../../', f:xs-component-get-relative-path(.), '/index.html')"/>
+    <xsl:variable name="object">
+      <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TR>
+          <TD ALIGN="LEFT" HREF="../../{f:xs-component-get-relative-path(.)}/index.html">
+            <B><xsl:value-of select="$qname"/></B>
+          </TD>
+        </TR>
+      </TABLE>
+    </xsl:variable>
+    <xsl:value-of select="f:enquote(string($qname))"/>
+    <xsl:text> [label = </xsl:text>
+    <xsl:value-of select="f:to-dot-html($object)"/>
+    <xsl:text>];&#10;</xsl:text>
+    <xsl:apply-templates select=".//xs:*[@base]/@base" mode="#current"/>
+  </xsl:template>
+
+  <xsl:template match="*" mode="component-diagram-base-type" priority="-1">
+    <xsl:message terminate="yes">Unexpected content: mode component-diagram-base-type
+      name = <xsl:value-of select="name()"/>
+    </xsl:message>
   </xsl:template>
 
   <xsl:template mode="component-diagram-base-type"
@@ -435,6 +468,18 @@
   <!-- ============================================================================= -->
   <!-- mode to-dot-html -->
   <!-- ============================================================================= -->
+
+  <xsl:function name="f:to-dot-html" as="xs:string">
+    <xsl:param name="item" as="item()*"/>
+    <xsl:variable name="html" as="xs:string">
+      <xsl:value-of>
+        <xsl:text>&lt;</xsl:text>
+        <xsl:apply-templates select="$item" mode="to-dot-html"/>
+        <xsl:text>&gt;</xsl:text>
+      </xsl:value-of>
+    </xsl:variable>
+    <xsl:value-of select="$html"/>
+  </xsl:function>
 
   <xsl:template match="HR" xmlns="" mode="to-dot-html">
     <xsl:choose>

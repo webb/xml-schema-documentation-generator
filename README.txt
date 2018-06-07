@@ -1,4 +1,5 @@
 
+
 To build:
 
     1. Start in a build directory
@@ -24,4 +25,10 @@ To build:
 
 This package doesn't need to know about what versions the schema pile is, or
 even if it's a NIEM release or subset.
+
+# notes
+
+Documentation for a string is at:
+
+https://www.w3.org/TR/xmlschema-2/#string
 
