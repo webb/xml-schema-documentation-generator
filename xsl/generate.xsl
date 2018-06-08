@@ -418,17 +418,43 @@
                   select="ancestor::xs:*[@name][1]"/>
     <xsl:variable name="this-qname" as="xs:QName"
                   select="f:xs-component-get-qname($this)"/>
-    <xsl:variable name="base" as="element()"
-                  select="f:resolve-type(.., .)"/>
-    <xsl:variable name="base-qname" as="xs:QName"
-                  select="f:xs-component-get-qname($base)"/>
+
+    <xsl:variable name="base-qname" as="xs:QName" select="f:ref-get-qname(.., .)"/>
+    <xsl:variable name="base" as="element()?" select="f:qname-resolve-type($base-qname)"/>
+    
     <xsl:value-of select="f:enquote(string($base-qname))"/>
     <xsl:text> -&gt; </xsl:text>
     <xsl:value-of select="f:enquote(string($this-qname))"/>
     <xsl:text> [label=&quot;</xsl:text>
     <xsl:value-of select="local-name($extension)"/>
-    <xsl:text>=&quot;];</xsl:text>
-    <xsl:apply-templates select="$base" mode="#current"/>
+    <xsl:text>&quot;];&#10;</xsl:text>
+
+    <xsl:text>{ rank = same; </xsl:text>
+    <xsl:value-of select="f:enquote(string($this-qname))"/>
+    <xsl:text>; </xsl:text>
+    <xsl:value-of select="f:enquote(string($base-qname))"/>
+    <xsl:text>; }&#10;</xsl:text>
+    
+    <xsl:choose>
+      <xsl:when test="exists($base)">
+        <xsl:apply-templates select="$base" mode="#current"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="object">
+          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+            <TR>
+              <TD ALIGN="LEFT" HREF="{f:get-href('../..', $base-qname)}">
+                <B><xsl:value-of select="$base-qname"/></B>
+              </TD>
+            </TR>
+          </TABLE>
+        </xsl:variable>
+        <xsl:value-of select="f:enquote(string($base-qname))"/>
+        <xsl:text> [shape=plain, label=</xsl:text>
+        <xsl:value-of select="f:to-dot-html($object)"/>
+        <xsl:text>];</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template mode="component-diagram-base-type"

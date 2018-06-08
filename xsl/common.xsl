@@ -47,6 +47,16 @@
     <xsl:value-of select="$context/xs:annotation[1]/xs:documentation[1]"/>
   </xsl:function>
 
+  <xsl:function name="f:qname-resolve-type" as="element()?">
+    <xsl:param name="qname" as="xs:QName"/>
+    <xsl:variable name="schema" as="element(xs:schema)?"
+                  select="f:resolve-namespace(namespace-uri-from-QName($qname))"/>
+    <xsl:if test="exists($schema)">
+      <xsl:sequence select="$schema/xs:complexType[@name = local-name-from-QName($qname)]
+                            | $schema/xs:simpleType[@name = local-name-from-QName($qname)]"/>
+    </xsl:if>
+  </xsl:function>
+
   <xsl:function name="f:resolve-type" as="element()">
     <xsl:param name="context" as="element()"/>
     <xsl:param name="ref" as="xs:string"/>
@@ -68,14 +78,13 @@
     <xsl:sequence select="$schema/xs:element[@name = local-name-from-QName($qname)]"/>
   </xsl:function>
 
-  <xsl:function name="f:resolve-namespace" as="element(xs:schema)">
+  <xsl:function name="f:resolve-namespace" as="element(xs:schema)?">
     <xsl:param name="namespace" as="xs:string"/>
     <xsl:variable name="catalog-uri" as="element(catalog:uri)?"
                   select="$xml-catalog-file/catalog:catalog/catalog:uri[@name = $namespace]"/>
-    <xsl:if test="empty($catalog-uri)">
-      <xsl:message>f:resolve-namespace(): no catalog uri found for namespace <xsl:value-of select="$namespace"/></xsl:message>
+    <xsl:if test="exists($catalog-uri)">
+      <xsl:sequence select="doc(resolve-uri($catalog-uri/@uri, base-uri($catalog-uri)))/xs:schema"/>
     </xsl:if>
-    <xsl:sequence select="doc(resolve-uri($catalog-uri/@uri, base-uri($catalog-uri)))/xs:schema"/>
   </xsl:function>
 
   <xsl:function name="f:xs-component-get-qname" as="xs:QName">
@@ -112,28 +121,14 @@
     <xsl:param name="qname" as="xs:QName"/>
     <xsl:choose>
       <xsl:when test="namespace-uri-from-QName($qname) = 'http://www.w3.org/2001/XMLSchema'">
-        <!-- here here here -->
-        <xsl:value-of select=""></xsl:value-of>
+        <xsl:value-of select="concat('https://www.w3.org/TR/xmlschema-2/#',
+                              local-name-from-QName($qname))"/>
       </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="concat($path-to-root, '/', prefix-from-QName($qname), '/', 
+                              local-name-from-QName($qname))"/>
+      </xsl:otherwise>
     </xsl:choose>
-    <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname($context)"/>
-    <xsl:value-of select="concat(prefix-from-QName($qname), '/', local-name-from-QName($qname))"/>
-
-    
-    <xsl:param name="context" as="element()"/>
-    <xsl:param name="ref" as="xs:string"/>
-    <xsl:variable name="ref-qname" as="xs:QName"
-                  select="resolve-QName($ref, $context)"/>
-    <xsl:variable name="ref-uri" select="namespace-uri-from-QName($ref-qname)"/>
-    <xsl:sequence select="QName(
-                          $ref-uri,
-                          concat(f:uri-get-prefix($ref-uri), 
-                          ':', 
-                          local-name-from-QName($ref-qname)))"/>
-  </xsl:function>
-
-
-
   </xsl:function>
 
   <xsl:function name="f:enquote" as="xs:string">

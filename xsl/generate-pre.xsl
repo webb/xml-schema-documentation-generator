@@ -24,14 +24,14 @@
   </xsl:template>
 
   <xsl:template match="xs:schema">
-    <xsl:value-of>mkdir -p &quot;<xsl:value-of select="f:get-prefix(.)"/>&quot;&#10;</xsl:value-of>
+    <xsl:value-of>mkdir -p &quot;<xsl:value-of select="f:xs-get-prefix(.)"/>&quot;&#10;</xsl:value-of>
     <xsl:apply-templates select="xs:complexType|xs:element|xs:attribute|xs:simpleType|xs:attributeGroup">
       <xsl:sort select="@name"/>
     </xsl:apply-templates>
   </xsl:template>
 
   <xsl:template match="xs:*[@name]">
-    <xsl:value-of>mkdir -p &quot;<xsl:value-of select="f:get-prefix(.)"/>/<xsl:value-of select="@name"/>&quot;&#10;</xsl:value-of>
+    <xsl:value-of>mkdir -p &quot;<xsl:value-of select="f:xs-get-prefix(.)"/>/<xsl:value-of select="@name"/>&quot;&#10;</xsl:value-of>
   </xsl:template>
 
   <xsl:template match="text()" priority="-1"/>
