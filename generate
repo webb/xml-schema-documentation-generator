@@ -11,6 +11,7 @@ build_dir=build
 # other variables
 
 prefixes_file=${build_dir}/prefixes.xml
+backlinks_file=${build_dir}/backlinks.xml
 
 # actions
 
@@ -22,6 +23,14 @@ echo "# collect prefixes"
 saxon --in=${xml_catalog_file} \
       --xsl=xsl/collect-prefixes.xsl \
       --out=${prefixes_file}
+
+echo "# collect backlinks"
+
+saxon --in=${xml_catalog_file} \
+      --xsl=xsl/collect-backlinks.xsl \
+      --out=${backlinks_file} \
+      +prefixes-file=${prefixes_file} \
+      +xml-catalog-file=${xml_catalog_file}
 
 echo "# generate pre"
 
