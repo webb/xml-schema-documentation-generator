@@ -78,6 +78,16 @@
     <xsl:sequence select="$schema/xs:element[@name = local-name-from-QName($qname)]"/>
   </xsl:function>
 
+  <xsl:function name="f:resolve-attribute" as="element()">
+    <xsl:param name="context" as="element()"/>
+    <xsl:param name="ref" as="xs:string"/>
+    <xsl:variable name="qname" as="xs:QName"
+                  select="resolve-QName($ref, $context)"/>
+    <xsl:variable name="schema" as="element(xs:schema)"
+                  select="f:resolve-namespace(namespace-uri-from-QName($qname))"/>
+    <xsl:sequence select="$schema/xs:attribute[@name = local-name-from-QName($qname)]"/>
+  </xsl:function>
+
   <xsl:function name="f:resolve-namespace" as="element(xs:schema)?">
     <xsl:param name="namespace" as="xs:string"/>
     <xsl:variable name="catalog-uri" as="element(catalog:uri)?"
