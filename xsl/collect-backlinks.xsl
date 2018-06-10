@@ -24,6 +24,8 @@
 
   <xsl:template match="xs:schema">
     <xsl:apply-templates select="xs:complexType[@name]
+                                 | xs:attribute[@name]
+                                 | xs:attributeGroup[@name]
                                  | xs:element[@name]"/>
   </xsl:template>
 
@@ -37,6 +39,33 @@
         <xsl:namespace name="{prefix-from-QName($base)}"
                        select="namespace-uri-from-QName($base)"/>
       </bl:type-derivation>
+    </xsl:for-each>
+    <xsl:for-each select=".//xs:element[@ref]">
+      <xsl:variable name="element" as="xs:QName" select="f:ref-get-qname(., @ref)"/>
+      <bl:type-has-element type="{$this}" element="{$element}">
+        <xsl:namespace name="{prefix-from-QName($this)}"
+                       select="namespace-uri-from-QName($this)"/>
+        <xsl:namespace name="{prefix-from-QName($element)}"
+                       select="namespace-uri-from-QName($element)"/>
+      </bl:type-has-element>
+    </xsl:for-each>
+    <xsl:for-each select=".//xs:attribute[@ref]">
+      <xsl:variable name="attribute" as="xs:QName" select="f:ref-get-qname(., @ref)"/>
+      <bl:type-has-attribute type="{$this}" attribute="{$attribute}">
+        <xsl:namespace name="{prefix-from-QName($this)}"
+                       select="namespace-uri-from-QName($this)"/>
+        <xsl:namespace name="{prefix-from-QName($attribute)}"
+                       select="namespace-uri-from-QName($attribute)"/>
+      </bl:type-has-attribute>
+    </xsl:for-each>
+    <xsl:for-each select=".//xs:attributeGroup[@ref]">
+      <xsl:variable name="attribute-group" as="xs:QName" select="f:ref-get-qname(., @ref)"/>
+      <bl:type-has-attribute-group type="{$this}" attribute-group="{$attribute-group}">
+        <xsl:namespace name="{prefix-from-QName($this)}"
+                       select="namespace-uri-from-QName($this)"/>
+        <xsl:namespace name="{prefix-from-QName($attribute-group)}"
+                       select="namespace-uri-from-QName($attribute-group)"/>
+      </bl:type-has-attribute-group>
     </xsl:for-each>
   </xsl:template>
 
@@ -61,6 +90,32 @@
       </bl:element-substitution-group>
     </xsl:for-each>
 
+  </xsl:template>
+
+  <xsl:template match="xs:attribute[@name]">
+    <xsl:variable name="this" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <xsl:for-each select="self::*[@type]">
+      <xsl:variable name="type" as="xs:QName" select="f:ref-get-qname(., @type)"/>
+      <bl:attribute-of-type attribute="{$this}" type="{$type}">
+        <xsl:namespace name="{prefix-from-QName($this)}"
+                       select="namespace-uri-from-QName($this)"/>
+        <xsl:namespace name="{prefix-from-QName($type)}"
+                       select="namespace-uri-from-QName($type)"/>
+      </bl:attribute-of-type>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="xs:attributeGroup[@name]">
+    <xsl:variable name="this" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <xsl:for-each select="xs:attribute[@ref]">
+      <xsl:variable name="attribute" as="xs:QName" select="f:ref-get-qname(., @ref)"/>
+      <bl:attribute-group-has-attribute attribute-group="{$this}" attribute="{$attribute}">
+        <xsl:namespace name="{prefix-from-QName($this)}"
+                       select="namespace-uri-from-QName($this)"/>
+        <xsl:namespace name="{prefix-from-QName($attribute)}"
+                       select="namespace-uri-from-QName($attribute)"/>
+      </bl:attribute-group-has-attribute>
+    </xsl:for-each>
   </xsl:template>
 
 </xsl:stylesheet>
