@@ -150,11 +150,9 @@
   <!-- ================================================================== -->
 
   <xsl:template match="/xs:schema/xs:*[@name]" mode="component-page">
-    <xsl:variable name="prefix" select="f:xs-get-prefix(.)"/>
     <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
-    <xsl:variable name="path" select="f:xs-component-get-relative-path(.)"/>
-    <xsl:result-document href="{$root-path}/{$path}/index.html"
-      method="xml" version="1.0" encoding="UTF-8" indent="yes">
+    <xsl:result-document href="{f:qname-get-href($root-path, $qname)}"
+                         method="xml" version="1.0" encoding="UTF-8" indent="yes">
       <html>
         <head>
           <title><xsl:value-of select="$qname"/></title>
@@ -162,7 +160,7 @@
         <body>
           <p class="title">
             <a href="../index.html">
-              <xsl:value-of select="$prefix"/>
+              <xsl:value-of select="prefix-from-QName($qname)"/>
             </a>
             <xsl:text>:</xsl:text>
             <xsl:value-of select="local-name-from-QName($qname)"/>
@@ -173,7 +171,8 @@
           <img src="diagram.png" usemap="#diagram"/>
           <xsl:apply-templates
             mode="htmlify"
-            select="doc(concat($root-path,'/',$path,'/diagram.map'))"/>
+            select="doc(concat($root-path, '/', prefix-from-QName($qname),
+                    '/', local-name-from-QName($qname), '/diagram.map'))"/>
         </body>
       </html>
     </xsl:result-document>
@@ -203,10 +202,8 @@
   </xsl:template>
 
   <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-diagram">
-    <xsl:variable name="prefix" select="f:xs-get-prefix(.)"/>
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
-    <xsl:variable name="path" as="xs:string" select="f:xs-component-get-relative-path(.)"/>
-    <xsl:result-document href="{$root-path}/{$path}/diagram.dot"
+    <xsl:result-document href="{$root-path}/{prefix-from-QName($qname)}/{local-name-from-QName($qname)}/diagram.dot"
                          method="text" encoding="US-ASCII">
       <xsl:variable name="object" as="item()*" xmlns="">
         <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
@@ -235,10 +232,8 @@
   </xsl:template>
 
   <xsl:template match="/xs:schema/xs:element[@name]" mode="component-diagram">
-    <xsl:variable name="prefix" select="f:xs-get-prefix(.)"/>
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
-    <xsl:variable name="path" as="xs:string" select="f:xs-component-get-relative-path(.)"/>
-    <xsl:result-document href="{$root-path}/{$path}/diagram.dot"
+    <xsl:result-document href="{$root-path}/{prefix-from-QName($qname)}/{local-name-from-QName($qname)}/diagram.dot"
                          method="text" encoding="US-ASCII">
       <xsl:variable name="element" as="item()*" xmlns="">
         <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
@@ -268,13 +263,13 @@
   <xsl:template match="xs:element/@type" mode="component-diagram">
     <xsl:variable name="element-qname" as="xs:QName"
                   select="f:xs-component-get-qname(..)"/>
-    <xsl:variable name="type" select="f:resolve-type(.., .)"/>
-    <xsl:variable name="type-qname" select="f:xs-component-get-qname($type)"/>
-    <xsl:variable name="type-path" select="f:xs-component-get-relative-path($type)"/>
+    <xsl:variable name="type-qname" as="xs:QName"
+                  select="f:attribute-get-qname(.)"/>
+    <xsl:variable name="type" select="f:qname-resolve-type($type-qname)"/>
     <xsl:variable name="type-object" xmlns="">
       <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
         <TR>
-          <TD ALIGN="LEFT" HREF="../../{$type-path}/index.html">
+          <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $type-qname)}">
             <B><xsl:value-of select="$type-qname"/></B>
           </TD>
         </TR>
@@ -314,14 +309,12 @@
 
   <xsl:template match="xs:sequence/xs:element[@ref]" mode="component-diagram-type-table"
                 xmlns="">
-    <xsl:variable name="element" as="element(xs:element)"
-                  select="f:resolve-element(., @ref)"/>
     <xsl:variable name="element-qname" as="xs:QName"
-                  select="f:xs-component-get-qname($element)"/>
-    <xsl:variable name="element-path" as="xs:string"
-                  select="f:xs-component-get-relative-path($element)"/>
+                  select="f:attribute-get-qname(@ref)"/>
+    <xsl:variable name="element" as="element(xs:element)"
+                  select="f:qname-resolve-element($element-qname)"/>
     <TR>
-      <TD ALIGN="LEFT" HREF="../../{$element-path}/index.html">
+      <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $element-qname)}">
         <xsl:value-of select="$element-qname"/>
       </TD>
       <TD>
@@ -337,18 +330,21 @@
       </TD>
       <TD>
         <xsl:if test="$element/@type">
-          <xsl:variable name="type" select="f:resolve-type($element, $element/@type)"/>
+          <xsl:variable name="type-qname" as="xs:QName"
+                        select="f:attribute-get-qname($element/@type)"/>
           <xsl:attribute name="ALIGN" select="'LEFT'"/>
-          <xsl:attribute name="HREF" select="concat('../../', f:xs-component-get-relative-path($type), '/index.html')"/>
-          <xsl:value-of select="f:xs-component-get-qname($type)"/>
+          <xsl:attribute name="HREF" select="f:qname-get-href('../../', $type-qname)"/>
+          <xsl:value-of select="$type-qname"/>
         </xsl:if>
       </TD>
     </TR>
   </xsl:template>
 
   <xsl:template match="xs:attribute[@ref]" mode="component-diagram-type-table">
+    <xsl:variable name="attribute-qname" as="xs:QName"
+                  select="f:attribute-get-qname(@ref)"/>
     <TR>
-      <TD ALIGN="LEFT">@<xsl:value-of select="@ref"/></TD>
+      <TD ALIGN="LEFT">@<xsl:value-of select="$attribute-qname"/></TD>
       <TD>
         <xsl:choose>
           <xsl:when test="@use = 'required'">1</xsl:when>
@@ -357,7 +353,15 @@
           <xsl:otherwise>0-1</xsl:otherwise>
         </xsl:choose>
       </TD>
-      <TD>unknown</TD>
+      <xsl:variable name="attribute" as="element(xs:attribute)"
+                    select="f:qname-resolve-attribute($attribute-qname)"/>
+      <xsl:variable name="type-qname" as="xs:QName"
+                    select="f:attribute-get-qname($attribute/@type)"/>
+      <xsl:variable name="type-href" as="xs:string"
+                    select="f:qname-get-href('../..', $type-qname)"/>
+      <TD ALIGN="LEFT" HREF="{$type-href}">
+        <xsl:value-of select="$type-qname"/>
+      </TD>
     </TR>
   </xsl:template>
 
@@ -421,9 +425,8 @@
     <xsl:variable name="this-qname" as="xs:QName"
                   select="f:xs-component-get-qname($this)"/>
 
-    <xsl:variable name="base-qname" as="xs:QName" select="f:ref-get-qname(.., .)"/>
-    <xsl:variable name="base" as="element()?" select="f:qname-resolve-type($base-qname)"/>
-    
+    <xsl:variable name="base-qname" as="xs:QName" select="f:attribute-get-qname(.)"/>
+
     <xsl:value-of select="f:enquote(string($base-qname))"/>
     <xsl:text> -&gt; </xsl:text>
     <xsl:value-of select="f:enquote(string($this-qname))"/>
@@ -437,6 +440,8 @@
     <xsl:value-of select="f:enquote(string($base-qname))"/>
     <xsl:text>; }&#10;</xsl:text>
     
+    <xsl:variable name="base" as="element()?" select="f:qname-resolve-type($base-qname)"/>
+
     <xsl:choose>
       <xsl:when test="exists($base)">
         <xsl:apply-templates select="$base" mode="#current"/>
@@ -445,7 +450,7 @@
         <xsl:variable name="object">
           <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
             <TR>
-              <TD ALIGN="LEFT" HREF="{f:get-href('../..', $base-qname)}">
+              <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $base-qname)}">
                 <B><xsl:value-of select="$base-qname"/></B>
               </TD>
             </TR>
@@ -463,12 +468,10 @@
                 match="xs:complexType|xs:simpleType">
     <xsl:variable name="qname" as="xs:QName"
                   select="f:xs-component-get-qname(.)"/>
-    <xsl:variable name="path" as="xs:string"
-                  select="concat('../../', f:xs-component-get-relative-path(.), '/index.html')"/>
     <xsl:variable name="object">
       <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
         <TR>
-          <TD ALIGN="LEFT" HREF="../../{f:xs-component-get-relative-path(.)}/index.html">
+          <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $qname)}">
             <B><xsl:value-of select="$qname"/></B>
           </TD>
         </TR>

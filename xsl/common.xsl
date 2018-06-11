@@ -57,6 +57,25 @@
     </xsl:if>
   </xsl:function>
 
+  <xsl:function name="f:qname-resolve-attribute" as="element(xs:attribute)?">
+    <xsl:param name="qname" as="xs:QName"/>
+    <xsl:variable name="schema" as="element(xs:schema)?"
+                  select="f:resolve-namespace(namespace-uri-from-QName($qname))"/>
+    <xsl:if test="exists($schema)">
+      <xsl:sequence select="$schema/xs:attribute[@name = local-name-from-QName($qname)]"/>
+    </xsl:if>
+  </xsl:function>
+
+  <xsl:function name="f:qname-resolve-element" as="element(xs:element)?">
+    <xsl:param name="qname" as="xs:QName"/>
+    <xsl:variable name="schema" as="element(xs:schema)?"
+                  select="f:resolve-namespace(namespace-uri-from-QName($qname))"/>
+    <xsl:if test="exists($schema)">
+      <xsl:sequence select="$schema/xs:element[@name = local-name-from-QName($qname)]"/>
+    </xsl:if>
+  </xsl:function>
+
+<!--
   <xsl:function name="f:resolve-type" as="element()">
     <xsl:param name="context" as="element()"/>
     <xsl:param name="ref" as="xs:string"/>
@@ -87,9 +106,10 @@
                   select="f:resolve-namespace(namespace-uri-from-QName($qname))"/>
     <xsl:sequence select="$schema/xs:attribute[@name = local-name-from-QName($qname)]"/>
   </xsl:function>
+-->
 
   <xsl:function name="f:resolve-namespace" as="element(xs:schema)?">
-    <xsl:param name="namespace" as="xs:string"/>
+    <xsl:param name="namespace" as="xs:anyURI"/>
     <xsl:variable name="catalog-uri" as="element(catalog:uri)?"
                   select="$xml-catalog-file/catalog:catalog/catalog:uri[@name = $namespace]"/>
     <xsl:if test="exists($catalog-uri)">
@@ -106,11 +126,13 @@
     <xsl:sequence select="QName($uri, concat($prefix, ':', $local-name))"/>
   </xsl:function>
 
+<!--
   <xsl:function name="f:xs-component-get-relative-path" as="xs:string">
     <xsl:param name="context" as="element()"/>
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname($context)"/>
     <xsl:value-of select="concat(prefix-from-QName($qname), '/', local-name-from-QName($qname))"/>
   </xsl:function>
+-->
 
   <xsl:function name="f:ref-get-qname" as="xs:QName">
     <xsl:param name="context" as="element()"/>
@@ -125,7 +147,7 @@
                           local-name-from-QName($ref-qname)))"/>
   </xsl:function>
 
-  <xsl:function name="f:get-href" as="xs:string">
+  <xsl:function name="f:qname-get-href" as="xs:string">
     <!-- e.g., '../..' -->
     <xsl:param name="path-to-root" as="xs:string"/>
     <xsl:param name="qname" as="xs:QName"/>
@@ -136,7 +158,7 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="concat($path-to-root, '/', prefix-from-QName($qname), '/', 
-                              local-name-from-QName($qname))"/>
+                              local-name-from-QName($qname), '/index.html')"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
@@ -144,6 +166,11 @@
   <xsl:function name="f:enquote" as="xs:string">
     <xsl:param name="string" as="xs:string"/>
     <xsl:value-of select="concat('&quot;', $string, '&quot;')"/>
+  </xsl:function>
+
+  <xsl:function name="f:attribute-get-qname" as="xs:QName">
+    <xsl:param name="attribute" as="attribute()"/>
+    <xsl:sequence select="f:ref-get-qname($attribute/.., $attribute)"/>
   </xsl:function>
 
 </xsl:stylesheet>

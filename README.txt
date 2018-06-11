@@ -32,3 +32,9 @@ Documentation for a string is at:
 
 https://www.w3.org/TR/xmlschema-2/#string
 
+# todo
+
+- replace resolve-component with attribute-get-qname
+- rename f:get-href() to f:qname-get-href()
+- eliminate use of f:xs-component-get-relative path
+  - instead, use f:qname-get-href()
