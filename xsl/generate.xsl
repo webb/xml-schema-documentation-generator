@@ -13,6 +13,7 @@
   <xsl:include href="backlinks.xsl"/>
   <xsl:include href="mode-htmlify.xsl"/>
   <xsl:include href="mode-to-dot-html.xsl"/>
+  <xsl:include href="mode-component-diagram-td.xsl"/>
 
   <xsl:param name="root-path" as="xs:string" required="yes"/>
 
@@ -242,17 +243,14 @@
             <HR/>
             <xsl:for-each select="$attributes-of-this-type">
               <TR>
-                <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', .)}">
-                  <xsl:text>@</xsl:text>
-                  <xsl:value-of select="."/>
-                </TD>
+                <xsl:apply-templates mode="component-diagram-td"
+                                     select="f:qname-resolve-attribute(.)"/>
               </TR>
             </xsl:for-each>
             <xsl:for-each select="$elements-of-this-type">
               <TR>
-                <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', .)}">
-                  <xsl:value-of select="."/>
-                </TD>
+                <xsl:apply-templates mode="component-diagram-td"
+                                     select="f:qname-resolve-element(.)"/>
               </TR>
             </xsl:for-each>
           </TABLE>
@@ -261,7 +259,38 @@
         Properties [shape=plain, label=<xsl:value-of select="f:to-dot-html($properties-object)"/>];
         Properties -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="type"];
       </xsl:if>
-      
+
+      <xsl:variable name="derived-types" as="xs:QName*"
+                    select="f:backlinks-get-types-derived-from-type($qname)"/>
+      <xsl:if test="exists($derived-types)">
+        <xsl:variable name="derived-types-object">
+          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+            <TR>
+              <TD ALIGN="LEFT">
+                <B>Derived types</B>
+              </TD>
+            </TR>
+            <HR/>
+            <xsl:for-each select="$derived-types">
+              <TR>
+                <xsl:apply-templates mode="component-diagram-td"
+                                     select="f:qname-resolve-type(.)"/>
+              </TR>
+            </xsl:for-each>
+          </TABLE>
+        </xsl:variable>
+
+        <xsl:text>DerivedTypes [shape=plain, label=</xsl:text>
+        <xsl:value-of select="f:to-dot-html($derived-types-object)"/>
+        <xsl:text>];</xsl:text>
+
+        <xsl:text>{ rank = same; DerivedTypes; </xsl:text>
+        <xsl:value-of select="f:enquote(string($qname))"/>
+        <xsl:text>; }&#10;</xsl:text>
+        
+        <xsl:value-of select="f:enquote(string($qname))"/>  -&gt; DerivedTypes [label="derived"];
+      </xsl:if>
+                 
       <xsl:apply-templates select=".//xs:*[@base]/@base" mode="component-diagram-base-type"/>
       }
     </xsl:result-document>
@@ -305,9 +334,8 @@
             <HR/>
             <xsl:for-each select="$types-having-this-element">
               <TR>
-                <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', .)}">
-                  <xsl:value-of select="."/>
-                </TD>
+                <xsl:apply-templates mode="component-diagram-td"
+                                     select="f:qname-resolve-type(.)"/>
               </TR>
             </xsl:for-each>
           </TABLE>
@@ -369,16 +397,14 @@
     <xsl:apply-templates select="*" mode="#current"/>
   </xsl:template>
 
-  <xsl:template match="xs:sequence/xs:element[@ref]" mode="component-diagram-type-table"
-                xmlns="">
+  <xsl:template match="xs:sequence/xs:element[@ref]" mode="component-diagram-type-table">
     <xsl:variable name="element-qname" as="xs:QName"
                   select="f:attribute-get-qname(@ref)"/>
     <xsl:variable name="element" as="element(xs:element)"
                   select="f:qname-resolve-element($element-qname)"/>
-    <TR>
-      <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $element-qname)}">
-        <xsl:value-of select="$element-qname"/>
-      </TD>
+    <TR xmlns="">
+      <xsl:apply-templates mode="component-diagram-td"
+                           select="f:qname-resolve-element($element-qname)"/>
       <TD>
         <xsl:variable name="min" select="if (@minOccurs) then @minOccurs else '1'"/>
         <xsl:variable name="max" select="if (@maxOccurs) 
@@ -390,23 +416,27 @@
                               then $min
                               else concat($min, '-', $max)"/>
       </TD>
-      <TD>
-        <xsl:if test="$element/@type">
-          <xsl:variable name="type-qname" as="xs:QName"
-                        select="f:attribute-get-qname($element/@type)"/>
-          <xsl:attribute name="ALIGN" select="'LEFT'"/>
-          <xsl:attribute name="HREF" select="f:qname-get-href('../../', $type-qname)"/>
-          <xsl:value-of select="$type-qname"/>
-        </xsl:if>
-      </TD>
+      <xsl:choose>
+        <xsl:when test="$element/@type">
+          <xsl:apply-templates
+             select="f:qname-resolve-type(f:attribute-get-qname($element/@type))"
+             mode="component-diagram-td"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <TD></TD>
+        </xsl:otherwise>
+      </xsl:choose>
     </TR>
   </xsl:template>
 
   <xsl:template match="xs:attribute[@ref]" mode="component-diagram-type-table">
     <xsl:variable name="attribute-qname" as="xs:QName"
                   select="f:attribute-get-qname(@ref)"/>
+    <xsl:variable name="attribute" as="element(xs:attribute)"
+                  select="f:qname-resolve-attribute($attribute-qname)"/>
     <TR xmlns="">
-      <TD ALIGN="LEFT">@<xsl:value-of select="$attribute-qname"/></TD>
+      <xsl:apply-templates select="$attribute"
+                           mode="component-diagram-td"/>
       <TD>
         <xsl:choose>
           <xsl:when test="@use = 'required'">1</xsl:when>
@@ -415,15 +445,10 @@
           <xsl:otherwise>0-1</xsl:otherwise>
         </xsl:choose>
       </TD>
-      <xsl:variable name="attribute" as="element(xs:attribute)"
-                    select="f:qname-resolve-attribute($attribute-qname)"/>
       <xsl:variable name="type-qname" as="xs:QName"
                     select="f:attribute-get-qname($attribute/@type)"/>
-      <xsl:variable name="type-href" as="xs:string"
-                    select="f:qname-get-href('../..', $type-qname)"/>
-      <TD ALIGN="LEFT" HREF="{$type-href}">
-        <xsl:value-of select="$type-qname"/>
-      </TD>
+      <xsl:apply-templates select="f:qname-resolve-type($type-qname)"
+                           mode="component-diagram-td"/>
     </TR>
   </xsl:template>
 
@@ -533,9 +558,8 @@
     <xsl:variable name="object">
       <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
         <TR>
-          <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $qname)}">
-            <B><xsl:value-of select="$qname"/></B>
-          </TD>
+          <xsl:apply-templates mode="component-diagram-td"
+                               select="."/>
         </TR>
       </TABLE>
     </xsl:variable>

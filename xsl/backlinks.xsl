@@ -34,4 +34,14 @@
     </xsl:for-each>
   </xsl:function>
 
+  <xsl:function name="f:backlinks-get-types-derived-from-type" as="xs:QName*">
+    <xsl:param name="base-type" as="xs:QName"/>
+    <xsl:for-each
+      select="$backlinks/bl:type-derivation[f:attribute-get-qname(@base-type) = $base-type]">
+      <xsl:variable name="derived-type" as="xs:QName"
+                    select="f:attribute-get-qname(@derived-type)"/>
+      <xsl:sequence select="$derived-type,f:backlinks-get-types-derived-from-type($derived-type)"/>
+    </xsl:for-each>
+  </xsl:function>
+
 </xsl:stylesheet>
