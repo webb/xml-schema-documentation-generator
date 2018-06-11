@@ -38,3 +38,8 @@ https://www.w3.org/TR/xmlschema-2/#string
 - rename f:get-href() to f:qname-get-href()
 - eliminate use of f:xs-component-get-relative path
   - instead, use f:qname-get-href()
+- Need landing pages for XML Schema types
+  - right now the XSD types just point into the XSD specification.
+  - We need to be able to see, e.g.,
+    - What attributes are of type xs:boolean?
+    - What simple types are extended from xs:string?

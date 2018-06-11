@@ -18,4 +18,12 @@
     </xsl:for-each>
   </xsl:function>
 
+  <xsl:function name="f:backlinks-get-attributes-of-type" as="xs:QName*">
+    <xsl:param name="type" as="xs:QName"/>
+    <xsl:for-each
+       select="$backlinks/bl:attribute-of-type[f:attribute-get-qname(@type) = $type]">
+      <xsl:sequence select="f:attribute-get-qname(@attribute)"/>
+    </xsl:for-each>
+  </xsl:function>
+
 </xsl:stylesheet>

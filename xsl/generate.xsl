@@ -220,24 +220,6 @@
         </TABLE>
       </xsl:variable>
 
-      <xsl:variable name="properties-object" xmlns="">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
-          <TR>
-            <TD ALIGN="LEFT">
-              <B>Properties</B>
-            </TD>
-          </TR>
-          <HR/>
-          <xsl:for-each select="f:backlinks-get-elements-of-type($qname)">
-            <TR>
-              <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', .)}">
-                <xsl:value-of select="."/>
-              </TD>
-            </TR>
-          </xsl:for-each>
-        </TABLE>
-      </xsl:variable>
-      
       digraph diagram {
         edge [fontname = "Helvetica", fontsize = 12, dir = forward];
         node [fontname = "Helvetica", fontsize = 12, shape = plain];
@@ -245,8 +227,40 @@
 
       &quot;<xsl:value-of select="$qname"/>&quot; [shape=plain, label = <xsl:value-of select="f:to-dot-html($object)"/>];
 
-      Properties [shape=plain, label=<xsl:value-of select="f:to-dot-html($properties-object)"/>];
-      Properties -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="type"];
+      <xsl:variable name="elements-of-this-type" as="xs:QName*"
+                    select="f:backlinks-get-elements-of-type($qname)"/>
+      <xsl:variable name="attributes-of-this-type" as="xs:QName*"
+                    select="f:backlinks-get-attributes-of-type($qname)"/>
+      <xsl:if test="exists($elements-of-this-type) or exists($attributes-of-this-type)">
+        <xsl:variable name="properties-object" xmlns="">
+          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
+            <TR>
+              <TD ALIGN="LEFT">
+                <B>Properties</B>
+              </TD>
+            </TR>
+            <HR/>
+            <xsl:for-each select="$attributes-of-this-type">
+              <TR>
+                <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', .)}">
+                  <xsl:text>@</xsl:text>
+                  <xsl:value-of select="."/>
+                </TD>
+              </TR>
+            </xsl:for-each>
+            <xsl:for-each select="$elements-of-this-type">
+              <TR>
+                <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', .)}">
+                  <xsl:value-of select="."/>
+                </TD>
+              </TR>
+            </xsl:for-each>
+          </TABLE>
+        </xsl:variable>
+
+        Properties [shape=plain, label=<xsl:value-of select="f:to-dot-html($properties-object)"/>];
+        Properties -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="type"];
+      </xsl:if>
       
       <xsl:apply-templates select=".//xs:*[@base]/@base" mode="component-diagram-base-type"/>
       }
@@ -365,7 +379,7 @@
   <xsl:template match="xs:attribute[@ref]" mode="component-diagram-type-table">
     <xsl:variable name="attribute-qname" as="xs:QName"
                   select="f:attribute-get-qname(@ref)"/>
-    <TR>
+    <TR xmlns="">
       <TD ALIGN="LEFT">@<xsl:value-of select="$attribute-qname"/></TD>
       <TD>
         <xsl:choose>
@@ -388,7 +402,7 @@
   </xsl:template>
 
   <xsl:template match="xs:anyAttribute" mode="component-diagram-type-table">
-    <TR>
+    <TR xmlns="">
       <TD ALIGN="LEFT">anyAttribute</TD>
       <TD></TD>
       <TD></TD>
@@ -396,7 +410,7 @@
   </xsl:template>
 
   <xsl:template match="xs:attributeGroup[@ref]" mode="component-diagram-type-table">
-    <TR>
+    <TR xmlns="">
       <TD ALIGN="LEFT">attributeGroup <xsl:value-of select="@ref"/></TD>
       <TD></TD>
       <TD></TD>
