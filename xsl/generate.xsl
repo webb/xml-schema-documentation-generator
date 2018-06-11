@@ -207,7 +207,7 @@
     <xsl:result-document href="{$root-path}/{prefix-from-QName($qname)}/{local-name-from-QName($qname)}/diagram.dot"
                          method="text" encoding="US-ASCII">
       <xsl:variable name="object" as="item()*" xmlns="">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
+        <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
           <TR>
             <TD ALIGN="LEFT">
               <B><xsl:value-of select="$qname"/></B>
@@ -272,7 +272,7 @@
     <xsl:result-document href="{$root-path}/{prefix-from-QName($qname)}/{local-name-from-QName($qname)}/diagram.dot"
                          method="text" encoding="US-ASCII">
       <xsl:variable name="element" as="item()*" xmlns="">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
+        <TABLE BORDER="5" COLOR="red" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
           <TR>
             <TD ALIGN="LEFT">
               <B><xsl:value-of select="$qname"/></B>
@@ -291,6 +291,32 @@
       <xsl:text>[shape=plain, label = </xsl:text>
       <xsl:value-of select="f:to-dot-html($element)"/>
       <xsl:text>];&#10;</xsl:text>
+
+      <xsl:variable name="types-having-this-element" as="xs:QName*"
+                    select="f:backlinks-get-types-having-element($qname)"/>
+      <xsl:if test="exists($types-having-this-element)">
+        <xsl:variable name="types-having-this-element-object">
+          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+            <TR>
+              <TD ALIGN="LEFT">
+                <B>Types</B>
+              </TD>
+            </TR>
+            <HR/>
+            <xsl:for-each select="$types-having-this-element">
+              <TR>
+                <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', .)}">
+                  <xsl:value-of select="."/>
+                </TD>
+              </TR>
+            </xsl:for-each>
+          </TABLE>
+        </xsl:variable>
+
+        Types [shape=plain, label=<xsl:value-of select="f:to-dot-html($types-having-this-element-object)"/>];
+        Types -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="has-a"];
+      </xsl:if>
+      
       <xsl:apply-templates select="@type" mode="#current"/>
       <xsl:text>}&#10;</xsl:text>
     </xsl:result-document>
