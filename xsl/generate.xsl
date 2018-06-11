@@ -10,6 +10,7 @@
    xmlns="http://www.w3.org/1999/xhtml">
 
   <xsl:include href="common.xsl"/>
+  <xsl:include href="backlinks.xsl"/>
   <xsl:include href="mode-htmlify.xsl"/>
   <xsl:include href="mode-to-dot-html.xsl"/>
 
@@ -218,6 +219,24 @@
           <xsl:apply-templates mode="component-diagram-type-table"/>
         </TABLE>
       </xsl:variable>
+
+      <xsl:variable name="properties-object" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
+          <TR>
+            <TD ALIGN="LEFT">
+              <B>Properties</B>
+            </TD>
+          </TR>
+          <HR/>
+          <xsl:for-each select="f:backlinks-get-elements-of-type($qname)">
+            <TR>
+              <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', .)}">
+                <xsl:value-of select="."/>
+              </TD>
+            </TR>
+          </xsl:for-each>
+        </TABLE>
+      </xsl:variable>
       
       digraph diagram {
         edge [fontname = "Helvetica", fontsize = 12, dir = forward];
@@ -226,6 +245,9 @@
 
       &quot;<xsl:value-of select="$qname"/>&quot; [shape=plain, label = <xsl:value-of select="f:to-dot-html($object)"/>];
 
+      Properties [shape=plain, label=<xsl:value-of select="f:to-dot-html($properties-object)"/>];
+      Properties -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="type"];
+      
       <xsl:apply-templates select=".//xs:*[@base]/@base" mode="component-diagram-base-type"/>
       }
     </xsl:result-document>

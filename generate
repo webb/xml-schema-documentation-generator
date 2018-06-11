@@ -52,6 +52,7 @@ saxon --in=${xml_catalog_file} \
       -- -im:"{}component-diagram" \
       +prefixes-file=${prefixes_file} \
       +xml-catalog-file=${xml_catalog_file} \
+      +backlinks-file=${backlinks_file} \
       root-path=$PWD/${build_dir}
 
 make dot
@@ -63,6 +64,7 @@ saxon --in=${xml_catalog_file} \
       --out=${build_dir}/report.txt \
       +prefixes-file=${prefixes_file} \
       +xml-catalog-file=${xml_catalog_file} \
+      +backlinks-file=${backlinks_file} \
       root-path=$PWD/${build_dir}
 
 
