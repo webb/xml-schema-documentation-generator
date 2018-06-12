@@ -155,7 +155,7 @@
   <xsl:template match="/xs:schema/xs:*[@name]" mode="component-page">
     <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
     <xsl:result-document href="{f:qname-get-href($root-path, $qname)}"
-                         method="xml" version="1.0" encoding="UTF-8" indent="yes">
+                         method="xml" version="1.0" encoding="UTF-8" indent="no">
       <html>
         <head>
           <title><xsl:value-of select="$qname"/></title>
@@ -182,10 +182,8 @@
                     '/', local-name-from-QName($qname), '/diagram.map'))"/>
           <h1>XML Schema</h1>
           <a name="xml-schema">
-            <div style="white-space: pre-wrap;">
-              <xsl:apply-templates select="."
-                                   mode="component-xml-schema"/>
-            </div>
+            <xsl:apply-templates select="."
+                                 mode="component-xml-schema"/>
           </a>
         </body>
       </html>
