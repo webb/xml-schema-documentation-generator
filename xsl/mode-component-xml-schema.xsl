@@ -37,7 +37,8 @@
   </xsl:template>
 
   <xsl:template match="xs:*/@base
-                       | xs:*/@ref"
+                       | xs:*/@ref
+                       | xs:*/@type"
                 mode="component-xml-schema">
     <xsl:variable name="base" as="xs:QName"
                   select="f:attribute-get-qname(.)"/>

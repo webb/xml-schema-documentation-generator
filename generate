@@ -71,9 +71,9 @@ saxon --in=${xml_catalog_file} \
       +backlinks-file=${backlinks_file} \
       root-path=$PWD/${build_dir}
 
-rm -rf ../repo/*
+# rm -rf ../repo/*
 
-"${make[@]}" -f generate.mk install install_dir=../repo
+# "${make[@]}" -f generate.mk install install_dir=../repo
 
 
 
