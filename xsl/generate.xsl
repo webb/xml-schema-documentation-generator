@@ -170,7 +170,9 @@
           <h1>Definition</h1>
           <p><xsl:value-of select="f:xs-component-get-definition(.)"/></p>
           <h1>Diagram</h1>
-          <img src="diagram.png" usemap="#diagram"/>
+          <div style="text-align: center;">
+            <img src="diagram.png" usemap="#diagram"/>
+          </div>
           <xsl:apply-templates
             mode="htmlify"
             select="doc(concat($root-path, '/', prefix-from-QName($qname),

@@ -20,7 +20,7 @@
         HREF="{f:qname-get-href('../..', $qname)}"
         TITLE="this is a title"
         PORT="{generate-id(.)}"
-        TOOLTIP="this is a tooltip">
+        TOOLTIP="{f:safe-string(f:xs-component-get-definition(.))}">
       <xsl:value-of select="$qname"/>
     </TD>
   </xsl:template>
@@ -32,7 +32,7 @@
         HREF="{f:qname-get-href('../..', $qname)}"
         TITLE="this is a title"
         PORT="{generate-id(.)}"
-        TOOLTIP="this is a tooltip">
+        TOOLTIP="{f:safe-string(f:xs-component-get-definition(.))}">
       <xsl:value-of select="$qname"/>
     </TD>
   </xsl:template>
@@ -44,7 +44,7 @@
         HREF="{f:qname-get-href('../..', $qname)}"
         TITLE="this is a title"
         PORT="{generate-id(.)}"
-        TOOLTIP="this is a tooltip">
+        TOOLTIP="{f:safe-string(f:xs-component-get-definition(.))}">
       <xsl:value-of select="$qname"/>
     </TD>
   </xsl:template>
@@ -56,7 +56,7 @@
         HREF="{f:qname-get-href('../..', $qname)}"
         TITLE="this is a title"
         PORT="{generate-id(.)}"
-        TOOLTIP="this is a tooltip">
+        TOOLTIP="{f:safe-string(f:xs-component-get-definition(.))}">
       <xsl:text>@</xsl:text>
       <xsl:value-of select="$qname"/>
     </TD>

@@ -163,6 +163,15 @@
     </xsl:choose>
   </xsl:function>
 
+  <xsl:function name="f:safe-string" as="xs:string">
+    <xsl:param name="string" as="xs:string"/>
+    <xsl:variable name="v1" as="xs:string"
+                  select="replace($string, '&amp;', '&amp;amp;')"/>
+    <xsl:variable name="v2" as="xs:string"
+                  select="replace($v1, '&quot;', '\\&quot;')"/>
+    <xsl:value-of select="$v2"/>
+  </xsl:function>
+
   <xsl:function name="f:enquote" as="xs:string">
     <xsl:param name="string" as="xs:string"/>
     <xsl:value-of select="concat('&quot;', $string, '&quot;')"/>
