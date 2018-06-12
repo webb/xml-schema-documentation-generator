@@ -14,6 +14,7 @@
   <xsl:include href="mode-htmlify.xsl"/>
   <xsl:include href="mode-to-dot-html.xsl"/>
   <xsl:include href="mode-component-diagram-td.xsl"/>
+  <xsl:include href="mode-component-xml-schema.xsl"/>
 
   <xsl:param name="root-path" as="xs:string" required="yes"/>
 
@@ -170,13 +171,22 @@
           <h1>Definition</h1>
           <p><xsl:value-of select="f:xs-component-get-definition(.)"/></p>
           <h1>Diagram</h1>
-          <div style="text-align: center;">
-            <img src="diagram.png" usemap="#diagram"/>
-          </div>
+          <a name="diagram">
+            <div style="text-align: center;">
+              <img src="data:image/png;base64,{unparsed-text(concat($root-path, '/', prefix-from-QName($qname), '/', local-name-from-QName($qname), '/diagram.png.base64'))}" usemap="#diagram"/>
+            </div>
+          </a>
           <xsl:apply-templates
             mode="htmlify"
             select="doc(concat($root-path, '/', prefix-from-QName($qname),
                     '/', local-name-from-QName($qname), '/diagram.map'))"/>
+          <h1>XML Schema</h1>
+          <a name="xml-schema">
+            <div style="white-space: pre-wrap;">
+              <xsl:apply-templates select="."
+                                   mode="component-xml-schema"/>
+            </div>
+          </a>
         </body>
       </html>
     </xsl:result-document>
@@ -212,7 +222,7 @@
       <xsl:variable name="object" as="item()*" xmlns="">
         <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
           <TR>
-            <TD ALIGN="LEFT">
+            <TD ALIGN="LEFT" PORT="top">
               <B><xsl:value-of select="$qname"/></B>
             </TD>
             <TD>#</TD>
@@ -228,7 +238,7 @@
         node [fontname = "Helvetica", fontsize = 12, shape = plain];
         rankdir=LR;
 
-      &quot;<xsl:value-of select="$qname"/>&quot; [shape=plain, label = <xsl:value-of select="f:to-dot-html($object)"/>];
+      <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
 
       <xsl:variable name="elements-of-this-type" as="xs:QName*"
                     select="f:backlinks-get-elements-of-type($qname)"/>
@@ -238,7 +248,7 @@
         <xsl:variable name="properties-object" xmlns="">
           <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
             <TR>
-              <TD ALIGN="LEFT">
+              <TD ALIGN="LEFT" PORT="top">
                 <B>Properties</B>
               </TD>
             </TR>
@@ -259,7 +269,7 @@
         </xsl:variable>
 
         Properties [shape=plain, label=<xsl:value-of select="f:to-dot-html($properties-object)"/>];
-        Properties -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="type"];
+        Properties:top -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="type"];
       </xsl:if>
 
       <xsl:variable name="derived-types" as="xs:QName*"
@@ -329,7 +339,7 @@
         <xsl:variable name="types-having-this-element-object">
           <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
             <TR>
-              <TD ALIGN="LEFT">
+              <TD ALIGN="LEFT" PORT="top">
                 <B>Types</B>
               </TD>
             </TR>
@@ -344,7 +354,7 @@
         </xsl:variable>
 
         Types [shape=plain, label=<xsl:value-of select="f:to-dot-html($types-having-this-element-object)"/>];
-        Types -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="has-a"];
+        Types:top -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="has-a"];
       </xsl:if>
       
       <xsl:apply-templates select="@type" mode="#current"/>

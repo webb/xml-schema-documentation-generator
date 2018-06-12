@@ -14,19 +14,6 @@
   <xsl:variable name="prefixes" as="element(ns:namespace)+"
                 select="$prefixes-file/ns:namespaces/ns:namespace"/>
 
-  <xsl:param name="xml-catalog-file" required="yes"/>
-
-  <!-- ================================================================== -->
-  <!-- functions -->
-  <!-- ================================================================== -->
-
-  <xsl:function name="f:get-target-namespace" as="xs:string">
-    <xsl:param name="context" as="element()"/>
-    <xsl:variable name="target-namespace" as="xs:string"
-                  select="root($context)/xs:schema/@targetNamespace"/>
-    <xsl:sequence select="$target-namespace"/>
-  </xsl:function>
-  
   <xsl:function name="f:uri-get-prefix" as="xs:string">
     <xsl:param name="uri" as="xs:string"/>
     <xsl:variable name="prefix" as="xs:string"

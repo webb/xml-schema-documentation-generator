@@ -13,51 +13,25 @@
   <!-- mode: component-diagram-td -->
   <!-- ================================================================== -->
 
-  <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-diagram-td">
+  <xsl:template match="/xs:schema/xs:complexType[@name]
+                       | /xs:schema/xs:simpleType[@name]
+                       | /xs:schema/xs:element[@name]
+                       | /xs:schema/xs:attribute[@name]
+                       | /xs:schema/xs:attributeGroup[@name]"
+                mode="component-diagram-td">
     <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
     <TD xmlns=""
         ALIGN="LEFT"
         HREF="{f:qname-get-href('../..', $qname)}"
-        TITLE="this is a title"
-        PORT="{generate-id(.)}"
-        TOOLTIP="{f:safe-string(f:xs-component-get-definition(.))}">
-      <xsl:value-of select="$qname"/>
-    </TD>
-  </xsl:template>
-
-  <xsl:template match="/xs:schema/xs:simpleType[@name]" mode="component-diagram-td">
-    <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
-    <TD xmlns=""
-        ALIGN="LEFT"
-        HREF="{f:qname-get-href('../..', $qname)}"
-        TITLE="this is a title"
-        PORT="{generate-id(.)}"
-        TOOLTIP="{f:safe-string(f:xs-component-get-definition(.))}">
-      <xsl:value-of select="$qname"/>
-    </TD>
-  </xsl:template>
-
-  <xsl:template match="/xs:schema/xs:element[@name]" mode="component-diagram-td">
-    <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
-    <TD xmlns=""
-        ALIGN="LEFT"
-        HREF="{f:qname-get-href('../..', $qname)}"
-        TITLE="this is a title"
-        PORT="{generate-id(.)}"
-        TOOLTIP="{f:safe-string(f:xs-component-get-definition(.))}">
-      <xsl:value-of select="$qname"/>
-    </TD>
-  </xsl:template>
-
-  <xsl:template match="/xs:schema/xs:attribute[@name]" mode="component-diagram-td">
-    <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
-    <TD xmlns=""
-        ALIGN="LEFT"
-        HREF="{f:qname-get-href('../..', $qname)}"
-        TITLE="this is a title"
-        PORT="{generate-id(.)}"
-        TOOLTIP="{f:safe-string(f:xs-component-get-definition(.))}">
-      <xsl:text>@</xsl:text>
+        PORT="{generate-id(.)}">
+      <xsl:variable name="definition" as="xs:string"
+                    select="f:safe-string(f:xs-component-get-definition(.))"/>
+      <xsl:if test="string-length(normalize-space($definition)) gt 0">
+        <xsl:attribute name="TOOLTIP" select="normalize-space($definition)"/>
+      </xsl:if>
+      <xsl:if test="self::xs:attribute">
+        <xsl:text>@</xsl:text>
+      </xsl:if>
       <xsl:value-of select="$qname"/>
     </TD>
   </xsl:template>
