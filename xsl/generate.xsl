@@ -161,16 +161,19 @@
           <title><xsl:value-of select="$qname"/></title>
         </head>
         <body>
-          <p class="title">
+          <h1>
             <a href="../index.html">
               <xsl:value-of select="prefix-from-QName($qname)"/>
             </a>
             <xsl:text>:</xsl:text>
             <xsl:value-of select="local-name-from-QName($qname)"/>
-          </p>
-          <h1>Definition</h1>
+          </h1>
+
+          <p><xsl:value-of select="local-name()"/><xsl:text> </xsl:text><xsl:value-of select="local-name-from-QName($qname)"/> in namespace <xsl:value-of select="namespace-uri-from-QName($qname)"/></p>
+          
+          <h2>Definition</h2>
           <p><xsl:value-of select="f:xs-component-get-definition(.)"/></p>
-          <h1>Diagram</h1>
+          <h2>Diagram</h2>
           <a name="diagram">
             <div style="text-align: center;">
               <img src="data:image/png;base64,{unparsed-text(concat($root-path, '/', prefix-from-QName($qname), '/', local-name-from-QName($qname), '/diagram.png.base64'))}" usemap="#diagram"/>
@@ -180,7 +183,7 @@
             mode="htmlify"
             select="doc(concat($root-path, '/', prefix-from-QName($qname),
                     '/', local-name-from-QName($qname), '/diagram.map'))"/>
-          <h1>XML Schema</h1>
+          <h2>XML Schema</h2>
           <a name="xml-schema">
             <xsl:apply-templates select="."
                                  mode="component-xml-schema"/>
