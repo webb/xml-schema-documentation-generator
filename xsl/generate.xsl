@@ -409,9 +409,7 @@
     <xsl:variable name="type-object" xmlns="">
       <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
         <TR>
-          <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $type-qname)}">
-            <B><xsl:value-of select="$type-qname"/></B>
-          </TD>
+          <xsl:apply-templates select="$type" mode="component-diagram-td"/>
         </TR>
       </TABLE>
     </xsl:variable>
@@ -588,7 +586,7 @@
           <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
             <TR>
               <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $base-qname)}">
-                <B><xsl:value-of select="$base-qname"/></B>
+                <xsl:value-of select="$base-qname"/>
               </TD>
             </TR>
           </TABLE>

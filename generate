@@ -7,8 +7,8 @@ make=(make -j 8)
 
 # set variables
 
-# xml_catalog=../../distro/niem/xml-catalog.xml
-xml_catalog_file=inputs/person-subset/niem/xml-catalog.xml
+xml_catalog_file=../../distro/niem/xml-catalog.xml
+# xml_catalog_file=inputs/person-subset/niem/xml-catalog.xml
 build_dir=build
 
 # other variables
