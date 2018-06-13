@@ -1,38 +1,32 @@
 
+<p class="title">XML Schema documentation generator</p>
 
-To build:
+# Building
 
-    1. Start in a build directory
+1. ./configure 
 
-       You will raise an error if you try to build in the source directory.
+  Set up the build process for your local environment.  Variables you can set include:
+  
+  * `install_dir`: directory to where files will be copied for `make install`
+  * `xml_catalog`: An XML catalog file identifying the schemas to be processed.
 
-    2. Run "configure", providing:
+2. make
 
-       - output_dir=$dir: where to put resulting web pages
+  Process the schema files to produce indexes, diagrams, and pages for
+  components. Results are put into diretory `build`.
 
-       - xml_catalog=$file.xml: an XML catalog file that conveys namespaces and
-         locations of schema documents.
+3. make install
 
-       $ ../source/configure output_dir=../repo/4.0 xml_catalog=../niem/xml-catalog.xml
+  Copy result files into directory for publication. You may want to set variable
+  `install_dir` to be the directory for a git repository.
 
-    3. Build the files:
-
-       $ make
-
-    4. Install the files to the output directory.
-
-       $ make install
-
-This package doesn't need to know about what versions the schema pile is, or
-even if it's a NIEM release or subset.
-
-# notes
+## notes
 
 Documentation for a string is at:
 
 https://www.w3.org/TR/xmlschema-2/#string
 
-# todo
+## todo
 
 - replace resolve-component with attribute-get-qname
 - rename f:get-href() to f:qname-get-href()
@@ -45,7 +39,7 @@ https://www.w3.org/TR/xmlschema-2/#string
     - What simple types are extended from xs:string?
 
 
-* Order
+# Order
 
 1. develop makefile dependencies
    1. get a list of namespaces
@@ -108,3 +102,20 @@ http://code.stephenmorley.org/html-and-css/the-myth-of-web-safe-fonts/
 
 - see ~/working/test-gen-xsd-diagrams/
 - see /Users/wr/r/by-topic/graphviz/graphics-nc-PersonType.gv
+
+<style type="text/css"> 
+body { counter-reset: i1 i2; }
+.title { font-size: 150%; font-weight: bold; }
+h1:before { 
+  counter-increment: i1;
+  content: counter(i1) ". ";
+  counter-reset: i2;
+}
+h1 { font-size: 120%; }
+h2:before { 
+  counter-increment: i2;
+  content: counter(i1) "." counter(i2) ". ";
+}
+h2 { font-size: 110%; }
+</style>
+
