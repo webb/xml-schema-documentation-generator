@@ -17,7 +17,7 @@ dependencies_mk := @builddir@/dependencies.mk
 
 srcdir = @srcdir@
 builddir = @builddir@
-output_dir = @output_dir@
+install_dir = @install_dir@
 xml_catalog = @xml_catalog@
 
 #############################################################################
@@ -53,18 +53,8 @@ process_diagrams_token = ${tokens_dir}/process-diagrams
 generate_pages_token = ${tokens_dir}/generate-pages
 
 #############################################################################
-# real targets
-
 .PHONY: all #    build everything
 all: ${generate_pages_token}
-
-.PHONY: install #    install everything to $output_dir
-install: ${installed_token}
-
-#############################################################################
-# build
-
-# ${definitions_mk} ${backlinks_file} ${make_dirs_token}
 
 ${prefixes_file}: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
 	${MKDIR_P} ${dir $@}
@@ -112,29 +102,24 @@ ${generate_pages_token}: ${xml_catalog} ${process_diagrams_token} ${all_sources}
   ${backlinks_file}
 	${saxon} --in=$< --out=${build_dir}/generate-pages-report.txt \
 	  --xsl=xsl/generate.xsl \
-	  -- \
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog} \
 	  +backlinks-file=${backlinks_file} \
 	  root-path=${realpath ${build_dir}}
-
-#${builddir}/build/index.html: ${builddir}/build/prefixes.xml
-#	${MKDIR_P} ${dir $@}
-#	${saxon} --xsl=${srcdir}/xsl/index-list-of-namespaces.xsl \
-#	  --in=$< --out=$@
-
-#${builddir}/build/prefixes.xml: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
-#	${MKDIR_P} ${dir $@}
-#	${saxon} --xsl=${srcdir}/xsl/collect-prefixes.xsl \
-#	  --in=${xml_catalog} \
-#	  --out=$@
+	${MKDIR_P} ${dir $@}
+	${touch} $@
 
 #############################################################################
-# install
+.PHONY: install #    install everything to $install_dir
+install: ${installed_token}
 
-${output_dir}/%: ${builddir}/build/%
+${installed_token}: ${generate_pages_token} ${definitions_mk}
+	${MAKE} -C ${srcdir} -f generate.mk install \
+	  definitions_mk=${definitions_mk} \
+	  build_dir=${build_dir} \
+	  install_dir=${install_dir}
 	${MKDIR_P} ${dir $@}
-	${INSTALL} -m 644 $< $@
+	${touch} $@
 
 #############################################################################
 # convenience targets
@@ -145,7 +130,7 @@ clean:
 
 .PHONY: distclean #    Clean all products
 distclean: clean
-	${RM} ${dependencies_mk} config.log config.status Makefile
+	${RM} config.log config.status Makefile
 
 #############################################################################
 # make help: this must be the last target
