@@ -13,7 +13,7 @@ dependencies_mk := @builddir@/dependencies.mk
 .DEFAULT_GOAL = all
 
 #############################################################################
-# dirs
+# AUTOCONF inputs
 
 srcdir = @srcdir@
 builddir = @builddir@
@@ -29,6 +29,7 @@ INSTALL = @INSTALL@
 SED = @SED@
 # unix stuff
 find = @find@
+touch = @touch@
 
 # webb stuff
 saxon = @saxon@
@@ -36,46 +37,97 @@ saxon = @saxon@
 #############################################################################
 # variables
 
-install_files_rel = \
-  index.html
+build_dir = ${builddir}/build
 
-all_files = ${install_files_rel:%=${builddir}/build/%}
-install_files = ${install_files_rel:%=${output_dir}/%}
+prefixes_file = ${build_dir}/prefixes.xml
+all_sources = ${wildcard ${srcdir}/xsl/*.xsl}
+definitions_mk = ${build_dir}/definitions.mk
+backlinks_file = ${build_dir}/backlinks.xml
 
-dot_files = ${shell ${find} build -type f -name '*.dot'}
-png_files = ${dot_files:%.dot=%.png}
-map_files = ${dot_files:%.dot=%.map}
+tokens_dir = ${build_dir}/tokens
+built_all_token = ${tokens_dir}/built-all
+installed_token = ${tokens_dir}/installed
+make_dirs_token = ${tokens_dir}/make-dirs
+generate_diagrams_token = ${tokens_dir}/generate-diagrams
+process_diagrams_token = ${tokens_dir}/process-diagrams
+generate_pages_token = ${tokens_dir}/generate-pages
 
 #############################################################################
 # real targets
 
 .PHONY: all #    build everything
-all: ${all_files}
+all: ${generate_pages_token}
 
 .PHONY: install #    install everything to $output_dir
-install: ${install_files}
-
-.PHONY: dot #   build everything from dot files
-dot: ${png_files} ${map_files}
+install: ${installed_token}
 
 #############################################################################
 # build
 
-${builddir}/build/index.html: ${builddir}/build/prefixes.xml
+# ${definitions_mk} ${backlinks_file} ${make_dirs_token}
+
+${prefixes_file}: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
 	${MKDIR_P} ${dir $@}
-	${saxon} --xsl=${srcdir}/xsl/index-list-of-namespaces.xsl \
-	  --in=$< --out=$@
+	${saxon} --in=$< --out=$@ --xsl=${srcdir}/xsl/collect-prefixes.xsl
 
-${builddir}/build/prefixes.xml: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
+${definitions_mk}: ${xml_catalog} ${prefixes_file} ${all_sources}
 	${MKDIR_P} ${dir $@}
-	${saxon} --xsl=${srcdir}/xsl/collect-prefixes.xsl \
-	  --in=${xml_catalog} \
-	  --out=$@
+	${saxon} --in=$< --out=$@ --xsl=${srcdir}/xsl/generate-makefile.xsl \
+	  +prefixes-file=${prefixes_file} \
+	  +xml-catalog-file=${xml_catalog}
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+${backlinks_file}: ${xml_catalog} ${prefixes_file} ${xml_catalog} ${all_sources}
+	${MKDIR_P} ${dir $@}
+	${saxon} --in=$< --out=$@ --xsl=xsl/collect-backlinks.xsl \
+	  +prefixes-file=${prefixes_file} \
+	  +xml-catalog-file=${xml_catalog}
 
-%.png %.map: %.dot
-	dot -Tpng -o$*.png -Tcmapx -o $*.map $<
+${make_dirs_token}: ${definitions_mk}
+	${MAKE} -C ${srcdir} -f generate.mk dirs \
+	  definitions_mk=${definitions_mk} \
+	  build_dir=${build_dir}
+	${MKDIR_P} ${dir $@}
+	${touch} $@
+
+${generate_diagrams_token}: ${xml_catalog} ${make_dirs_token} ${all_sources} ${prefixes_file} \
+  ${backlinks_file}
+	${saxon} --in=$< --out=${build_dir}/generate-diagrams-report.txt \
+	  --xsl=xsl/generate.xsl \
+	  -- -im:"{}component-diagram" \
+	  +prefixes-file=${prefixes_file} \
+	  +xml-catalog-file=${xml_catalog} \
+	  +backlinks-file=${backlinks_file} \
+	  root-path=${realpath ${build_dir}}
+	${MKDIR_P} ${dir $@}
+	${touch} $@
+
+${process_diagrams_token}: ${generate_diagrams_token}
+	${MAKE} -C ${srcdir} -f generate.mk diagrams \
+	  definitions_mk=${definitions_mk} \
+	  build_dir=${build_dir}
+	${MKDIR_P} ${dir $@}
+	${touch} $@
+
+${generate_pages_token}: ${xml_catalog} ${process_diagrams_token} ${all_sources} ${prefixes_file} \
+  ${backlinks_file}
+	${saxon} --in=$< --out=${build_dir}/generate-pages-report.txt \
+	  --xsl=xsl/generate.xsl \
+	  -- \
+	  +prefixes-file=${prefixes_file} \
+	  +xml-catalog-file=${xml_catalog} \
+	  +backlinks-file=${backlinks_file} \
+	  root-path=${realpath ${build_dir}}
+
+#${builddir}/build/index.html: ${builddir}/build/prefixes.xml
+#	${MKDIR_P} ${dir $@}
+#	${saxon} --xsl=${srcdir}/xsl/index-list-of-namespaces.xsl \
+#	  --in=$< --out=$@
+
+#${builddir}/build/prefixes.xml: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
+#	${MKDIR_P} ${dir $@}
+#	${saxon} --xsl=${srcdir}/xsl/collect-prefixes.xsl \
+#	  --in=${xml_catalog} \
+#	  --out=$@
 
 #############################################################################
 # install
@@ -89,7 +141,7 @@ ${output_dir}/%: ${builddir}/build/%
 
 .PHONY: clean #    clean regular build products
 clean:
-	${RM} -r ${all_files}
+	${RM} -r ${build_dir}
 
 .PHONY: distclean #    Clean all products
 distclean: clean

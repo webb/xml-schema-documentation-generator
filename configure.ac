@@ -25,18 +25,19 @@ AC_DEFUN([WR_check_prog_options],[AC_PATH_PROGS($1,$2)
 # unix stuff
 WR_check_prog(bash)
 WR_check_prog_options(find,gfind find)
+WR_check_prog_options(touch,gtouch touch)
 
 # webb stuff
 WR_check_prog(saxon)
 
-default_output_dir=${srcdir}/../publish
-if test "x$output_dir" = "x"
-then AC_MSG_NOTICE([Variable output_dir not set. Using default ($default_output_dir)])
-  output_dir=$default_output_dir
-else AC_MSG_RESULT([output_dir set to ${output_dir}])
-     AC_SUBST([output_dir],[$output_dir])
-     if ! test -d "${output_dir}"
-     then AC_MSG_WARN([output_dir ${output_dir} does not exist])
+default_install_dir=${srcdir}/../publish
+if test "x$install_dir" = "x"
+then AC_MSG_NOTICE([Variable install_dir not set. Using default ($default_install_dir)])
+  install_dir=$default_install_dir
+else AC_MSG_RESULT([install_dir set to ${install_dir}])
+     AC_SUBST([install_dir],[$install_dir])
+     if ! test -d "${install_dir}"
+     then AC_MSG_WARN([install_dir ${install_dir} does not exist])
      fi
 fi
 
