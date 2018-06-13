@@ -17,7 +17,7 @@ install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 #############################################################################
 .PHONY: dirs
 dirs:
-	mkdir -p ${components}
+	mkdir -p ${components:%=${build_dir}/%}
 
 #############################################################################
 .PHONY: diagrams
