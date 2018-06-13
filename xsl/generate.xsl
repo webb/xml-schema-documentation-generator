@@ -231,20 +231,57 @@
         </TABLE>
       </xsl:variable>
 
-      digraph diagram {
-        edge [fontname = "Helvetica", fontsize = 12, dir = forward];
-        node [fontname = "Helvetica", fontsize = 12, shape = plain];
-        rankdir=LR;
+      <xsl:text>digraph diagram {&#10;</xsl:text>
+      <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
+      <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+      <xsl:text>rankdir=LR;&#10;</xsl:text>
 
       <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
+
+      <xsl:for-each select="f:backlinks-get-elements-had-by-type($qname)">
+        <xsl:variable name="element-qname" as="xs:QName" select="."/>
+        <xsl:variable name="substitutable-elements" as="xs:QName*"
+                      select="f:backlinks-get-substitutable-elements($element-qname)"/>
+        <xsl:if test="exists($substitutable-elements)">
+          <xsl:variable name="element" as="element(xs:element)"
+                        select="f:qname-resolve-element($element-qname)"/>
+          <xsl:variable name="substitutable-elements">
+            <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+              <TR>
+                <TD ALIGN="LEFT" PORT="top">
+                  <B>Substitutable elements</B>
+                </TD>
+              </TR>
+              <HR/>
+              <xsl:for-each select="$substitutable-elements">
+                <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+              </xsl:for-each>
+            </TABLE>
+          </xsl:variable>
+
+          <xsl:text>subst_</xsl:text>
+          <xsl:value-of select="generate-id($element)"/>
+          <xsl:text> [shape=plain, label=</xsl:text>
+          <xsl:value-of select="f:to-dot-html($substitutable-elements)"/>
+          <xsl:text>];</xsl:text>
+
+          <xsl:value-of select="f:enquote(string($qname))"/>
+          <xsl:text>:type_of_</xsl:text>
+          <xsl:value-of select="generate-id($element)"/>
+          <xsl:text>:e -&gt; subst_</xsl:text>
+          <xsl:value-of select="generate-id($element)"/>
+          <xsl:text>:top:w [label="substitutable for", dir=back];</xsl:text>
+
+        </xsl:if>
+      </xsl:for-each>
 
       <xsl:variable name="elements-of-this-type" as="xs:QName*"
                     select="f:backlinks-get-elements-of-type($qname)"/>
       <xsl:variable name="attributes-of-this-type" as="xs:QName*"
                     select="f:backlinks-get-attributes-of-type($qname)"/>
       <xsl:if test="exists($elements-of-this-type) or exists($attributes-of-this-type)">
-        <xsl:variable name="properties-object" xmlns="">
-          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
+        <xsl:variable name="properties-object">
+          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
             <TR>
               <TD ALIGN="LEFT" PORT="top">
                 <B>Properties</B>
@@ -252,22 +289,21 @@
             </TR>
             <HR/>
             <xsl:for-each select="$attributes-of-this-type">
-              <TR>
-                <xsl:apply-templates mode="component-diagram-td"
-                                     select="f:qname-resolve-attribute(.)"/>
-              </TR>
+              <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
             </xsl:for-each>
             <xsl:for-each select="$elements-of-this-type">
-              <TR>
-                <xsl:apply-templates mode="component-diagram-td"
-                                     select="f:qname-resolve-element(.)"/>
-              </TR>
+              <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
             </xsl:for-each>
           </TABLE>
         </xsl:variable>
 
-        Properties [shape=plain, label=<xsl:value-of select="f:to-dot-html($properties-object)"/>];
-        Properties:top -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="type"];
+        <xsl:text>Properties [shape=plain, label=</xsl:text>
+        <xsl:value-of select="f:to-dot-html($properties-object)"/>
+        <xsl:text>];&#10;</xsl:text>
+        
+        <xsl:text>Properties:top -&gt; </xsl:text>
+        <xsl:value-of select="f:enquote(string($qname))"/>
+        <xsl:text> [label="type"];&#10;</xsl:text>
       </xsl:if>
 
       <xsl:variable name="derived-types" as="xs:QName*"
@@ -282,10 +318,7 @@
             </TR>
             <HR/>
             <xsl:for-each select="$derived-types">
-              <TR>
-                <xsl:apply-templates mode="component-diagram-td"
-                                     select="f:qname-resolve-type(.)"/>
-              </TR>
+              <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
             </xsl:for-each>
           </TABLE>
         </xsl:variable>
@@ -302,7 +335,8 @@
       </xsl:if>
                  
       <xsl:apply-templates select=".//xs:*[@base]/@base" mode="component-diagram-base-type"/>
-      }
+
+      <xsl:text>}&#10;</xsl:text>
     </xsl:result-document>
   </xsl:template>
 
@@ -343,10 +377,7 @@
             </TR>
             <HR/>
             <xsl:for-each select="$types-having-this-element">
-              <TR>
-                <xsl:apply-templates mode="component-diagram-td"
-                                     select="f:qname-resolve-type(.)"/>
-              </TR>
+              <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
             </xsl:for-each>
           </TABLE>
         </xsl:variable>
@@ -359,8 +390,7 @@
         <xsl:variable name="subst">
           <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
             <TR>
-              <xsl:apply-templates mode="component-diagram-td"
-                                   select="f:qname-resolve-element(f:attribute-get-qname(@substitutionGroup))"/>
+              <xsl:sequence select="f:qname-get-td(f:attribute-get-qname(@substitutionGroup))"/>
             </TR>
           </TABLE>
         </xsl:variable>
@@ -382,10 +412,7 @@
             </TR>
             <HR/>
             <xsl:for-each select="$substitutable-elements">
-              <TR>
-                <xsl:apply-templates mode="component-diagram-td"
-                                     select="f:qname-resolve-element(.)"/>
-              </TR>
+              <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
             </xsl:for-each>
           </TABLE>
         </xsl:variable>
@@ -405,18 +432,17 @@
                   select="f:xs-component-get-qname(..)"/>
     <xsl:variable name="type-qname" as="xs:QName"
                   select="f:attribute-get-qname(.)"/>
-    <xsl:variable name="type" select="f:qname-resolve-type($type-qname)"/>
-    <xsl:variable name="type-object" xmlns="">
-      <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
-        <TR>
-          <xsl:apply-templates select="$type" mode="component-diagram-td"/>
-        </TR>
+    <xsl:variable name="type-object">
+      <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TR><xsl:sequence select="f:qname-get-td($type-qname)"/></TR>
       </TABLE>
     </xsl:variable>
+
     <xsl:value-of select="f:enquote(string($type-qname))"/>
     <xsl:text> [shape=plain, label=</xsl:text>
     <xsl:value-of select="f:to-dot-html($type-object)"/>
     <xsl:text>];&#10;</xsl:text>
+
     <xsl:value-of select="f:enquote(string($element-qname))"/>
     <xsl:text> -&gt; </xsl:text>
     <xsl:value-of select="f:enquote(string($type-qname))"/>
@@ -450,9 +476,10 @@
                   select="f:attribute-get-qname(@ref)"/>
     <xsl:variable name="element" as="element(xs:element)"
                   select="f:qname-resolve-element($element-qname)"/>
+    <xsl:variable name="element-type-port" as="xs:string"
+                  select="concat('type_of_', generate-id($element))"/>
     <TR xmlns="">
-      <xsl:apply-templates mode="component-diagram-td"
-                           select="f:qname-resolve-element($element-qname)"/>
+      <xsl:sequence select="f:qname-get-td($element-qname)"/>
       <TD>
         <xsl:variable name="min" select="if (@minOccurs) then @minOccurs else '1'"/>
         <xsl:variable name="max" select="if (@maxOccurs) 
@@ -466,12 +493,12 @@
       </TD>
       <xsl:choose>
         <xsl:when test="$element/@type">
-          <xsl:apply-templates
-             select="f:qname-resolve-type(f:attribute-get-qname($element/@type))"
-             mode="component-diagram-td"/>
+          <xsl:sequence select="f:qname-get-td-with-port(
+                                  f:attribute-get-qname($element/@type), 
+                                  $element-type-port)"/>
         </xsl:when>
         <xsl:otherwise>
-          <TD></TD>
+          <TD PORT="{$element-type-port}"/>
         </xsl:otherwise>
       </xsl:choose>
     </TR>
@@ -483,8 +510,7 @@
     <xsl:variable name="attribute" as="element(xs:attribute)"
                   select="f:qname-resolve-attribute($attribute-qname)"/>
     <TR xmlns="">
-      <xsl:apply-templates select="$attribute"
-                           mode="component-diagram-td"/>
+      <xsl:sequence select="f:qname-get-td($attribute-qname)"/>
       <TD>
         <xsl:choose>
           <xsl:when test="@use = 'required'">1</xsl:when>
@@ -493,10 +519,7 @@
           <xsl:otherwise>0-1</xsl:otherwise>
         </xsl:choose>
       </TD>
-      <xsl:variable name="type-qname" as="xs:QName"
-                    select="f:attribute-get-qname($attribute/@type)"/>
-      <xsl:apply-templates select="f:qname-resolve-type($type-qname)"
-                           mode="component-diagram-td"/>
+      <xsl:sequence select="f:qname-get-td(f:attribute-get-qname($attribute/@type))"/>
     </TR>
   </xsl:template>
 
@@ -605,10 +628,7 @@
                   select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="object">
       <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
-        <TR>
-          <xsl:apply-templates mode="component-diagram-td"
-                               select="."/>
-        </TR>
+        <TR><xsl:sequence select="f:qname-get-td($qname)"/></TR>
       </TABLE>
     </xsl:variable>
     <xsl:value-of select="f:enquote(string($qname))"/>

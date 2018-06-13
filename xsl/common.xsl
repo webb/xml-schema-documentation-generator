@@ -75,6 +75,15 @@
     </xsl:if>
   </xsl:function>
 
+  <xsl:function name="f:qname-resolve" as="element()?">
+    <xsl:param name="qname" as="xs:QName"/>
+    <xsl:variable name="schema" as="element(xs:schema)?"
+                  select="f:resolve-namespace(namespace-uri-from-QName($qname))"/>
+    <xsl:if test="exists($schema)">
+      <xsl:sequence select="$schema/xs:*[@name = local-name-from-QName($qname)]"/>
+    </xsl:if>
+  </xsl:function>
+
   <xsl:function name="f:resolve-namespace" as="element(xs:schema)?">
     <xsl:param name="namespace" as="xs:anyURI"/>
     <xsl:variable name="catalog-uri" as="element(catalog:uri)?"

@@ -23,12 +23,38 @@
 
   <xsl:template match="HR" xmlns="" mode="to-dot-html">
     <xsl:choose>
-      <xsl:when test="following-sibling::*">&lt;HR/&gt;</xsl:when>
+      <xsl:when test="following-sibling::*">&lt;HR/&gt;&#10;</xsl:when>
       <xsl:otherwise></xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="*[namespace-uri(.) = '']" priority="-1" mode="to-dot-html">
+  <xsl:template match="TABLE | TR" xmlns=""
+                mode="to-dot-html">
+    <xsl:text>&lt;</xsl:text>
+    <xsl:value-of select="local-name()"/>
+    <xsl:apply-templates select="@*" mode="#current"/>
+    <xsl:text>&gt;&#10;</xsl:text>
+    <xsl:apply-templates select="node()" mode="#current"/>
+    <xsl:text>&lt;/</xsl:text>
+    <xsl:value-of select="local-name()"/>
+    <xsl:text>&gt;&#10;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="TD" xmlns=""
+                mode="to-dot-html">
+    <xsl:text>&lt;</xsl:text>
+    <xsl:value-of select="local-name()"/>
+    <xsl:apply-templates select="@*" mode="#current"/>
+    <xsl:text>&gt;</xsl:text>
+    <xsl:apply-templates select="node()" mode="#current"/>
+    <xsl:text>&lt;/</xsl:text>
+    <xsl:value-of select="local-name()"/>
+    <xsl:text>&gt;&#10;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="*[namespace-uri(.) = '']"
+                priority="-1"
+                mode="to-dot-html">
     <xsl:text>&lt;</xsl:text>
     <xsl:value-of select="local-name()"/>
     <xsl:apply-templates select="@*" mode="#current"/>
