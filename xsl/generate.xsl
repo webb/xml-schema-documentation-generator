@@ -355,6 +355,46 @@
         Types:top -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="has-a"];
       </xsl:if>
       
+      <xsl:if test="exists(@substitutionGroup)">
+        <xsl:variable name="subst">
+          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+            <TR>
+              <xsl:apply-templates mode="component-diagram-td"
+                                   select="f:qname-resolve-element(f:attribute-get-qname(@substitutionGroup))"/>
+            </TR>
+          </TABLE>
+        </xsl:variable>
+
+        SubstitutionGroup [shape=plain, label=<xsl:value-of select="f:to-dot-html($subst)"/>];
+        SubstitutionGroup -&gt; <xsl:value-of select="f:enquote(string($qname))"/> [label="substitution group", dir=back];
+        { rank=same; SubstitutionGroup; <xsl:value-of select="f:enquote(string($qname))"/>; }
+      </xsl:if>
+
+      <xsl:variable name="substitutable-elements" as="xs:QName*"
+                    select="f:backlinks-get-substitutable-elements($qname)"/>
+      <xsl:if test="exists($substitutable-elements)">
+        <xsl:variable name="substitutable-elements">
+          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+            <TR>
+              <TD ALIGN="LEFT" PORT="top">
+                <B>Substitutable elements</B>
+              </TD>
+            </TR>
+            <HR/>
+            <xsl:for-each select="$substitutable-elements">
+              <TR>
+                <xsl:apply-templates mode="component-diagram-td"
+                                     select="f:qname-resolve-element(.)"/>
+              </TR>
+            </xsl:for-each>
+          </TABLE>
+        </xsl:variable>
+
+        SubstitutableElements [shape=plain, label=<xsl:value-of select="f:to-dot-html($substitutable-elements)"/>];
+        <xsl:value-of select="f:enquote(string($qname))"/> -&gt; SubstitutableElements [label="substitutable for", dir=back];
+        { rank=same; SubstitutableElements; <xsl:value-of select="f:enquote(string($qname))"/>; }
+      </xsl:if>
+
       <xsl:apply-templates select="@type" mode="#current"/>
       <xsl:text>}&#10;</xsl:text>
     </xsl:result-document>

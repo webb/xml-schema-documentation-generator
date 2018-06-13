@@ -44,4 +44,14 @@
     </xsl:for-each>
   </xsl:function>
 
+  <xsl:function name="f:backlinks-get-substitutable-elements" as="xs:QName*">
+    <xsl:param name="base-element" as="xs:QName"/>
+    <xsl:for-each
+      select="$backlinks/bl:element-substitution-group[f:attribute-get-qname(@substitution-group) = $base-element]">
+      <xsl:variable name="substitutable-element" as="xs:QName"
+                    select="f:attribute-get-qname(@element)"/>
+      <xsl:sequence select="$substitutable-element,f:backlinks-get-substitutable-elements($substitutable-element)"/>
+    </xsl:for-each>
+  </xsl:function>
+
 </xsl:stylesheet>

@@ -36,9 +36,10 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="xs:*/@base
-                       | xs:*/@ref
-                       | xs:*/@type"
+  <xsl:template match="xs:*/@base |
+                       xs:*/@ref |
+                       xs:*/@substitutionGroup |
+                       xs:*/@type"
                 mode="component-xml-schema">
     <xsl:variable name="base" as="xs:QName"
                   select="f:attribute-get-qname(.)"/>

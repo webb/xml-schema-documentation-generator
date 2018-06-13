@@ -80,7 +80,7 @@
                        select="namespace-uri-from-QName($type)"/>
       </bl:element-of-type>
     </xsl:for-each>
-    <xsl:for-each select="self::*[@substitionGroup]">
+    <xsl:for-each select="self::*[@substitutionGroup]">
       <xsl:variable name="subst" as="xs:QName" select="f:ref-get-qname(., @substitutionGroup)"/>
       <bl:element-substitution-group element="{$this}" substitution-group="{$subst}">
         <xsl:namespace name="{prefix-from-QName($this)}"
