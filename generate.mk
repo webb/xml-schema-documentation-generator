@@ -14,10 +14,15 @@ all_files = \
 
 install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 
+dirs = ${components:%=${build_dir}/%/dir-token.txt}
+
 #############################################################################
 .PHONY: dirs
-dirs:
-	mkdir -p ${components:%=${build_dir}/%}
+dirs: ${dirs}
+
+%/dir-token.txt:
+	@ mkdir -p ${dir $@}
+	@ touch $@
 
 #############################################################################
 .PHONY: diagrams
