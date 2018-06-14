@@ -34,6 +34,17 @@
     <xsl:sequence select="$prefix"/>
   </xsl:function>
 
+  <xsl:function name="f:prefix-get-uri" as="xs:anyURI">
+    <xsl:param name="prefix" as="xs:string"/>
+    <xsl:sequence select="exactly-one($prefixes[@prefix = $prefix]/@uri) cast as xs:anyURI"/>
+  </xsl:function>
+
+  <xsl:function name="f:get-qname" as="xs:QName">
+    <xsl:param name="prefix" as="xs:string"/>
+    <xsl:param name="local-name" as="xs:string"/>
+    <xsl:sequence select="QName(f:prefix-get-uri($prefix), concat($prefix, ':', $local-name))"/>
+  </xsl:function>
+
   <xsl:function name="f:xs-get-prefix" as="xs:string">
     <xsl:param name="context" as="element()"/>
     <xsl:variable name="target-namespace" select="f:get-target-namespace($context)"/>
@@ -148,6 +159,19 @@
   <xsl:function name="f:attribute-get-qname" as="xs:QName">
     <xsl:param name="attribute" as="attribute()"/>
     <xsl:sequence select="f:ref-get-qname($attribute/.., $attribute)"/>
+  </xsl:function>
+
+  <xsl:function name="f:element-use-get-cardinality" as="xs:string">
+    <xsl:param name="context" as="element(xs:element)"/>
+    <xsl:variable name="min" select="if ($context/@minOccurs) then $context/@minOccurs else '1'"/>
+    <xsl:variable name="max" select="if ($context/@maxOccurs) 
+                                     then (if ($context/@maxOccurs = 'unbounded')
+                                     then 'n'
+                                     else $context/@maxOccurs)
+                                     else '1'"/>
+    <xsl:value-of select="if ($min = $max)
+                          then $min
+                          else concat($min, '-', $max)"/>
   </xsl:function>
 
 </xsl:stylesheet>
