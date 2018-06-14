@@ -53,7 +53,8 @@ process_diagrams_token = ${tokens_dir}/process-diagrams
 generate_pages_token = ${tokens_dir}/generate-pages
 
 #############################################################################
-.PHONY: all #    build everything
+.PHONY: all #    build everything from $xml_catalog
+#HELP:        Default xml_catalog = @xml_catalog@
 all: ${generate_pages_token}
 
 ${prefixes_file}: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
@@ -111,6 +112,7 @@ ${generate_pages_token}: ${xml_catalog} ${process_diagrams_token} ${all_sources}
 
 #############################################################################
 .PHONY: install #    install everything to $install_dir
+#HELP:        Default install_dir = @install_dir@
 install: ${installed_token}
 
 ${installed_token}: ${generate_pages_token} ${definitions_mk}
