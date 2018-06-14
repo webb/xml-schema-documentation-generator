@@ -30,15 +30,10 @@
         <sequence select="."/>
       </for-each-group>
     </variable>
-    <!--
-    <for-each select="$simplified">
-      <message>simplified name=<value-of select="name()"/> prefix=<value-of select="@prefix"/> namespace=<value-of select="@uri"/></message>
-    </for-each>
-    -->
     <!-- synthesize prefixes where needed -->
     <variable name="synthesized" as="element(ns:namespace)+">
       <sequence select="$simplified"/>
-      <for-each select="catalog:uri/@name">
+      <for-each select="catalog:uri[ends-with(@uri, '.xsd')]/@name">
         <if test="empty($simplified[@uri = current()])">
           <choose>
             <when test=". = 'http://reference.niem.gov/niem/specification/code-lists/4.0/code-lists-instance/'">
@@ -60,15 +55,38 @@
     </ns:namespaces>
   </template>
 
-  <template match="catalog:uri[@name and @uri[ends-with(., '.xsd')]]">
-    <variable name="path" as="xs:anyURI"
-              select="resolve-uri(@uri, base-uri(.))"/>
-    <apply-templates select="doc($path)"/>
+  <template match="catalog:uri[@name and @uri]">
+    <choose>
+      <when test="ends-with(@uri, '.xsd')">
+        <variable name="resource-path" as="xs:anyURI"
+                  select="resolve-uri(@uri, base-uri(.))"/>
+        <if test="not(doc-available($resource-path))">
+          <message terminate="yes">doc not avalable: <value-of select="$resource-path"/></message>
+        </if>
+        <variable name="resource" as="document-node()"
+                  select="exactly-one(doc($resource-path))"/>
+        <if test="not($resource/xs:schema)">
+          <message terminate="yes">Doc should be XML Schema but isn't (name is <value-of select="@uri"/>, path is <value-of select="$resource-path"/>)</message>
+        </if>
+        <apply-templates select="$resource"/>
+      </when>
+      <when test="ends-with(@uri, '.csv')"/>
+      <otherwise>
+        <message terminate="yes">Found catalog:uri with bad uri (<value-of select="@uri"/>)</message>
+      </otherwise>
+    </choose>
   </template>
 
   <template match="/xs:schema">
     <apply-templates select="." mode="prefixes"/>
   </template>
+
+  <!-- #############################################################################
+       mode: prefixes
+
+       Collect all namespace prefix declarations
+
+       -->
 
   <template match="*" mode="prefixes">
     <variable name="context" as="element()" select="."/>
