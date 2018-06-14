@@ -4,10 +4,13 @@
 
 this_makefile := ${lastword ${MAKEFILE_LIST}}
 SHELL = @bash@ -o pipefail -o errexit -o nounset
-# generated dependencies for things derived from the NDR doc
-dependencies_mk := @builddir@/dependencies.mk
+# all targets are never automatically deleted because they are intermediate
 .SECONDARY:
+# delete the target of a rule if it has changed and its recipe exits with a
+# nonzero exit status
 .DELETE_ON_ERROR:
+
+depend = false
 
 #HELP:Default target is "all". Targets include:
 .DEFAULT_GOAL = all
@@ -52,10 +55,11 @@ generate_diagrams_token = ${tokens_dir}/generate-diagrams
 process_diagrams_token = ${tokens_dir}/process-diagrams
 generate_pages_token = ${tokens_dir}/generate-pages
 
-#############################################################################
-.PHONY: all #    build everything from $xml_catalog
-#HELP:        Default xml_catalog = @xml_catalog@
-all: ${generate_pages_token}
+ifneq (${depend},false)
+.DEFAULT_GOAL = depend
+
+.PHONY: depend
+depend: ${definitions_mk}
 
 ${prefixes_file}: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
 	${MKDIR_P} ${dir $@}
@@ -67,18 +71,61 @@ ${definitions_mk}: ${xml_catalog} ${prefixes_file} ${all_sources}
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog}
 
+else
+namespaces =
+-include ${definitions_mk}
+ifeq (${namespaces},)
+${warning Prequisites/dependencies not present. Run "make depend=true"}
+endif
+
+#  ${build_dir}/index.html
+#  ${namespaces:%=${build_dir}/index.html}
+all_files = \
+  ${components:%=${build_dir}/%/index.html}
+
+install_files = ${all_files:${build_dir}/%=${install_dir}/%}
+
+#############################################################################
+.PHONY: all #    build everything from $xml_catalog
+#HELP:        Default xml_catalog = @xml_catalog@
+# all: ${generate_pages_token}
+# all: ${all_files}
+all: ${components:%=${build_dir}/%/diagram.png.base64}
+
 ${backlinks_file}: ${xml_catalog} ${prefixes_file} ${xml_catalog} ${all_sources}
 	${MKDIR_P} ${dir $@}
 	${saxon} --in=$< --out=$@ --xsl=xsl/collect-backlinks.xsl \
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog}
 
-${make_dirs_token}: ${definitions_mk}
-	${MAKE} -C ${srcdir} -f generate.mk dirs \
-	  definitions_mk=${definitions_mk} \
-	  build_dir=${build_dir}
+${build_dir}/%/index.html: ${build_dir}/%/diagram.png.base64 ${build_dir}/%/diagram.map
+	@ touch $@
+
+${build_dir}/%/diagram.png.base64: ${build_dir}/%/diagram.png
+	base64 --wrap=0 $< > $@
+
+${build_dir}/%/diagram.png ${build_dir}/%/diagram.map: ${build_dir}/%/diagram.dot
+	dot -Tpng -o${build_dir}/$*/diagram.png -Tcmapx -o${build_dir}/$*/diagram.map $<
+
+${build_dir}/%/diagram.dot: ${backlinks_file} \
+| ${build_dir}/%/dir-exists-token
+	${saxon} --in=inputs/empty.xml --out=$@ \
+	  --xsl=xsl/mode-component-diagram.xsl \
+	  -- -im:"{}component-diagram" \
+	  +prefixes-file=${prefixes_file} \
+	  +xml-catalog-file=${xml_catalog} \
+	  +backlinks-file=${backlinks_file} \
+	  root-path=${realpath ${build_dir}} \
+	  prefix=${word 1,${subst /, ,$*}} \
+	  local-name=${word 2,${subst /, ,$*}}
 	${MKDIR_P} ${dir $@}
 	${touch} $@
+
+${build_dir}/%/dir-exists-token:
+	@ echo $@
+	${MKDIR_P} ${dir $@}
+	${touch} $@
+
 
 ${generate_diagrams_token}: ${xml_catalog} ${make_dirs_token} ${all_sources} ${prefixes_file} \
   ${backlinks_file}
@@ -122,6 +169,10 @@ ${installed_token}: ${generate_pages_token} ${definitions_mk}
 	  install_dir=${install_dir}
 	${MKDIR_P} ${dir $@}
 	${touch} $@
+
+endif
+
+
 
 #############################################################################
 # convenience targets
