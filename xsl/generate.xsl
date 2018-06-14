@@ -70,6 +70,7 @@
       <html>
         <head>
           <title>Index</title>
+          <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
         </head>
         <body>
           <ul>
@@ -100,7 +101,7 @@
       <xsl:text>: </xsl:text>
       <xsl:value-of select="@targetNamespace"/>
       </p>
-      <div style="margin-left: 1em;">
+      <div class="ns-defn">
         <p>
           <xsl:value-of select="f:xs-component-get-definition(.)"/>
         </p>
@@ -127,6 +128,7 @@
       <html>
         <head>
           <title>Index for namespace <code><xsl:value-of select="f:get-target-namespace(.)"/></code></title>
+          <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
         </head>
         <body>
           <p><a href="../index.html">All namespaces</a></p>
@@ -155,10 +157,12 @@
   <xsl:template match="/xs:schema/xs:*[@name]" mode="component-page">
     <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
     <xsl:result-document href="{f:qname-get-href($root-path, $qname)}"
-                         method="xml" version="1.0" encoding="UTF-8" indent="no">
+                         method="xml" version="1.0" encoding="UTF-8" indent="no" omit-xml-declaration="no">
       <html>
         <head>
+          <meta charset="UTF-8"/>
           <title><xsl:value-of select="$qname"/></title>
+          <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
         </head>
         <body>
           <h1>
@@ -185,8 +189,10 @@
                     '/', local-name-from-QName($qname), '/diagram.map'))"/>
           <h2>XML Schema</h2>
           <a name="xml-schema">
-            <xsl:apply-templates select="."
-                                 mode="component-xml-schema"/>
+            <div class="xml-schema">
+              <xsl:apply-templates select="."
+                                   mode="component-xml-schema"/>
+            </div>
           </a>
         </body>
       </html>

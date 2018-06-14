@@ -17,20 +17,29 @@
 
   <xsl:template match="*"
                 mode="component-xml-schema">
-    <div style="margin-left: 1em;">
-      <xsl:text>&lt;</xsl:text>
-      <xsl:value-of select="name()"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
+    <div class="block">
       <xsl:choose>
         <xsl:when test="exists(*) or exists(text()[string-length(normalize-space(.)) gt 0])">
-          <xsl:text>&gt;</xsl:text>
+          <div class="line">
+            <xsl:text>&lt;</xsl:text>
+            <xsl:value-of select="name()"/>
+            <xsl:apply-templates select="@*" mode="#current"/>
+            <xsl:text>&gt;</xsl:text>
+          </div>
           <xsl:apply-templates select="* | text()" mode="#current"/>
-          <xsl:text>&lt;/</xsl:text>
-          <xsl:value-of select="name()"/>
-          <xsl:text>&gt;</xsl:text>
+          <div class="line">
+            <xsl:text>&lt;/</xsl:text>
+            <xsl:value-of select="name()"/>
+            <xsl:text>&gt;</xsl:text>
+          </div>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:text>/&gt;</xsl:text>
+          <div class="line">
+            <xsl:text>&lt;</xsl:text>
+            <xsl:value-of select="name()"/>
+            <xsl:apply-templates select="@*" mode="#current"/>
+            <xsl:text>/&gt;</xsl:text>
+          </div>
         </xsl:otherwise>
       </xsl:choose>
     </div>
