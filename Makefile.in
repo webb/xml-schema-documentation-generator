@@ -87,7 +87,7 @@ install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 
 #############################################################################
 .PHONY: all #    build everything from $xml_catalog
-#HELP:        Default xml_catalog = @xml_catalog@
+#HELP:        Default xml_catalog=@xml_catalog@
 # all: ${generate_pages_token}
 # all: ${all_files}
 all: ${components:%=${build_dir}/%/index.html}
@@ -146,20 +146,14 @@ ${generate_pages_token}: ${xml_catalog} ${process_diagrams_token} ${all_sources}
 
 #############################################################################
 .PHONY: install #    install everything to $install_dir
-#HELP:        Default install_dir = @install_dir@
-install: ${installed_token}
+#HELP:        Default install_dir=@install_dir@
+install: ${install_files}
 
-${installed_token}: ${generate_pages_token} ${definitions_mk}
-	${MAKE} -C ${srcdir} -f generate.mk install \
-	  definitions_mk=${definitions_mk} \
-	  build_dir=${build_dir} \
-	  install_dir=${install_dir}
-	${MKDIR_P} ${dir $@}
-	${touch} $@
+${install_dir}/%: ${build_dir}/%
+	[[ -d ${dir $@} ]] || mkdir -p ${dir $@}
+	cp $< $@
 
 endif
-
-
 
 #############################################################################
 # convenience targets
