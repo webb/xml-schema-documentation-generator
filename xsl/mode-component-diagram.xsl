@@ -321,7 +321,7 @@
   <xsl:template match="xs:attribute[@ref]" mode="component-diagram-type-table">
     <xsl:variable name="attribute-qname" as="xs:QName"
                   select="f:attribute-get-qname(@ref)"/>
-    <xsl:variable name="attribute" as="element(xs:attribute)"
+    <xsl:variable name="attribute" as="element(xs:attribute)?"
                   select="f:qname-resolve-attribute($attribute-qname)"/>
     <TR xmlns="">
       <xsl:sequence select="f:qname-get-td($attribute-qname)"/>
@@ -333,7 +333,14 @@
           <xsl:otherwise>0-1</xsl:otherwise>
         </xsl:choose>
       </TD>
-      <xsl:sequence select="f:qname-get-td(f:attribute-get-qname($attribute/@type))"/>
+      <xsl:choose>
+        <xsl:when test="exists($attribute)">
+          <xsl:sequence select="f:qname-get-td(f:attribute-get-qname($attribute/@type))"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <TD><xsl:value-of select="$attribute-qname"/></TD>
+        </xsl:otherwise>
+      </xsl:choose>
     </TR>
   </xsl:template>
 
