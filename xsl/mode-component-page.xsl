@@ -16,7 +16,7 @@
 
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
 
-  <xsl:template match="/" mode="component-diagram">
+  <xsl:template match="/" mode="component-page">
     <xsl:variable name="qname" as="xs:QName"
               select="f:get-qname($prefix, $local-name)"/>
     <xsl:variable name="component" as="element()"

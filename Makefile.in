@@ -90,7 +90,7 @@ install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 #HELP:        Default xml_catalog = @xml_catalog@
 # all: ${generate_pages_token}
 # all: ${all_files}
-all: ${components:%=${build_dir}/%/diagram.png.base64}
+all: ${components:%=${build_dir}/%/index.html}
 
 ${backlinks_file}: ${xml_catalog} ${prefixes_file} ${xml_catalog} ${all_sources}
 	${MKDIR_P} ${dir $@}
@@ -99,7 +99,16 @@ ${backlinks_file}: ${xml_catalog} ${prefixes_file} ${xml_catalog} ${all_sources}
 	  +xml-catalog-file=${xml_catalog}
 
 ${build_dir}/%/index.html: ${build_dir}/%/diagram.png.base64 ${build_dir}/%/diagram.map
-	@ touch $@
+	${saxon} --in=inputs/empty.xml --out=$@ \
+	  --xsl=xsl/mode-component-page.xsl \
+	  -- -im:"{}component-page" \
+	  --suppressXsltNamespaceCheck:on \
+	  +prefixes-file=${prefixes_file} \
+	  +xml-catalog-file=${xml_catalog} \
+	  +backlinks-file=${backlinks_file} \
+	  root-path=${realpath ${build_dir}} \
+	  prefix=${word 1,${subst /, ,$*}} \
+	  local-name=${word 2,${subst /, ,$*}}
 
 ${build_dir}/%/diagram.png.base64: ${build_dir}/%/diagram.png
 	base64 --wrap=0 $< > $@
@@ -107,19 +116,17 @@ ${build_dir}/%/diagram.png.base64: ${build_dir}/%/diagram.png
 ${build_dir}/%/diagram.png ${build_dir}/%/diagram.map: ${build_dir}/%/diagram.dot
 	dot -Tpng -o${build_dir}/$*/diagram.png -Tcmapx -o${build_dir}/$*/diagram.map $<
 
-${build_dir}/%/diagram.dot: ${backlinks_file} \
-| ${build_dir}/%/dir-exists-token
+${build_dir}/%/diagram.dot: ${backlinks_file} | ${build_dir}/%/dir-exists-token
 	${saxon} --in=inputs/empty.xml --out=$@ \
 	  --xsl=xsl/mode-component-diagram.xsl \
 	  -- -im:"{}component-diagram" \
+	  --suppressXsltNamespaceCheck:on \
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog} \
 	  +backlinks-file=${backlinks_file} \
 	  root-path=${realpath ${build_dir}} \
 	  prefix=${word 1,${subst /, ,$*}} \
 	  local-name=${word 2,${subst /, ,$*}}
-	${MKDIR_P} ${dir $@}
-	${touch} $@
 
 ${build_dir}/%/dir-exists-token:
 	@ echo $@
