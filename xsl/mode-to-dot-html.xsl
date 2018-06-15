@@ -21,6 +21,17 @@
     <xsl:value-of select="$html"/>
   </xsl:function>
 
+  <!-- convert a data string (like documentation) to text that looks right to be in a DOT HTML label -->
+  <xsl:function name="f:string-to-dot-html" as="xs:string">
+    <xsl:param name="in" as="xs:string"/>
+    <xsl:variable name="apos" as="xs:string">&apos;</xsl:variable>
+    <xsl:value-of select="replace(replace(replace(replace(replace($in, '&amp;', '&amp;amp;'),
+                          '&quot;', '&amp;quot;'),
+                          '&lt;', '&amp;lt;'),
+                          '&gt;', '&amp;gt;'),
+                          $apos, '&amp;apos;')"/>
+  </xsl:function>
+
   <xsl:template match="HR" xmlns="" mode="to-dot-html">
     <xsl:choose>
       <xsl:when test="following-sibling::*">&lt;HR/&gt;&#10;</xsl:when>
@@ -69,12 +80,12 @@
     <xsl:text> </xsl:text>
     <xsl:value-of select="local-name()"/>
     <xsl:text>=&quot;</xsl:text>
-    <xsl:value-of select="replace(., '&quot;', '&amp;&quot;')"/>
+    <xsl:value-of select="f:string-to-dot-html(.)"/>
     <xsl:text>&quot;</xsl:text>
   </xsl:template>
 
   <xsl:template match="text()" priority="-1" mode="to-dot-html">
-    <xsl:value-of select="replace(., '&lt;', '&amp;&lt;')"/>
+    <xsl:value-of select="f:string-to-dot-html(.)"/>
   </xsl:template>
 
   <xsl:template match="@*|node()" priority="-2" mode="to-dot-html">

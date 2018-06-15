@@ -147,7 +147,7 @@
     <xsl:variable name="v1" as="xs:string"
                   select="replace($string, '&amp;', '&amp;amp;')"/>
     <xsl:variable name="v2" as="xs:string"
-                  select="replace($v1, '&quot;', '\\&quot;')"/>
+                  select="replace($v1, '&quot;', '&amp;&quot;')"/>
     <xsl:value-of select="$v2"/>
   </xsl:function>
 

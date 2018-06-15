@@ -43,9 +43,9 @@
         HREF="{f:qname-get-href('../..', $qname)}"
         PORT="{$port}">
       <xsl:variable name="definition" as="xs:string"
-                    select="f:safe-string(f:xs-component-get-definition(.))"/>
+                    select="f:xs-component-get-definition(.)"/>
       <xsl:if test="string-length(normalize-space($definition)) gt 0">
-        <xsl:attribute name="TOOLTIP" select="normalize-space($definition)"/>
+        <xsl:attribute name="TOOLTIP" select="$definition"/>
       </xsl:if>
       <xsl:if test="self::xs:attribute">
         <xsl:text>@</xsl:text>
