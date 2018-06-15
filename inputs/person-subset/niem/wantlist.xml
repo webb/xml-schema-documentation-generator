@@ -1,9 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <w:WantList w:release="4.0" w:product="NIEM" w:nillableDefault="true"
-  xmlns:w="http://niem.gov/niem/wantlist/2.2" xmlns:nc="http://release.niem.gov/niem/niem-core/4.0/">
+  xmlns:w="http://niem.gov/niem/wantlist/2.2"
+  xmlns:hs="http://release.niem.gov/niem/domains/humanServices/4.0/"
+  xmlns:scr="http://release.niem.gov/niem/domains/screening/4.0/"
+  xmlns:nc="http://release.niem.gov/niem/niem-core/4.0/"
+  xmlns:biom="http://release.niem.gov/niem/domains/biometrics/4.0/"
+  xmlns:intel="http://release.niem.gov/niem/domains/intelligence/4.0/"
+  xmlns:j="http://release.niem.gov/niem/domains/jxdm/6.0/"
+  xmlns:im="http://release.niem.gov/niem/domains/immigration/4.0/" xmlns:it="http://release.niem.gov/niem/domains/internationalTrade/4.0/">
+  <w:Element w:name="biom:MinutiaeExaminer" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:Caregiver" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:JuvenileGangMember" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:JuvenilePlacementSupervisorPerson"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:JuvenileStudent" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:Parent" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:PlacedJuvenile" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:PlacementPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:SourcePerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:TargetPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:Therapist" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:BeneficiaryReceivedOtherBenefits"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:BenefitRequestPreparer" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:Dependent" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:ImmigrantVisaApplicant" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:ImmigrationBenefitBeneficiary"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:ImmigrationBenefitRequester"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:PermanentResidentAdjustmentApplicant"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:PrincipalRolePerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:Provider" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:SchoolOwner" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:SubmittingPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="intel:AuthenticatedIdentity" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="intel:PrimaryIdentity" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="it:CrewMember" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ActivityOfficial" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:BailBondsmanPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:BaileePerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:BailingPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:BirthAttendant" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:CommunityLeaveDoctor" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:CommunityLeaveEscort" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ContactPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:CorrectionalCounselor" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:Counselor" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:DeclarationPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:DriverLicensePerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:DrivingIncidentPassenger" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:EvidenceCollector" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:HearingAttendee" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:HearingDecisionPanelMember" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:HearingOfficial" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:IncomeRecipientPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element
+    w:name="j:InformationPracticesActDisclosureAuthorizingPerson"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ItemSeizureOwningPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ItemSeizurePossessingPerson"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:MissingPersonDeclarationPerson"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:OriginatorPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ParoleAgent" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ParoleHearingDecisionReviewReviewer"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ParoleOfficer" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:PawnReceiver" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:PawnSeller" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:PersonDeathIncidentCoroner" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:PersonDeathIncidentEmbalmer"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:PersonPrimaryWorker" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:PersonReferralWorker" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ProgramViolationRelatedOfficial"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ProtectionOrderRestrictedPerson"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ReceiverPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:RecipientPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:SenderPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ServiceCallDispatcher" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ServiceCallOperator" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ServiceCallOriginator" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ServiceCallResponsePerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ServiceProviderPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ServiceRecipientPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:SubjectInvolvementPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:SupervisionRestrictionPerson"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:TargetPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:ToolUser" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:VictimPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:VisitationRestrictedAccessPerson"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:VisitationVisitor" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:VisitedPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:VisitorPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:AssessmentPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:ContactResponder" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:ConveyanceOperator" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:ConveyedPerson" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="nc:Date" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="nc:DateTime" w:isReference="false" w:nillable="true"/>
-  <w:Element w:name="nc:Person" w:isReference="false" w:nillable="true"/>
+  <w:Element w:name="nc:DeviceUser" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:DisciplinaryActionPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:DocumentEntrySubmitter" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:Employee" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:EmployeeSupervisor" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:EntityPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:IdentityCharacteristics" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:InjuryCauserPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:InjurySustainer" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:MedicalConditionDoctor" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:OrganizationPrincipalOfficial"
+    w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:Person" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:PersonWorker" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:ProgramPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:ReferralPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:ReleasePerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:RoleOfPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:SchedulePerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:SupervisionPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:WeaponUser" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="scr:AgentPerson" w:isReference="false" w:nillable="false"/>
   <w:Type w:name="nc:DateType" w:isRequested="false">
     <w:ElementInType w:name="nc:DateRepresentation"
       w:isReference="false" w:minOccurs="1" w:maxOccurs="1"/>
@@ -19,9 +143,161 @@
       w:isReference="false" w:minOccurs="0" w:maxOccurs="1"/>
   </w:Type>
   <w:Type w:name="nc:PersonType" w:isRequested="false">
+    <w:ElementInType w:name="nc:PersonAccentText" w:isReference="false"
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonAgeDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonAgeMeasure" w:isReference="false"
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
     <w:ElementInType w:name="nc:PersonBirthDate" w:isReference="false"
-      w:minOccurs="1" w:maxOccurs="1"/>
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonBirthLocation"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonBloodTypeAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonBodyXRaysAvailableAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonBuildAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonCapability" w:isReference="false"
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonCircumcisionIndicator"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonCitizenshipAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonComplexionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonDeathDate" w:isReference="false"
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonDependentQuantity"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonDigitalImage"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonDigitizedSignatureImage"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonDisguiseDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonOrganDonorAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonEducationLevelText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonEthnicityAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonEyeColorAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonEyewearAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonFacialHairAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHairLengthAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHairStyleAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonGeneralAppearanceDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHairAppearanceText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHairCategoryText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHairColorAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHandednessText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHeightDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHeightMeasure"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHumanResourceIdentification"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonInjury" w:isReference="false"
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonJewelryDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonLanguageEnglishIndicator"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonLearningDisabilityText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonLicenseIdentification"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonLivingIndicator"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonMedicalCondition"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonMedicalDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonMedicalFileIndicator"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonMedicationRequiredText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonMentalStateText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonMilitarySummary"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonMoodDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
     <w:ElementInType w:name="nc:PersonName" w:isReference="false"
-      w:minOccurs="1" w:maxOccurs="1"/>
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonNationalIdentification"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonOrganDonatorIndicator"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonOtherIdentification"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonPassportIdentification"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonPhysicalDisabilityText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonPhysicalFeature"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonPrimaryLanguage"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonRaceAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonReligionAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonResidentAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonSecondaryLanguage"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonSecurityClearanceAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonSexAbstract" w:isReference="false"
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonSexualOrientationText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonSkinToneAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonSpeechDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonSSNIdentification"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonStateIdentification"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonTaxIdentification"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonUnionStatusAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonUSCitizenIndicator"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonVisionPrescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonWeightDescriptionText"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonWeightMeasure"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonXRayImage" w:isReference="false"
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonNationalityAbstract"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:EmploymentContactInformation"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonEmergencyContactInformation"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonHomeContactInformation"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonAugmentationPoint"
+      w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
   </w:Type>
 </w:WantList>
