@@ -124,7 +124,7 @@
         
         <xsl:text>Properties:top -&gt; </xsl:text>
         <xsl:value-of select="f:enquote(string($qname))"/>
-        <xsl:text> [label="type"];&#10;</xsl:text>
+        <xsl:text>:top [label="type"];&#10;</xsl:text>
       </xsl:if>
 
       <xsl:variable name="derived-types" as="xs:QName*"
