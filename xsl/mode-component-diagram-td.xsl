@@ -32,7 +32,6 @@
 
   <xsl:template match="/xs:schema/xs:complexType[@name]
                        | /xs:schema/xs:simpleType[@name]
-                       | /xs:schema/xs:element[@name]
                        | /xs:schema/xs:attribute[@name]
                        | /xs:schema/xs:attributeGroup[@name]"
                 mode="component-diagram-td">
@@ -55,29 +54,20 @@
   </xsl:template>
 
   <xsl:template match="xs:element[@ref]"
-                mode="component-diagram-td">
+                mode="component-diagram-td"
+                as="element(TD)" xmlns="">
     <xsl:variable name="element-qname" as="xs:QName"
                   select="f:attribute-get-qname(@ref)"/>
     <xsl:variable name="element" as="element()?"
                   select="f:qname-resolve-element($element-qname)"/>
     <xsl:choose>
       <xsl:when test="exists($element)">
-        <TD xmlns=""
-            ALIGN="LEFT"
-            HREF="{f:qname-get-href('../..', $element-qname)}"
-            PORT="{generate-id($element)}">
-          <xsl:variable name="definition" as="xs:string"
-                        select="f:xs-component-get-definition($element)"/>
-          <xsl:if test="string-length(normalize-space($definition)) gt 0">
-            <xsl:attribute name="TOOLTIP" select="normalize-space($definition)"/>
-          </xsl:if>
-          <xsl:value-of select="$element-qname"/>
-          <xsl:if test="exists($element/@type)">
-            <xsl:variable name="type-qname" as="xs:QName"
-                          select="f:attribute-get-qname($element/@type)"/>
-            <xsl:text>: </xsl:text>
-            <xsl:value-of select="$type-qname"/>
-          </xsl:if>
+        <xsl:variable name="td" as="element(TD)">
+          <xsl:apply-templates select="$element" mode="#current"/>
+        </xsl:variable>
+        <TD>
+          <xsl:copy-of select="$td/@*"/>
+          <xsl:value-of select="$td/text()"/>
           <xsl:text> </xsl:text>
           <xsl:value-of select="f:element-use-get-cardinality(.)"/>
         </TD>
@@ -91,6 +81,30 @@
         </TD>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="xs:element[@name]"
+                mode="component-diagram-td"
+                as="element(TD)" xmlns="">
+    <xsl:variable name="element-qname" as="xs:QName"
+                  select="f:xs-component-get-qname(.)"/>
+    <TD xmlns=""
+        ALIGN="LEFT"
+        HREF="{f:qname-get-href('../..', $element-qname)}"
+        PORT="{generate-id(.)}">
+      <xsl:variable name="definition" as="xs:string"
+                    select="f:xs-component-get-definition(.)"/>
+      <xsl:if test="string-length(normalize-space($definition)) gt 0">
+        <xsl:attribute name="TOOLTIP" select="normalize-space($definition)"/>
+      </xsl:if>
+      <xsl:value-of select="$element-qname"/>
+      <xsl:if test="exists(@type)">
+        <xsl:variable name="type-qname" as="xs:QName"
+                      select="f:attribute-get-qname(@type)"/>
+        <xsl:text>: </xsl:text>
+        <xsl:value-of select="$type-qname"/>
+      </xsl:if>
+    </TD>
   </xsl:template>
 
   <xsl:template match="@*|node" mode="component-diagram-td" priority="-1">
