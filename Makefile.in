@@ -92,7 +92,7 @@ install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 # all: ${all_files}
 all: ${components:%=${build_dir}/%/index.html}
 
-${backlinks_file}: ${xml_catalog} ${prefixes_file} ${xml_catalog} ${all_sources}
+${backlinks_file}: ${xml_catalog} ${prefixes_file} ${all_sources}
 	${MKDIR_P} ${dir $@}
 	${saxon} --in=$< --out=$@ --xsl=xsl/collect-backlinks.xsl \
 	  +prefixes-file=${prefixes_file} \

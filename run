@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+. "$HOME"/share/wrtools-core/fail.bash
+
+(( $# > 0 )) || fail "need a command"
+
+case $1 in
+    backlinks )
+        rm -f build/backlinks.xml
+        make build/backlinks.xml
+        ;;
+    * )
+        fail "unknown command $1"
+        ;;
+esac
