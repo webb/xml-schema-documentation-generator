@@ -169,9 +169,11 @@
                                      then 'n'
                                      else $context/@maxOccurs)
                                      else '1'"/>
-    <xsl:value-of select="if ($min = $max)
-                          then $min
-                          else concat($min, '-', $max)"/>
+    <xsl:value-of select="if ($min = '1' and $max = '1')
+                          then ''
+                          else (if ($min = $max)
+                                then concat('[', $min, ']')
+                                else concat('[', $min, '-', $max, ']'))"/>
   </xsl:function>
 
 </xsl:stylesheet>

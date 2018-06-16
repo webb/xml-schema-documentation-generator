@@ -44,8 +44,6 @@
             <TD ALIGN="LEFT" PORT="top">
               <B><xsl:value-of select="$qname"/></B>
             </TD>
-            <TD>#</TD>
-            <TD ALIGN="LEFT">Type</TD>
           </TR>
           <HR/>
           <xsl:apply-templates mode="component-diagram-type-table"/>
@@ -293,37 +291,9 @@
   </xsl:template>
 
   <xsl:template match="xs:sequence/xs:element[@ref]" mode="component-diagram-type-table">
-    <xsl:variable name="element-qname" as="xs:QName"
-                  select="f:attribute-get-qname(@ref)"/>
-    <xsl:variable name="element" as="element(xs:element)?"
-                  select="f:qname-resolve-element($element-qname)"/>
-    <xsl:choose>
-      <xsl:when test="exists($element)">
-        <xsl:variable name="element-type-port" as="xs:string"
-                      select="concat('type_of_', generate-id($element))"/>
-        <TR xmlns="">
-          <xsl:sequence select="f:qname-get-td($element-qname)"/>
-          <TD><xsl:value-of select="f:element-use-get-cardinality(.)"/></TD>
-          <xsl:choose>
-            <xsl:when test="$element/@type">
-              <xsl:sequence select="f:qname-get-td-with-port(
-                                    f:attribute-get-qname($element/@type), 
-                                    $element-type-port)"/>
-            </xsl:when>
-            <xsl:otherwise>
-              <TD PORT="{$element-type-port}"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </TR>
-      </xsl:when>
-      <xsl:otherwise>
-        <TR xmlns="">
-          <TD><xsl:value-of select="$element-qname"/></TD>
-          <TD><xsl:value-of select="f:element-use-get-cardinality(.)"/></TD>
-          <TD></TD>
-        </TR>
-      </xsl:otherwise>
-    </xsl:choose>
+    <TR xmlns="">
+      <xsl:apply-templates select="." mode="component-diagram-td"/>
+    </TR>
   </xsl:template>
 
   <xsl:template match="xs:attribute[@ref]" mode="component-diagram-type-table">

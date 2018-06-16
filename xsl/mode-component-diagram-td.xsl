@@ -54,6 +54,45 @@
     </TD>
   </xsl:template>
 
+  <xsl:template match="xs:element[@ref]"
+                mode="component-diagram-td">
+    <xsl:variable name="element-qname" as="xs:QName"
+                  select="f:attribute-get-qname(@ref)"/>
+    <xsl:variable name="element" as="element()?"
+                  select="f:qname-resolve-element($element-qname)"/>
+    <xsl:choose>
+      <xsl:when test="exists($element)">
+        <TD xmlns=""
+            ALIGN="LEFT"
+            HREF="{f:qname-get-href('../..', $element-qname)}"
+            PORT="{generate-id($element)}">
+          <xsl:variable name="definition" as="xs:string"
+                        select="f:xs-component-get-definition($element)"/>
+          <xsl:if test="string-length(normalize-space($definition)) gt 0">
+            <xsl:attribute name="TOOLTIP" select="normalize-space($definition)"/>
+          </xsl:if>
+          <xsl:value-of select="$element-qname"/>
+          <xsl:if test="exists($element/@type)">
+            <xsl:variable name="type-qname" as="xs:QName"
+                          select="f:attribute-get-qname($element/@type)"/>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of select="$type-qname"/>
+          </xsl:if>
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="f:element-use-get-cardinality(.)"/>
+        </TD>
+      </xsl:when>
+      <xsl:otherwise>
+        <TD xmlns=""
+            ALIGN="LEFT">
+          <xsl:value-of select="$element-qname"/>
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="f:element-use-get-cardinality(.)"/>
+        </TD>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match="@*|node" mode="component-diagram-td" priority="-1">
     <xsl:message terminate="yes">Unexpected content (mode=component-diagram-td; <xsl:value-of select="name()"/>)</xsl:message>
   </xsl:template>
