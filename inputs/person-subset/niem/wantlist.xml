@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <w:WantList w:release="4.0" w:product="NIEM" w:nillableDefault="true"
+  xmlns:j="http://release.niem.gov/niem/domains/jxdm/6.0/"
+  xmlns:ndex="http://release.niem.gov/niem/codes/fbi_ndex/4.0/"
   xmlns:w="http://niem.gov/niem/wantlist/2.2" xmlns:nc="http://release.niem.gov/niem/niem-core/4.0/">
+  <w:Element w:name="j:PersonBuildCode" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="nc:Date" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="nc:DateTime" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="nc:Person" w:isReference="false" w:nillable="true"/>
+  <w:Element w:name="nc:PersonBuildText" w:isReference="false" w:nillable="true"/>
   <w:Type w:name="nc:DateType" w:isRequested="false">
     <w:ElementInType w:name="nc:DateRepresentation"
       w:isReference="false" w:minOccurs="1" w:maxOccurs="1"/>
@@ -21,7 +25,29 @@
   <w:Type w:name="nc:PersonType" w:isRequested="false">
     <w:ElementInType w:name="nc:PersonBirthDate" w:isReference="false"
       w:minOccurs="1" w:maxOccurs="1"/>
+    <w:ElementInType w:name="nc:PersonBloodTypeAbstract"
+      w:isReference="false" w:minOccurs="1" w:maxOccurs="1"/>
+    <w:ElementInType w:name="nc:PersonBuildAbstract"
+      w:isReference="false" w:minOccurs="1" w:maxOccurs="unbounded"/>
+    <w:ElementInType w:name="nc:PersonCapability" w:isReference="false"
+      w:minOccurs="0" w:maxOccurs="unbounded"/>
     <w:ElementInType w:name="nc:PersonName" w:isReference="false"
       w:minOccurs="1" w:maxOccurs="1"/>
+  </w:Type>
+  <w:Type w:name="ndex:PersonBuildCodeSimpleType" w:isRequested="false">
+    <w:Facet w:facet="enumeration" w:value="AVERAGE"/>
+    <w:Facet w:facet="enumeration" w:value="HEAVY"/>
+    <w:Facet w:facet="enumeration" w:value="LARGE"/>
+    <w:Facet w:facet="enumeration" w:value="MEDIUM"/>
+    <w:Facet w:facet="enumeration" w:value="MUSCULAR"/>
+    <w:Facet w:facet="enumeration" w:value="OBESE"/>
+    <w:Facet w:facet="enumeration" w:value="POT BELLY"/>
+    <w:Facet w:facet="enumeration" w:value="ROTUND"/>
+    <w:Facet w:facet="enumeration" w:value="SLIM"/>
+    <w:Facet w:facet="enumeration" w:value="SMALL"/>
+    <w:Facet w:facet="enumeration" w:value="STOCKY"/>
+    <w:Facet w:facet="enumeration" w:value="THIN"/>
+    <w:Facet w:facet="enumeration" w:value="UNKNOWN"/>
+    <w:Facet w:facet="enumeration" w:value="VERY THIN"/>
   </w:Type>
 </w:WantList>
