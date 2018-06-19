@@ -48,7 +48,7 @@
         <h2>Diagram</h2>
         <a name="diagram">
           <div style="text-align: center;">
-            <img src="data:image/png;base64,{unparsed-text(concat($root-path, '/', prefix-from-QName($qname), '/', local-name-from-QName($qname), '/diagram.png.base64'))}" usemap="#diagram"/>
+            <img src="data:image/png;base64,{unparsed-text(concat($root-path, '/', prefix-from-QName($qname), '/', local-name-from-QName($qname), '/diagram.png.base64'))}" usemap="#graphic"/>
           </div>
         </a>
         <xsl:apply-templates

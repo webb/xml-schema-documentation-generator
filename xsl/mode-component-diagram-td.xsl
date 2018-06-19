@@ -39,7 +39,7 @@
     <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
     <TD xmlns=""
         ALIGN="LEFT"
-        HREF="{f:qname-get-href('../..', $qname)}"
+        HREF="{f:qname-get-href('../..', $qname)}#diagram"
         PORT="{$port}">
       <xsl:variable name="definition" as="xs:string"
                     select="f:xs-component-get-definition(.)"/>
@@ -90,7 +90,7 @@
                   select="f:xs-component-get-qname(.)"/>
     <TD xmlns=""
         ALIGN="LEFT"
-        HREF="{f:qname-get-href('../..', $element-qname)}"
+        HREF="{f:qname-get-href('../..', $element-qname)}#diagram"
         PORT="{generate-id(.)}">
       <xsl:variable name="definition" as="xs:string"
                     select="f:xs-component-get-definition(.)"/>

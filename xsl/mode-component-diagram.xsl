@@ -46,7 +46,7 @@
       </TABLE>
     </xsl:variable>
 
-    <xsl:text>digraph diagram {&#10;</xsl:text>
+    <xsl:text>digraph graphic {&#10;</xsl:text>
     <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
     <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
     <xsl:text>rankdir=LR;&#10;</xsl:text>
@@ -167,7 +167,7 @@
       </TABLE>
     </xsl:variable>
     <xsl:text>
-      digraph diagram {
+      digraph graphic {
       edge [fontname = "Helvetica", fontsize = 12, dir = forward];
       node [fontname = "Helvetica", fontsize = 12, shape = plain];
       rankdir=LR;
@@ -400,7 +400,7 @@
         <xsl:variable name="object">
           <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
             <TR>
-              <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $base-qname)}">
+              <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $base-qname)}#diagram">
                 <xsl:value-of select="$base-qname"/>
               </TD>
             </TR>
