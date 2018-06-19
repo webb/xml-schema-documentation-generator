@@ -133,16 +133,8 @@
     <!-- e.g., '../..' -->
     <xsl:param name="path-to-root" as="xs:string"/>
     <xsl:param name="qname" as="xs:QName"/>
-    <xsl:choose>
-      <xsl:when test="namespace-uri-from-QName($qname) = 'http://www.w3.org/2001/XMLSchema'">
-        <xsl:value-of select="concat('https://www.w3.org/TR/xmlschema-2/#',
-                              local-name-from-QName($qname))"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="concat($path-to-root, '/', prefix-from-QName($qname), '/', 
-                              local-name-from-QName($qname), '/index.html')"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:value-of select="concat($path-to-root, '/', prefix-from-QName($qname), '/', 
+                          local-name-from-QName($qname), '/index.html')"/>
   </xsl:function>
 
   <xsl:function name="f:safe-string" as="xs:string">

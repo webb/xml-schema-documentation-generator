@@ -27,9 +27,100 @@
   <xsl:template match="/" mode="component-diagram">
     <xsl:variable name="qname" as="xs:QName"
               select="f:get-qname($prefix, $local-name)"/>
-    <xsl:variable name="component" as="element()"
+    <xsl:variable name="component" as="element()?"
                   select="f:qname-resolve($qname)"/>
-    <xsl:apply-templates select="$component" mode="#current"/>
+    <xsl:choose>
+      <xsl:when test="exists($component)">
+        <xsl:apply-templates select="$component" mode="#current"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="component-diagram-with-no-component">
+          <xsl:with-param name="qname" as="xs:QName" select="$qname"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="component-diagram-with-no-component">
+    <xsl:param name="qname" as="xs:QName" required="yes"/>
+
+    <xsl:variable name="object" as="item()*" xmlns="">
+      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
+        <TR>
+          <TD ALIGN="LEFT" PORT="top">
+            <B><xsl:value-of select="$qname"/></B>
+          </TD>
+        </TR>
+      </TABLE>
+    </xsl:variable>
+
+    <xsl:text>digraph graphic {&#10;</xsl:text>
+    <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
+    <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+    <xsl:text>rankdir=LR;&#10;</xsl:text>
+
+    <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
+
+    <xsl:variable name="elements-of-this-type" as="xs:QName*"
+                  select="f:backlinks-get-elements-of-type($qname)"/>
+    <xsl:variable name="attributes-of-this-type" as="xs:QName*"
+                  select="f:backlinks-get-attributes-of-type($qname)"/>
+    <xsl:if test="exists($elements-of-this-type) or exists($attributes-of-this-type)">
+      <xsl:variable name="properties-object">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+          <TR>
+            <TD ALIGN="LEFT" PORT="top">
+              <B>Properties</B>
+            </TD>
+          </TR>
+          <HR/>
+          <xsl:for-each select="$attributes-of-this-type">
+            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+          </xsl:for-each>
+          <xsl:for-each select="$elements-of-this-type">
+            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+          </xsl:for-each>
+        </TABLE>
+      </xsl:variable>
+
+      <xsl:text>Properties [shape=plain, label=</xsl:text>
+      <xsl:value-of select="f:to-dot-html($properties-object)"/>
+      <xsl:text>];&#10;</xsl:text>
+      
+      <xsl:text>Properties:top -&gt; </xsl:text>
+      <xsl:value-of select="f:enquote(string($qname))"/>
+      <xsl:text>:top [label="type"];&#10;</xsl:text>
+    </xsl:if>
+
+    <xsl:variable name="derived-types" as="xs:QName*"
+                  select="f:backlinks-get-types-derived-from-type($qname)"/>
+    <xsl:if test="exists($derived-types)">
+      <xsl:variable name="derived-types-object">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+          <TR>
+            <TD ALIGN="LEFT">
+              <B>Derived types</B>
+            </TD>
+          </TR>
+          <HR/>
+          <xsl:for-each select="$derived-types">
+            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+          </xsl:for-each>
+        </TABLE>
+      </xsl:variable>
+
+      <xsl:text>DerivedTypes [shape=plain, label=</xsl:text>
+      <xsl:value-of select="f:to-dot-html($derived-types-object)"/>
+      <xsl:text>];</xsl:text>
+
+      <xsl:text>{ rank = same; DerivedTypes; </xsl:text>
+      <xsl:value-of select="f:enquote(string($qname))"/>
+      <xsl:text>; }&#10;</xsl:text>
+      
+      <xsl:value-of select="f:enquote(string($qname))"/>  -&gt; DerivedTypes [label="derived"];
+    </xsl:if>
+
+    <xsl:text>}&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-diagram">
@@ -155,6 +246,28 @@
     <xsl:text>}&#10;</xsl:text>
   </xsl:template>
 
+  <xsl:template match="/xs:schema/xs:simpleType[@name]" mode="component-diagram">
+    <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <xsl:variable name="object" as="item()*" xmlns="">
+      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
+        <TR>
+          <TD ALIGN="LEFT" PORT="top">
+            <B><xsl:value-of select="$qname"/></B>
+          </TD>
+        </TR>
+      </TABLE>
+    </xsl:variable>
+
+    <xsl:text>digraph graphic {&#10;</xsl:text>
+    <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
+    <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+    <xsl:text>rankdir=LR;&#10;</xsl:text>
+
+    <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
+
+    <xsl:text>}&#10;</xsl:text>
+  </xsl:template>
+
   <xsl:template match="/xs:schema/xs:element[@name]" mode="component-diagram">
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="element" as="item()*" xmlns="">
@@ -239,6 +352,52 @@
     <xsl:text>}&#10;</xsl:text>
   </xsl:template>
 
+  <xsl:template match="/xs:schema/xs:attribute[@name]" mode="component-diagram">
+    <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <xsl:variable name="object" as="item()*" xmlns="">
+      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
+        <TR>
+          <TD ALIGN="LEFT" PORT="top">
+            <B><xsl:value-of select="$qname"/></B>
+          </TD>
+        </TR>
+      </TABLE>
+    </xsl:variable>
+
+    <xsl:text>digraph graphic {&#10;</xsl:text>
+    <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
+    <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+    <xsl:text>rankdir=LR;&#10;</xsl:text>
+
+    <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
+
+    <xsl:text>}&#10;</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="/xs:schema/xs:attributeGroup[@name]" mode="component-diagram">
+    <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <xsl:variable name="object" as="item()*" xmlns="">
+      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
+        <TR>
+          <TD ALIGN="LEFT" PORT="top">
+            <B><xsl:value-of select="$qname"/></B>
+          </TD>
+        </TR>
+      </TABLE>
+    </xsl:variable>
+
+    <xsl:text>digraph graphic {&#10;</xsl:text>
+    <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
+    <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+    <xsl:text>rankdir=LR;&#10;</xsl:text>
+
+    <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
+
+    <xsl:text>}&#10;</xsl:text>
+  </xsl:template>
+
+
+
   <xsl:template match="xs:element/@type" mode="component-diagram">
     <xsl:variable name="element-qname" as="xs:QName"
                   select="f:xs-component-get-qname(..)"/>
@@ -261,7 +420,11 @@
     <xsl:text> [label="type"];&#10;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="@*|node()" priority="-1" mode="component-diagram">
+  <xsl:template match="*" priority="-1" mode="component-diagram">
+    <xsl:message terminate="yes">Unexpected element <xsl:value-of select="name()"/> in <xsl:value-of select="base-uri(.)"/> (mode=component-diagram)</xsl:message>
+  </xsl:template>
+
+  <xsl:template match="@*|node()" priority="-2" mode="component-diagram">
     <xsl:message terminate="yes">Unexpected content (mode=component-diagram)</xsl:message>
   </xsl:template>
 

@@ -19,9 +19,65 @@
   <xsl:template match="/" mode="component-page">
     <xsl:variable name="qname" as="xs:QName"
               select="f:get-qname($prefix, $local-name)"/>
-    <xsl:variable name="component" as="element()"
+    <xsl:variable name="component" as="element()?"
                   select="f:qname-resolve($qname)"/>
-    <xsl:apply-templates select="$component" mode="#current"/>
+    <xsl:choose>
+      <xsl:when test="exists($component)">
+        <xsl:apply-templates select="$component" mode="#current"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="component-page-with-no-component">
+          <xsl:with-param name="qname" as="xs:QName" select="$qname"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="component-page-with-no-component">
+    <xsl:param name="qname" as="xs:QName" required="yes"/>
+    <html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <meta charset="UTF-8"/>
+        <title><xsl:value-of select="$qname"/></title>
+        <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
+      </head>
+      <body>
+        <h1>
+          <a href="../index.html">
+            <xsl:value-of select="prefix-from-QName($qname)"/>
+          </a>
+          <xsl:text>:</xsl:text>
+          <xsl:value-of select="local-name-from-QName($qname)"/>
+        </h1>
+
+        <p>Component <xsl:value-of select="local-name-from-QName($qname)"/> in namespace <xsl:value-of select="namespace-uri-from-QName($qname)"/></p>
+
+        <xsl:if test="namespace-uri-from-QName($qname) = 'http://www.w3.org/2001/XMLSchema'">
+          <h2>Definition</h2>
+          <p>
+            <xsl:text>Simple type </xsl:text>
+            <xsl:value-of select="$qname"/>
+            <xsl:text> is documented by </xsl:text>
+            <a href="{concat('https://www.w3.org/TR/xmlschema-2/#', 
+                     local-name-from-QName($qname))}">
+              <xsl:text>the XML Schema specification</xsl:text>
+            </a>
+            <xsl:text>.</xsl:text>
+          </p>
+        </xsl:if>
+        <h2>Diagram</h2>
+        <a name="diagram">
+          <div style="text-align: center;">
+            <img src="data:image/png;base64,{unparsed-text(concat($root-path, '/', prefix-from-QName($qname), '/', local-name-from-QName($qname), '/diagram.png.base64'))}" usemap="#graphic"/>
+          </div>
+        </a>
+        <xsl:apply-templates
+          mode="htmlify"
+          select="doc(concat($root-path, '/', prefix-from-QName($qname),
+                  '/', local-name-from-QName($qname), '/diagram.map'))"/>
+
+      </body>
+    </html>
   </xsl:template>
 
   <xsl:template match="/xs:schema/xs:*[@name]" mode="component-page">
