@@ -40,8 +40,6 @@
           <TD ALIGN="LEFT" PORT="top">
             <B><xsl:value-of select="$qname"/></B>
           </TD>
-          <TD>#</TD>
-          <TD ALIGN="LEFT">Type</TD>
         </TR>
         <HR/>
         <xsl:apply-templates mode="component-diagram-type-table"/>
@@ -83,7 +81,7 @@
         <xsl:text>];</xsl:text>
 
         <xsl:value-of select="f:enquote(string($qname))"/>
-        <xsl:text>:type_of_</xsl:text>
+        <xsl:text>:</xsl:text>
         <xsl:value-of select="generate-id($element)"/>
         <xsl:text>:e -&gt; subst_</xsl:text>
         <xsl:value-of select="generate-id($element)"/>
