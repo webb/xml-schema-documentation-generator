@@ -1,6 +1,12 @@
 
 # XML Schema documentation generator
 
+The home for this package is on GitHub:
+- Repository home: <https://github.com/webb/xml-schema-documentation-generator>
+- Bugs, feature addtions, and other things to be changes are being tracked in the GitHub issue tracker: <https://github.com/webb/xml-schema-documentation-generator/issues>.
+- Workflow is being managed in the issue status project board on GitHub: <https://github.com/webb/xml-schema-documentation-generator/projects/1>
+
+
 ## Building
 
 1. `./configure`
@@ -49,27 +55,6 @@
     - `#json-schema`
 1. Each component is a single page. What we put on each page is TBD, as much detail as is useful, but no more.
 1. Graphviz images use maps for hotlinks to other component pages.
-
-## Future work
-
-### To do
-
-1. Format the pages to look good.
-1. Provide JSON Schema
-1. Provide RDF Schema
-1. Create landing pages for XML Schema types
-    - right now the XSD types just point into the XSD specification.
-    - We need to be able to see, e.g.,
-        - What attributes are of type xs:boolean?
-        - What simple types are extended from xs:string?
-1. Clarify (to the user) the difference between open and closed JSON schema.
-
-### Someday Maybe
-
-1. Include a set of files that augment the documentation for components. This might include, for example, specific examples of use of a component. That would be in a page within the hierarchy for the component, with a given name.
-1. Provide XML instance example
-1. Provide RDF instance example
-1. Provide JSON instance example
 
 ## Miscellaneous notes
 
