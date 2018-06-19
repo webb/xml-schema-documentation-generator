@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<xs:schema targetNamespace="http://release.niem.gov/niem/domains/immigration/4.0/" version="1" xsi:schemaLocation="http://release.niem.gov/niem/appinfo/4.0/ ../../../utility/appinfo/4.0/appinfo.xsd http://release.niem.gov/niem/conformanceTargets/3.0/ ../../../utility/conformanceTargets/3.0/conformanceTargets.xsd" ct:conformanceTargets="http://reference.niem.gov/niem/specification/naming-and-design-rules/4.0/#ReferenceSchemaDocument" xmlns:appinfo="http://release.niem.gov/niem/appinfo/4.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:im="http://release.niem.gov/niem/domains/immigration/4.0/" xmlns:nc="http://release.niem.gov/niem/niem-core/4.0/" xmlns:ct="http://release.niem.gov/niem/conformanceTargets/3.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:structures="http://release.niem.gov/niem/structures/4.0/">
+  <xs:annotation>
+    <xs:documentation>Immigration</xs:documentation>
+  </xs:annotation>
+  <xs:import schemaLocation="../../../niem-core/4.0/niem-core.xsd" namespace="http://release.niem.gov/niem/niem-core/4.0/"/>
+  <xs:import schemaLocation="../../../utility/structures/4.0/structures.xsd" namespace="http://release.niem.gov/niem/structures/4.0/"/>
+  <xs:element name="BeneficiaryReceivedOtherBenefits" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>An other Beneficiary in the request that has received other benefits (reference to a person)</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="BenefitRequestPreparer" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>A Person that prepared the application</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="Dependent" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>A person who is a dependent of another person.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="ImmigrantVisaApplicant" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>A person included in this application who filed the application for the immigrant visa.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="ImmigrationBenefitBeneficiary" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>A beneficiary or recipient of the immigration benefit.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="ImmigrationBenefitRequester" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>A reference to the person who is making the immigration benefit request.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="PermanentResidentAdjustmentApplicant" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>A Person that has filed Form I-485, Application to Register Permanent Residence or Adjust Status contained in this benefit request.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="PrincipalRolePerson" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>A reference to the Person playing the principal alien role.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="Provider" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>A person who has another person as a dependent.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="SchoolOwner" type="nc:PersonType">
+    <xs:annotation>
+      <xs:documentation>A person who has legal ownership title of a school.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="SubmittingEntityAbstract" abstract="true">
+    <xs:annotation>
+      <xs:documentation>A data concept for the entity submitting the documentation</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="SubmittingPerson" type="nc:PersonType" substitutionGroup="im:SubmittingEntityAbstract">
+    <xs:annotation>
+      <xs:documentation>A Person submitting the Immigration Documentation</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+</xs:schema>

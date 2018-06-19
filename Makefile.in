@@ -87,12 +87,12 @@ install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 
 #############################################################################
 .PHONY: all #    build everything from $xml_catalog
-#HELP:        Default xml_catalog = @xml_catalog@
+#HELP:        Default xml_catalog=@xml_catalog@
 # all: ${generate_pages_token}
 # all: ${all_files}
 all: ${components:%=${build_dir}/%/index.html}
 
-${backlinks_file}: ${xml_catalog} ${prefixes_file} ${all_sources}
+${backlinks_file}: ${xml_catalog} | ${prefixes_file} ${xml_catalog} ${all_sources}
 	${MKDIR_P} ${dir $@}
 	${saxon} --in=$< --out=$@ --xsl=xsl/collect-backlinks.xsl \
 	  +prefixes-file=${prefixes_file} \
@@ -116,7 +116,7 @@ ${build_dir}/%/diagram.png.base64: ${build_dir}/%/diagram.png
 ${build_dir}/%/diagram.png ${build_dir}/%/diagram.map: ${build_dir}/%/diagram.dot
 	dot -Tpng -o${build_dir}/$*/diagram.png -Tcmapx -o${build_dir}/$*/diagram.map $<
 
-${build_dir}/%/diagram.dot: ${backlinks_file} | ${build_dir}/%/dir-exists-token
+${build_dir}/%/diagram.dot: | ${backlinks_file} ${build_dir}/%/dir-exists-token
 	${saxon} --in=inputs/empty.xml --out=$@ \
 	  --xsl=xsl/mode-component-diagram.xsl \
 	  -- -im:"{}component-diagram" \
@@ -133,26 +133,6 @@ ${build_dir}/%/dir-exists-token:
 	${MKDIR_P} ${dir $@}
 	${touch} $@
 
-
-${generate_diagrams_token}: ${xml_catalog} ${make_dirs_token} ${all_sources} ${prefixes_file} \
-  ${backlinks_file}
-	${saxon} --in=$< --out=${build_dir}/generate-diagrams-report.txt \
-	  --xsl=xsl/generate.xsl \
-	  -- -im:"{}component-diagram" \
-	  +prefixes-file=${prefixes_file} \
-	  +xml-catalog-file=${xml_catalog} \
-	  +backlinks-file=${backlinks_file} \
-	  root-path=${realpath ${build_dir}}
-	${MKDIR_P} ${dir $@}
-	${touch} $@
-
-${process_diagrams_token}: ${generate_diagrams_token}
-	${MAKE} -C ${srcdir} -f generate.mk diagrams \
-	  definitions_mk=${definitions_mk} \
-	  build_dir=${build_dir}
-	${MKDIR_P} ${dir $@}
-	${touch} $@
-
 ${generate_pages_token}: ${xml_catalog} ${process_diagrams_token} ${all_sources} ${prefixes_file} \
   ${backlinks_file} style.css
 	${saxon} --in=$< --out=${build_dir}/generate-pages-report.txt \
@@ -166,20 +146,14 @@ ${generate_pages_token}: ${xml_catalog} ${process_diagrams_token} ${all_sources}
 
 #############################################################################
 .PHONY: install #    install everything to $install_dir
-#HELP:        Default install_dir = @install_dir@
-install: ${installed_token}
+#HELP:        Default install_dir=@install_dir@
+install: ${install_files}
 
-${installed_token}: ${generate_pages_token} ${definitions_mk}
-	${MAKE} -C ${srcdir} -f generate.mk install \
-	  definitions_mk=${definitions_mk} \
-	  build_dir=${build_dir} \
-	  install_dir=${install_dir}
-	${MKDIR_P} ${dir $@}
-	${touch} $@
+${install_dir}/%: ${build_dir}/%
+	[[ -d ${dir $@} ]] || mkdir -p ${dir $@}
+	cp $< $@
 
 endif
-
-
 
 #############################################################################
 # convenience targets

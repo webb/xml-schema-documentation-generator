@@ -67,14 +67,14 @@
     <xsl:text> </xsl:text>
     <xsl:value-of select="name()"/>
     <xsl:text>=&quot;</xsl:text>
-    <xsl:value-of select="f:safe-string(.)"/>
+    <xsl:value-of select="."/>
     <xsl:text>&quot;</xsl:text>
   </xsl:template>
 
   <xsl:template match="text()" mode="component-xml-schema">
     <xsl:variable name="text" as="xs:string" select="."/>
     <xsl:if test="string-length(normalize-space($text)) gt 0">
-      <xsl:value-of select="f:safe-string($text)"/>
+      <xsl:value-of select="$text"/>
     </xsl:if>
   </xsl:template>
 
