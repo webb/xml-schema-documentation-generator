@@ -56,6 +56,11 @@
     <xsl:text>&lt;</xsl:text>
     <xsl:value-of select="local-name()"/>
     <xsl:apply-templates select="@*" mode="#current"/>
+    <xsl:choose>
+      <xsl:when test="(count(parent::TR/preceding-sibling::TR) mod 2) = 1">
+        <xsl:text> BGCOLOR="gray92"</xsl:text>
+      </xsl:when>
+    </xsl:choose>
     <xsl:text>&gt;</xsl:text>
     <xsl:apply-templates select="node()" mode="#current"/>
     <xsl:text>&lt;/</xsl:text>
