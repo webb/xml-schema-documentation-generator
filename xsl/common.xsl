@@ -48,9 +48,12 @@
   <xsl:function name="f:xs-get-prefix" as="xs:string">
     <xsl:param name="context" as="element()"/>
     <xsl:variable name="target-namespace" select="f:get-target-namespace($context)"/>
-    <xsl:variable name="prefix" as="xs:string"
+    <xsl:variable name="prefix" as="xs:string?"
                   select="$prefixes[@uri = f:get-target-namespace($context)]/@prefix"/>
-    <xsl:sequence select="$prefix"/>
+    <xsl:if test="empty($prefix)">
+      <xsl:message terminate="yes">f:xs-get-prefix can't find prefix for <xsl:value-of select="base-uri($context)"/></xsl:message>
+    </xsl:if>
+    <xsl:sequence select="exactly-one($prefix)"/>
   </xsl:function>
 
   <xsl:function name="f:xs-component-get-definition" as="xs:string">
