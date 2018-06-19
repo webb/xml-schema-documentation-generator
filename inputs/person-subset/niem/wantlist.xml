@@ -2,12 +2,16 @@
 <w:WantList w:release="4.0" w:product="NIEM" w:nillableDefault="true"
   xmlns:w="http://niem.gov/niem/wantlist/2.2"
   xmlns:hs="http://release.niem.gov/niem/domains/humanServices/4.0/"
+  xmlns:ndex="http://release.niem.gov/niem/codes/fbi_ndex/4.0/"
   xmlns:scr="http://release.niem.gov/niem/domains/screening/4.0/"
   xmlns:nc="http://release.niem.gov/niem/niem-core/4.0/"
   xmlns:biom="http://release.niem.gov/niem/domains/biometrics/4.0/"
   xmlns:intel="http://release.niem.gov/niem/domains/intelligence/4.0/"
   xmlns:j="http://release.niem.gov/niem/domains/jxdm/6.0/"
-  xmlns:im="http://release.niem.gov/niem/domains/immigration/4.0/" xmlns:it="http://release.niem.gov/niem/domains/internationalTrade/4.0/">
+  xmlns:im="http://release.niem.gov/niem/domains/immigration/4.0/"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
+  xmlns:it="http://release.niem.gov/niem/domains/internationalTrade/4.0/"
+  xmlns:ncic="http://release.niem.gov/niem/codes/fbi_ncic/4.0/" xmlns:m="http://release.niem.gov/niem/domains/maritime/4.0/">
   <w:Element w:name="biom:MinutiaeExaminer" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="hs:Caregiver" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="hs:JuvenileGangMember" w:isReference="false" w:nillable="false"/>
@@ -15,6 +19,7 @@
     w:isReference="false" w:nillable="false"/>
   <w:Element w:name="hs:JuvenileStudent" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="hs:Parent" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="hs:PersonAugmentation" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="hs:PlacedJuvenile" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="hs:PlacementPerson" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="hs:SourcePerson" w:isReference="false" w:nillable="false"/>
@@ -31,13 +36,16 @@
     w:isReference="false" w:nillable="false"/>
   <w:Element w:name="im:PermanentResidentAdjustmentApplicant"
     w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="im:PersonAugmentation" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="im:PrincipalRolePerson" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="im:Provider" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="im:SchoolOwner" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="im:SubmittingPerson" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="intel:AuthenticatedIdentity" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="intel:PersonAugmentation" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="intel:PrimaryIdentity" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="it:CrewMember" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="it:PersonAugmentation" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="j:ActivityOfficial" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="j:BailBondsmanPerson" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="j:BaileePerson" w:isReference="false" w:nillable="false"/>
@@ -71,10 +79,14 @@
   <w:Element w:name="j:ParoleOfficer" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="j:PawnReceiver" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="j:PawnSeller" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:PersonAugmentation" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="j:PersonDeathIncidentCoroner" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="j:PersonDeathIncidentEmbalmer"
     w:isReference="false" w:nillable="false"/>
   <w:Element w:name="j:PersonPrimaryWorker" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="j:PersonRaceCode" w:isReference="false" w:nillable="true"/>
+  <w:Element w:name="j:PersonRaceNDExCode" w:isReference="false" w:nillable="true"/>
+  <w:Element w:name="j:PersonRaceRapSheetCode" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="j:PersonReferralWorker" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="j:ProgramViolationRelatedOfficial"
     w:isReference="false" w:nillable="false"/>
@@ -100,6 +112,7 @@
   <w:Element w:name="j:VisitationVisitor" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="j:VisitedPerson" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="j:VisitorPerson" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="m:PersonAugmentation" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="nc:AssessmentPerson" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="nc:ContactResponder" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="nc:ConveyanceOperator" w:isReference="false" w:nillable="false"/>
@@ -119,6 +132,7 @@
   <w:Element w:name="nc:OrganizationPrincipalOfficial"
     w:isReference="false" w:nillable="false"/>
   <w:Element w:name="nc:Person" w:isReference="false" w:nillable="false"/>
+  <w:Element w:name="nc:PersonRaceText" w:isReference="false" w:nillable="true"/>
   <w:Element w:name="nc:PersonWorker" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="nc:ProgramPerson" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="nc:ReferralPerson" w:isReference="false" w:nillable="false"/>
@@ -128,9 +142,21 @@
   <w:Element w:name="nc:SupervisionPerson" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="nc:WeaponUser" w:isReference="false" w:nillable="false"/>
   <w:Element w:name="scr:AgentPerson" w:isReference="false" w:nillable="false"/>
+  <w:Type w:name="j:PersonRaceCodeSimpleType" w:isRequested="false">
+    <w:Facet w:facet="enumeration" w:value="Asian"/>
+    <w:Facet w:facet="enumeration" w:value="Black"/>
+    <w:Facet w:facet="enumeration" w:value="Native American"/>
+    <w:Facet w:facet="enumeration" w:value="Unknown"/>
+    <w:Facet w:facet="enumeration" w:value="White"/>
+  </w:Type>
   <w:Type w:name="nc:DateType" w:isRequested="false">
     <w:ElementInType w:name="nc:DateRepresentation"
       w:isReference="false" w:minOccurs="1" w:maxOccurs="1"/>
+  </w:Type>
+  <w:Type w:name="nc:PersonNameTextType" w:isRequested="false">
+    <w:AttributeInType w:name="nc:personNameInitialIndicator"
+      w:minOccurs="0" w:maxOccurs="1"/>
+    <w:AttributeInType w:name="nc:sequenceID" w:minOccurs="0" w:maxOccurs="1"/>
   </w:Type>
   <w:Type w:name="nc:PersonNameType" w:isRequested="false">
     <w:ElementInType w:name="nc:PersonGivenName" w:isReference="false"
@@ -299,5 +325,25 @@
       w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
     <w:ElementInType w:name="nc:PersonAugmentationPoint"
       w:isReference="false" w:minOccurs="0" w:maxOccurs="unbounded"/>
+  </w:Type>
+  <w:Type w:name="nc:TextType" w:isRequested="false">
+    <w:AttributeInType w:name="nc:partialIndicator" w:minOccurs="0" w:maxOccurs="1"/>
+    <w:AttributeInType w:name="nc:truncationIndicator" w:minOccurs="0" w:maxOccurs="1"/>
+    <w:AttributeInType w:name="xml:lang" w:minOccurs="0" w:maxOccurs="1"/>
+  </w:Type>
+  <w:Type w:name="ncic:RACECodeSimpleType" w:isRequested="false">
+    <w:Facet w:facet="enumeration" w:value="A"/>
+    <w:Facet w:facet="enumeration" w:value="B"/>
+    <w:Facet w:facet="enumeration" w:value="I"/>
+    <w:Facet w:facet="enumeration" w:value="U"/>
+    <w:Facet w:facet="enumeration" w:value="W"/>
+  </w:Type>
+  <w:Type w:name="ndex:RACCodeSimpleType" w:isRequested="false">
+    <w:Facet w:facet="enumeration" w:value="A"/>
+    <w:Facet w:facet="enumeration" w:value="B"/>
+    <w:Facet w:facet="enumeration" w:value="I"/>
+    <w:Facet w:facet="enumeration" w:value="P"/>
+    <w:Facet w:facet="enumeration" w:value="U"/>
+    <w:Facet w:facet="enumeration" w:value="W"/>
   </w:Type>
 </w:WantList>

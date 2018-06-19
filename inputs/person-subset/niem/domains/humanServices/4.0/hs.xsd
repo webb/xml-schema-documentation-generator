@@ -1,13 +1,108 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-<xs:schema targetNamespace="http://release.niem.gov/niem/domains/humanServices/4.0/" version="1" xsi:schemaLocation="http://release.niem.gov/niem/appinfo/4.0/ ../../../utility/appinfo/4.0/appinfo.xsd http://release.niem.gov/niem/conformanceTargets/3.0/ ../../../utility/conformanceTargets/3.0/conformanceTargets.xsd" ct:conformanceTargets="http://reference.niem.gov/niem/specification/naming-and-design-rules/4.0/#ReferenceSchemaDocument" xmlns:appinfo="http://release.niem.gov/niem/appinfo/4.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:nc="http://release.niem.gov/niem/niem-core/4.0/" xmlns:ct="http://release.niem.gov/niem/conformanceTargets/3.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:structures="http://release.niem.gov/niem/structures/4.0/" xmlns:hs="http://release.niem.gov/niem/domains/humanServices/4.0/">
+<xs:schema targetNamespace="http://release.niem.gov/niem/domains/humanServices/4.0/" version="1" xsi:schemaLocation="http://release.niem.gov/niem/appinfo/4.0/ ../../../utility/appinfo/4.0/appinfo.xsd http://release.niem.gov/niem/conformanceTargets/3.0/ ../../../utility/conformanceTargets/3.0/conformanceTargets.xsd" ct:conformanceTargets="http://reference.niem.gov/niem/specification/naming-and-design-rules/4.0/#ReferenceSchemaDocument" xmlns:appinfo="http://release.niem.gov/niem/appinfo/4.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:nc="http://release.niem.gov/niem/niem-core/4.0/" xmlns:ct="http://release.niem.gov/niem/conformanceTargets/3.0/" xmlns:niem-xs="http://release.niem.gov/niem/proxy/xsd/4.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:structures="http://release.niem.gov/niem/structures/4.0/" xmlns:hs="http://release.niem.gov/niem/domains/humanServices/4.0/">
   <xs:annotation>
     <xs:documentation>Human Services</xs:documentation>
   </xs:annotation>
   <xs:import schemaLocation="../../../niem-core/4.0/niem-core.xsd" namespace="http://release.niem.gov/niem/niem-core/4.0/"/>
+  <xs:import schemaLocation="../../../proxy/xsd/4.0/xs.xsd" namespace="http://release.niem.gov/niem/proxy/xsd/4.0/"/>
   <xs:import schemaLocation="../../../utility/structures/4.0/structures.xsd" namespace="http://release.niem.gov/niem/structures/4.0/"/>
+  <xs:complexType name="EligibilityType">
+    <xs:annotation>
+      <xs:documentation>A data type for a set of programs for which a person may be considered for eligibility.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="structures:ObjectType">
+        <xs:sequence>
+          <xs:element ref="hs:TANFIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:ChildSupportAssistanceStatusIndicatorCode" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="PersonAugmentationType">
+    <xs:annotation>
+      <xs:documentation>A data type for additional information about a person.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="structures:AugmentationType">
+        <xs:sequence>
+          <xs:element ref="nc:LocationStateName" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:PhoneContactSupportIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:FaxContactSupportIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:EmailContactSupportIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:SSNVerificationIndicatorCode" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:FraudIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:FugitiveFelonIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:ProbationAndParoleViolationIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:DrugRelatedFelonIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:VAMatchRequestIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:StateMatchRequestIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:FEDMatchRequestIndicator" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="hs:Eligibility" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="nc:Case" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:simpleType name="SSNVerificationIndicatorCodeSimpleType">
+    <xs:annotation>
+      <xs:documentation>A data type for a verification of a SSN by the Social Security Administration (SSA).</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="SSNVerificationIndicatorCodeType">
+    <xs:annotation>
+      <xs:documentation>A data type for a verification of a SSN by the Social Security Administration (SSA).</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="hs:SSNVerificationIndicatorCodeSimpleType">
+        <xs:attributeGroup ref="structures:SimpleObjectAttributeGroup"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
   <xs:element name="Caregiver" type="nc:PersonType">
     <xs:annotation>
       <xs:documentation>A person who takes care of another.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="ChildSupportAssistanceStatusIndicatorCode" type="niem-xs:string" nillable="true">
+    <xs:annotation>
+      <xs:documentation>A former assistance.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="DrugRelatedFelonIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if a person is a drug-related felon; false otherwise.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="Eligibility" type="hs:EligibilityType" nillable="true">
+    <xs:annotation>
+      <xs:documentation>A set of programs for which a person may be considered for eligibility.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="EmailContactSupportIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if contact by e-mail is supported for follow up purposes; false otherwise.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="FEDMatchRequestIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if perform federal data match; false if there is no fed match.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="FaxContactSupportIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if contact by fax machine is supported for follow up purposes; false otherwise.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="FraudIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if there has been fraudulent receipt of TANF benefits within the last ten years due to a misrepresentation of residence; false otherwise.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="FugitiveFelonIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if a person is a current fugitive felon; false otherwise.</xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:element name="JuvenileGangMember" type="nc:PersonType">
@@ -30,6 +125,16 @@
       <xs:documentation>A father or mother of a person.</xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="PersonAugmentation" type="hs:PersonAugmentationType" substitutionGroup="nc:PersonAugmentationPoint" nillable="true">
+    <xs:annotation>
+      <xs:documentation>Additional information about a person.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="PhoneContactSupportIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if contact by voice phone is supported for follow up purposes; false otherwise.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="PlacedJuvenile" type="nc:PersonType">
     <xs:annotation>
       <xs:documentation>A juvenile who is directed to reside somewhere other than a parent's residence.</xs:documentation>
@@ -40,9 +145,29 @@
       <xs:documentation>A person with whom a juvenile is directed to reside.</xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="ProbationAndParoleViolationIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if Current Probation or Parole Violation; false otherwise.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="SSNVerificationIndicatorCode" type="hs:SSNVerificationIndicatorCodeType" nillable="true">
+    <xs:annotation>
+      <xs:documentation>A verification of a SSN by the Social Security Administration (SSA).</xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="SourcePerson" type="nc:PersonType">
     <xs:annotation>
       <xs:documentation>A person that is the start point of a directed association</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="StateMatchRequestIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if to perform an interstate match; false if there is no state match.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="TANFIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if a client receives TANF Assistance or if their assets count; false otherwise.</xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:element name="TargetPerson" type="nc:PersonType">
@@ -53,6 +178,11 @@
   <xs:element name="Therapist" type="nc:PersonType">
     <xs:annotation>
       <xs:documentation>A person who provides therapy services.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="VAMatchRequestIndicator" type="niem-xs:boolean" nillable="true">
+    <xs:annotation>
+      <xs:documentation>True if to perform a VA Match; false if there is no VA match.</xs:documentation>
     </xs:annotation>
   </xs:element>
 </xs:schema>
