@@ -63,8 +63,9 @@
         <xsl:variable name="substitutable-elements">
           <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
             <TR>
-              <TD ALIGN="LEFT" PORT="top">
-                <B>Substitutable elements</B>
+              <TD ALIGN="LEFT" PORT="top"
+                  HREF="{f:qname-get-href('../..', $element-qname)}#diagram">
+                <B>Substitution group <xsl:value-of select="$element-qname"/></B>
               </TD>
             </TR>
             <HR/>
@@ -85,7 +86,7 @@
         <xsl:value-of select="generate-id($element)"/>
         <xsl:text>:e -&gt; subst_</xsl:text>
         <xsl:value-of select="generate-id($element)"/>
-        <xsl:text>:top:w [label="substitutable for", dir=back];</xsl:text>
+        <xsl:text>:top:w [dir=back];</xsl:text>
 
       </xsl:if>
     </xsl:for-each>
