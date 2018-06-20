@@ -4,10 +4,26 @@
 
 (( $# > 0 )) || fail "need a command"
 
-case $1 in
+command=$1
+shift 1
+
+case $command in
     backlinks )
         rm -f build/backlinks.xml
         make build/backlinks.xml
+        ;;
+    show )
+        remove=(rm -rf)
+        build=(make -j 8)
+        for path in "$@"
+        do remove+=( "build/$path" )
+           build+=( "build/$path/index.html" )
+        done
+        "${remove[@]}"
+        "${build[@]}"
+        if (( $# > 0 ))
+        then open "${build[3]}"
+        fi
         ;;
     * )
         fail "unknown command $1"
