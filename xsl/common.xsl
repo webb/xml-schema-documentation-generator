@@ -171,4 +171,34 @@
                                 else concat('[', $min, '-', $max, ']'))"/>
   </xsl:function>
 
+  <xsl:function name="f:sequence-as-text-list" as="xs:string">
+    <xsl:param name="list"/>
+    <xsl:param name="conjunction" as="xs:string"/>
+    <xsl:variable name="list-length" as="xs:integer" select="count($list)"/>
+    <xsl:value-of>
+      <xsl:choose>
+        <xsl:when test="$list-length eq 0"/>
+        <xsl:when test="$list-length eq 1">
+          <xsl:value-of select="$list"/>
+        </xsl:when>
+        <xsl:when test="$list-length eq 2">
+          <xsl:value-of select="$list[1]"/>
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="$conjunction"/>
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="$list[2]"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:for-each select="subsequence($list, 1, $list-length - 1)">
+            <xsl:value-of select="."/>
+            <xsl:text>, </xsl:text>
+          </xsl:for-each>
+          <xsl:value-of select="$conjunction"/>
+          <xsl:text>, </xsl:text>
+          <xsl:value-of select="$list[$list-length]"/>>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:value-of>
+  </xsl:function>
+
 </xsl:stylesheet>

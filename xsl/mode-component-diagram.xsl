@@ -525,9 +525,7 @@
 
   <xsl:template match="xs:anyAttribute" mode="component-diagram-type-table">
     <TR xmlns="">
-      <TD ALIGN="LEFT">anyAttribute</TD>
-      <TD></TD>
-      <TD></TD>
+      <xsl:apply-templates select="." mode="component-diagram-td"/>
     </TR>
   </xsl:template>
 

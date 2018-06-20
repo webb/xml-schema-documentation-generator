@@ -80,6 +80,21 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="xs:anyAttribute"
+                mode="component-diagram-td"
+                as="element(TD)" xmlns="">
+    <xsl:variable name="documentation" as="xs:string">
+      <xsl:value-of>
+        <xsl:text>Allow any attribute</xsl:text>
+        <xsl:if test="exists(@namespace)">
+          <xsl:text> from namespace </xsl:text>
+          <xsl:value-of select="f:sequence-as-text-list(tokenize(normalize-space(@namespace), ' '), 'or')"/>
+        </xsl:if>
+      </xsl:value-of>
+    </xsl:variable>
+    <TD xmlns="" ALIGN="LEFT" HREF="#diagram" TOOLTIP="{$documentation}">anyAttribute</TD>
+  </xsl:template>
+
   <xsl:template match="xs:element[@name]"
                 mode="component-diagram-td"
                 as="element(TD)" xmlns="">
