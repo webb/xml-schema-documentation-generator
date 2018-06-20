@@ -142,7 +142,10 @@
     <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
     <xsl:text>rankdir=LR;&#10;</xsl:text>
 
-    <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
+    <xsl:value-of select="f:enquote(string($qname))"/>
+    <xsl:text> [shape=plain, label=</xsl:text>
+    <xsl:value-of select="f:to-dot-html($object)"/>
+    <xsl:text>];&#10;</xsl:text>
 
     <xsl:for-each select="f:backlinks-get-elements-had-by-type($qname)">
       <xsl:variable name="element-qname" as="xs:QName" select="."/>
@@ -170,14 +173,14 @@
         <xsl:value-of select="generate-id($element)"/>
         <xsl:text> [shape=plain, label=</xsl:text>
         <xsl:value-of select="f:to-dot-html($substitutable-elements)"/>
-        <xsl:text>];</xsl:text>
+        <xsl:text>];&#10;</xsl:text>
 
         <xsl:value-of select="f:enquote(string($qname))"/>
         <xsl:text>:</xsl:text>
         <xsl:value-of select="generate-id($element)"/>
         <xsl:text>:e -&gt; subst_</xsl:text>
         <xsl:value-of select="generate-id($element)"/>
-        <xsl:text>:top:w [dir=back];</xsl:text>
+        <xsl:text>:top:w [dir=back];&#10;</xsl:text>
 
       </xsl:if>
     </xsl:for-each>
@@ -530,9 +533,7 @@
 
   <xsl:template match="xs:attributeGroup[@ref]" mode="component-diagram-type-table">
     <TR xmlns="">
-      <TD ALIGN="LEFT">attributeGroup <xsl:value-of select="@ref"/></TD>
-      <TD></TD>
-      <TD></TD>
+      <xsl:sequence select="f:qname-get-td(f:attribute-get-qname(@ref))"/>
     </TR>
   </xsl:template>
 
