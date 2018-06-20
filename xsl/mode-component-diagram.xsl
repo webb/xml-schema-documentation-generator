@@ -353,12 +353,12 @@
   </xsl:template>
 
   <xsl:template match="/xs:schema/xs:attribute[@name]" mode="component-diagram">
-    <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <xsl:variable name="this-attribute-qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="object" as="item()*" xmlns="">
       <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
         <TR>
           <TD ALIGN="LEFT" PORT="top">
-            <B><xsl:value-of select="$qname"/></B>
+            <B><xsl:value-of select="$this-attribute-qname"/></B>
           </TD>
         </TR>
       </TABLE>
@@ -369,7 +369,49 @@
     <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
     <xsl:text>rankdir=LR;&#10;</xsl:text>
 
-    <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
+    <xsl:value-of select="f:enquote(string($this-attribute-qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
+
+    <xsl:variable name="types-having-this-attribute" as="xs:QName*"
+                  select="f:backlinks-get-types-having-attribute($this-attribute-qname)"/>
+    <xsl:if test="exists($types-having-this-attribute)">
+      <xsl:variable name="types-having-this-attribute-object">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+          <TR>
+            <TD ALIGN="LEFT" PORT="top">
+              <B>Types</B>
+            </TD>
+          </TR>
+          <HR/>
+          <xsl:for-each select="$types-having-this-attribute">
+            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+          </xsl:for-each>
+        </TABLE>
+      </xsl:variable>
+
+      Types [shape=plain, label=<xsl:value-of select="f:to-dot-html($types-having-this-attribute-object)"/>];
+      Types:top -&gt; <xsl:value-of select="f:enquote(string($this-attribute-qname))"/>:w [label="has-a"];
+    </xsl:if>
+
+    <xsl:variable name="attribute-groups-having-this-attribute" as="xs:QName*"
+                  select="f:backlinks-get-attribute-groups-having-attribute($this-attribute-qname)"/>
+    <xsl:if test="exists($attribute-groups-having-this-attribute)">
+      <xsl:variable name="attribute-groups-having-this-attribute-object">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+          <TR>
+            <TD ALIGN="LEFT" PORT="top">
+              <B>Attribute Groups</B>
+            </TD>
+          </TR>
+          <HR/>
+          <xsl:for-each select="$attribute-groups-having-this-attribute">
+            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+          </xsl:for-each>
+        </TABLE>
+      </xsl:variable>
+
+      AttributeGroups [shape=plain, label=<xsl:value-of select="f:to-dot-html($attribute-groups-having-this-attribute-object)"/>];
+      AttributeGroups:top -&gt; <xsl:value-of select="f:enquote(string($this-attribute-qname))"/>:w [label="has-a"];
+    </xsl:if>
 
     <xsl:text>}&#10;</xsl:text>
   </xsl:template>

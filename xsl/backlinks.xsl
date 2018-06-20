@@ -34,6 +34,22 @@
     </xsl:for-each>
   </xsl:function>
 
+  <xsl:function name="f:backlinks-get-types-having-attribute" as="xs:QName*">
+    <xsl:param name="attribute" as="xs:QName"/>
+    <xsl:for-each
+       select="$backlinks/bl:type-has-attribute[f:attribute-get-qname(@attribute) = $attribute]">
+      <xsl:sequence select="f:attribute-get-qname(@type)"/>
+    </xsl:for-each>
+  </xsl:function>
+
+  <xsl:function name="f:backlinks-get-attribute-groups-having-attribute" as="xs:QName*">
+    <xsl:param name="attribute" as="xs:QName"/>
+    <xsl:for-each
+       select="$backlinks/bl:attribute-group-has-attribute[f:attribute-get-qname(@attribute) = $attribute]">
+      <xsl:sequence select="f:attribute-get-qname(@attribute-group)"/>
+    </xsl:for-each>
+  </xsl:function>
+
   <xsl:function name="f:backlinks-get-types-derived-from-type" as="xs:QName*">
     <xsl:param name="base-type" as="xs:QName"/>
     <xsl:for-each
