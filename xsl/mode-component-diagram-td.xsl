@@ -20,13 +20,11 @@
                          mode="component-diagram-td"/>
   </xsl:function>
 
-  <!-- a port is a place to link to on a graphviz diagram -->
-  <xsl:function name="f:qname-get-td-with-port">
+  <xsl:function name="f:qname-get-td-brief">
     <xsl:param name="qname" as="xs:QName"/>
-    <xsl:param name="port" as="xs:string"/>
     <xsl:apply-templates select="f:qname-resolve($qname)"
                          mode="component-diagram-td">
-      <xsl:with-param name="port" select="$port"/>
+      <xsl:with-param name="brief" select="true()" tunnel="yes"/>
     </xsl:apply-templates>
   </xsl:function>
 
@@ -35,12 +33,11 @@
                        | /xs:schema/xs:attribute[@name]
                        | /xs:schema/xs:attributeGroup[@name]"
                 mode="component-diagram-td">
-    <xsl:param name="port" as="xs:string" select="generate-id(.)"/>
     <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
     <TD xmlns=""
         ALIGN="LEFT"
         HREF="{f:qname-get-href('../..', $qname)}#diagram"
-        PORT="{$port}">
+        PORT="{generate-id(.)}">
       <xsl:variable name="definition" as="xs:string"
                     select="f:xs-component-get-definition(.)"/>
       <xsl:if test="string-length(normalize-space($definition)) gt 0">
@@ -86,6 +83,7 @@
   <xsl:template match="xs:element[@name]"
                 mode="component-diagram-td"
                 as="element(TD)" xmlns="">
+    <xsl:param name="brief" as="xs:boolean" select="false()" tunnel="yes"/>
     <xsl:variable name="element-qname" as="xs:QName"
                   select="f:xs-component-get-qname(.)"/>
     <TD xmlns=""
@@ -101,8 +99,10 @@
       <xsl:if test="exists(@type)">
         <xsl:variable name="type-qname" as="xs:QName"
                       select="f:attribute-get-qname(@type)"/>
-        <xsl:text>: </xsl:text>
-        <xsl:value-of select="$type-qname"/>
+        <xsl:if test="not($brief)">
+          <xsl:text>: </xsl:text>
+          <xsl:value-of select="$type-qname"/>
+        </xsl:if>
       </xsl:if>
     </TD>
   </xsl:template>

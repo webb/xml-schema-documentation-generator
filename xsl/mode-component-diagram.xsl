@@ -75,10 +75,10 @@
           </TR>
           <HR/>
           <xsl:for-each select="$attributes-of-this-type">
-            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+            <TR><xsl:sequence select="f:qname-get-td-brief(.)"/></TR>
           </xsl:for-each>
           <xsl:for-each select="$elements-of-this-type">
-            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+            <TR><xsl:sequence select="f:qname-get-td-brief(.)"/></TR>
           </xsl:for-each>
         </TABLE>
       </xsl:variable>
@@ -196,10 +196,10 @@
           </TR>
           <HR/>
           <xsl:for-each select="$attributes-of-this-type">
-            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+            <TR><xsl:sequence select="f:qname-get-td-brief(.)"/></TR>
           </xsl:for-each>
           <xsl:for-each select="$elements-of-this-type">
-            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+            <TR><xsl:sequence select="f:qname-get-td-brief(.)"/></TR>
           </xsl:for-each>
         </TABLE>
       </xsl:variable>
