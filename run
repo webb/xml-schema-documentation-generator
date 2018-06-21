@@ -8,6 +8,11 @@ command=$1
 shift 1
 
 case $command in
+    rebuild )
+        rm -rf build
+        make depend=true
+        make -j -l 8
+        ;;
     backlinks )
         rm -f build/backlinks.xml
         make build/backlinks.xml
