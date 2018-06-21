@@ -111,6 +111,33 @@
           mode="htmlify"
           select="doc(concat($root-path, '/', prefix-from-QName($qname),
                   '/', local-name-from-QName($qname), '/diagram.map'))"/>
+
+        <xsl:if test="self::xs:simpleType[@name]//xs:enumeration">
+          <h2>Enumerations</h2>
+          <a name="enumerations">
+            <table>
+              <thead>
+                <tr>
+                  <td>Value</td>
+                  <td>Definition</td>
+                </tr>
+              </thead>
+              <tbody>
+                <xsl:for-each select=".//xs:enumeration[@value]">
+                  <tr>
+                    <td>
+                      <xsl:value-of select="@value"/>
+                    </td>
+                    <td>
+                      <xsl:value-of select="f:xs-component-get-definition(.)"/>
+                    </td>
+                  </tr>
+                </xsl:for-each>
+              </tbody>
+            </table>
+          </a>
+        </xsl:if>
+
         <h2>XML Schema</h2>
         <a name="xml-schema">
           <div class="xml-schema">
