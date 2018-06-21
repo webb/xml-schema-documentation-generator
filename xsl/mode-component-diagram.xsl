@@ -268,6 +268,36 @@
 
     <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
 
+    <xsl:variable name="derived-types" as="xs:QName*"
+                  select="f:backlinks-get-types-derived-from-type($qname)"/>
+    <xsl:if test="exists($derived-types)">
+      <xsl:variable name="derived-types-object">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+          <TR>
+            <TD ALIGN="LEFT">
+              <B>Derived types</B>
+            </TD>
+          </TR>
+          <HR/>
+          <xsl:for-each select="$derived-types">
+            <TR><xsl:sequence select="f:qname-get-td(.)"/></TR>
+          </xsl:for-each>
+        </TABLE>
+      </xsl:variable>
+
+      <xsl:text>DerivedTypes [shape=plain, label=</xsl:text>
+      <xsl:value-of select="f:to-dot-html($derived-types-object)"/>
+      <xsl:text>];</xsl:text>
+
+      <xsl:text>{ rank = same; DerivedTypes; </xsl:text>
+      <xsl:value-of select="f:enquote(string($qname))"/>
+      <xsl:text>; }&#10;</xsl:text>
+      
+      <xsl:value-of select="f:enquote(string($qname))"/>  -&gt; DerivedTypes [label="derived"];
+    </xsl:if>
+
+    <xsl:apply-templates select=".//xs:*[@base]/@base" mode="component-diagram-base-type"/>
+
     <xsl:text>}&#10;</xsl:text>
   </xsl:template>
 
