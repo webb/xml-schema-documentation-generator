@@ -13,6 +13,15 @@ case $command in
         make depend=true
         make -j -l 8
         ;;
+    release )
+        rm -rf build
+        rm -rf .../repo/*
+        ./configure install_dir=../repo xml_catalog=../../niem-releases/niem/xml-catalog.xml
+        make depend=true
+        make -k -j -l 50
+        make -k -j -l 50 install
+        date
+        ;;
     backlinks )
         rm -f build/backlinks.xml
         make build/backlinks.xml
