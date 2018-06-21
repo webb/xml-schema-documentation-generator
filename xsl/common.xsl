@@ -171,6 +171,18 @@
                                 else concat(' [', $min, '-', $max, ']'))"/>
   </xsl:function>
 
+  <xsl:function name="f:attribute-use-get-cardinality" as="xs:string">
+    <xsl:param name="context" as="element(xs:attribute)"/>
+    <xsl:value-of>
+      <xsl:choose>
+        <xsl:when test="$context/@use = 'required'"></xsl:when>
+        <xsl:when test="$context/@use = 'prohibited'"> [0]</xsl:when>
+        <xsl:when test="$context/@use = 'optional'"> [0-1]</xsl:when>
+        <xsl:otherwise> [0-1]</xsl:otherwise>
+      </xsl:choose>
+    </xsl:value-of>
+  </xsl:function>
+
   <xsl:function name="f:sequence-as-text-list" as="xs:string">
     <xsl:param name="list"/>
     <xsl:param name="conjunction" as="xs:string"/>

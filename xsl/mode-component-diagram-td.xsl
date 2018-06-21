@@ -78,6 +78,34 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="xs:attribute[@ref]"
+                mode="component-diagram-td"
+                as="element(TD)" xmlns="">
+    <xsl:variable name="attribute-qname" as="xs:QName"
+                  select="f:attribute-get-qname(@ref)"/>
+    <xsl:variable name="attribute" as="element()?"
+                  select="f:qname-resolve-attribute($attribute-qname)"/>
+    <xsl:choose>
+      <xsl:when test="exists($attribute)">
+        <xsl:variable name="td" as="element(TD)">
+          <xsl:apply-templates select="$attribute" mode="#current"/>
+        </xsl:variable>
+        <TD>
+          <xsl:copy-of select="$td/@*"/>
+          <xsl:value-of select="$td/text()"/>
+          <xsl:value-of select="f:attribute-use-get-cardinality(.)"/>
+        </TD>
+      </xsl:when>
+      <xsl:otherwise>
+        <TD xmlns=""
+            ALIGN="LEFT">
+          <xsl:value-of select="$attribute-qname"/>
+          <xsl:value-of select="f:attribute-use-get-cardinality(.)"/>
+        </TD>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match="xs:anyAttribute"
                 mode="component-diagram-td"
                 as="element(TD)" xmlns="">

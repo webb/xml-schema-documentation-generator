@@ -503,21 +503,15 @@
     <xsl:variable name="attribute" as="element(xs:attribute)?"
                   select="f:qname-resolve-attribute($attribute-qname)"/>
     <TR xmlns="">
-      <xsl:sequence select="f:qname-get-td($attribute-qname)"/>
-      <TD>
-        <xsl:choose>
-          <xsl:when test="@use = 'required'">1</xsl:when>
-          <xsl:when test="@use = 'prohibited'">0</xsl:when>
-          <xsl:when test="@use = 'optional'">0-1</xsl:when>
-          <xsl:otherwise>0-1</xsl:otherwise>
-        </xsl:choose>
-      </TD>
       <xsl:choose>
         <xsl:when test="exists($attribute)">
-          <xsl:sequence select="f:qname-get-td(f:attribute-get-qname($attribute/@type))"/>
+          <xsl:apply-templates select="." mode="component-diagram-td"/>
         </xsl:when>
         <xsl:otherwise>
-          <TD><xsl:value-of select="$attribute-qname"/></TD>
+          <TD>
+            <xsl:value-of select="$attribute-qname"/>
+            <xsl:value-of select="f:attribute-use-get-cardinality(.)"/>
+          </TD>
         </xsl:otherwise>
       </xsl:choose>
     </TR>
