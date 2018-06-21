@@ -9,6 +9,7 @@
   <xsl:include href="backlinks.xsl"/>
   <xsl:include href="mode-htmlify.xsl"/>
   <xsl:include href="mode-component-xml-schema.xsl"/>
+  <xsl:include href="mode-component-json-schema.xsl"/>
 
   <xsl:param name="root-path" as="xs:string" required="yes"/>
   <xsl:param name="prefix" as="xs:string" required="yes"/>
@@ -145,6 +146,15 @@
                                  mode="component-xml-schema"/>
           </div>
         </a>
+
+        <h2>JSON Schema</h2>
+        <a name="json-schema">
+          <div class="json-schema">
+            <xsl:apply-templates select="."
+                                 mode="component-json-schema"/>
+          </div>
+        </a>
+
       </body>
     </html>
   </xsl:template>
