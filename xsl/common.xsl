@@ -167,8 +167,8 @@
     <xsl:value-of select="if ($min = '1' and $max = '1')
                           then ''
                           else (if ($min = $max)
-                                then concat('[', $min, ']')
-                                else concat('[', $min, '-', $max, ']'))"/>
+                                then concat(' [', $min, ']')
+                                else concat(' [', $min, '-', $max, ']'))"/>
   </xsl:function>
 
   <xsl:function name="f:sequence-as-text-list" as="xs:string">

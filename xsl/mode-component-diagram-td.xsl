@@ -65,7 +65,6 @@
         <TD>
           <xsl:copy-of select="$td/@*"/>
           <xsl:value-of select="$td/text()"/>
-          <xsl:text> </xsl:text>
           <xsl:value-of select="f:element-use-get-cardinality(.)"/>
         </TD>
       </xsl:when>
@@ -73,7 +72,6 @@
         <TD xmlns=""
             ALIGN="LEFT">
           <xsl:value-of select="$element-qname"/>
-          <xsl:text> </xsl:text>
           <xsl:value-of select="f:element-use-get-cardinality(.)"/>
         </TD>
       </xsl:otherwise>
