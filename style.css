@@ -13,6 +13,15 @@ div.xml-schema div.line {
 div.xml-schema div.block div.block {
     margin-left: 1em;
 }
+div.json-schema div.line:first-letter {
+    margin-left: -2em;
+}
+div.json-schema div.line {
+    margin-left: 2em;
+}
+div.json-schema div.block div.block {
+    margin-left: 1em;
+}
 h1 { font-size: 120%; }
 h2 { font-size: 110%; }
 table {
