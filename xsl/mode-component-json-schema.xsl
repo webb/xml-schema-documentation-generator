@@ -8,6 +8,11 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml">
 
+  <xsl:function name="f:json-xml-to-html">
+    <xsl:param name="content"/>
+    <xsl:apply-templates select="$content" mode="component-json-schema-json-xml-to-html"/>
+  </xsl:function>
+
   <!-- ============================================================================= 
 
        mode component-json-schema 
@@ -20,17 +25,17 @@
     match="/xs:schema/xs:complexType[@name]"
     mode="component-json-schema">
     <xsl:variable name="result">
-      <j:qkey name="{f:xs-component-get-qname(.)}">
-        <j:map>
-          <j:key name="type">object</j:key>
-          <j:key name="properties">
-            <j:map>
-              
-            </j:map>
-          </j:key>
+      <j:map qkey="{f:xs-component-get-qname(.)}">
+        <j:string key="type">object</j:string>
+        <j:map key="properties">
+          <xsl:apply-templates mode="component-json-schema-properties"/>
         </j:map>
-      </j:qkey>
+        <j:array key="required">
+          <xsl:apply-templates mode="component-json-schema-required"/>
+        </j:array>
+      </j:map>
     </xsl:variable>
+    <xsl:sequence select="f:json-xml-to-html($result)"/>
   </xsl:template>
 
   <xsl:template
