@@ -58,6 +58,10 @@ The home for this package is on GitHub:
 
 ## Miscellaneous notes
 
+### JSON Schema
+
+JSON Schema Validation specification: <http://json-schema.org/latest/json-schema-validation.html>
+
 ### XML Schema specification
 
 Documentation for xs:string <https://www.w3.org/TR/xmlschema-2/#string>
