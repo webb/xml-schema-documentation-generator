@@ -156,14 +156,26 @@
     <xsl:sequence select="f:ref-get-qname($attribute/.., $attribute)"/>
   </xsl:function>
 
+  <xsl:function name="f:element-use-get-min-occurs" as="xs:integer">
+    <xsl:param name="context" as="element(xs:element)"/>
+    <xsl:value-of select="if ($context/@minOccurs) 
+                          then $context/@minOccurs cast as xs:integer
+                          else 1"/>
+  </xsl:function>
+
+  <xsl:function name="f:element-use-get-max-occurs">
+    <xsl:param name="context" as="element(xs:element)"/>
+    <xsl:value-of select="if ($context/@maxOccurs)
+                          then (if ($context/@maxOccurs = 'unbounded')
+                                then 'n'
+                                else $context/@maxOccurs cast as xs:integer)
+                          else 1"/>
+  </xsl:function>
+
   <xsl:function name="f:element-use-get-cardinality" as="xs:string">
     <xsl:param name="context" as="element(xs:element)"/>
-    <xsl:variable name="min" select="if ($context/@minOccurs) then $context/@minOccurs else '1'"/>
-    <xsl:variable name="max" select="if ($context/@maxOccurs) 
-                                     then (if ($context/@maxOccurs = 'unbounded')
-                                     then 'n'
-                                     else $context/@maxOccurs)
-                                     else '1'"/>
+    <xsl:variable name="min" select="string(f:element-use-get-min-occurs($context))"/>
+    <xsl:variable name="max" select="string(f:element-use-get-max-occurs($context))"/>
     <xsl:value-of select="if ($min = '1' and $max = '1')
                           then ''
                           else (if ($min = $max)
