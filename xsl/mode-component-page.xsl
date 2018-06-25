@@ -91,6 +91,8 @@
         <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
       </head>
       <body>
+        <div id="page">
+          <div id="content">
         <h1>
           <a href="../index.html">
             <xsl:value-of select="prefix-from-QName($qname)"/>
@@ -161,6 +163,8 @@
           <h3>Notes</h3>
           <xsl:copy-of select="$json-schema-results//j:note/*"/>
         </xsl:if>
+          </div>
+        </div>
       </body>
     </html>
   </xsl:template>

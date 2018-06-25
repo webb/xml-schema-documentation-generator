@@ -1,6 +1,13 @@
 body {
     font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
 }
+div#page {
+    text-align: center;
+}
+div#content {
+    text-align: left;
+    display: inline-block;
+}
 div.ns-defn {
     margin-left: 2em;
 }
