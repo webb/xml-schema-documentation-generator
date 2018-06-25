@@ -69,3 +69,20 @@ Documentation for xs:string <https://www.w3.org/TR/xmlschema-2/#string>
 ### Graphviz
 
 HTML labels: <https://graphviz.gitlab.io/_pages/doc/info/shapes.html#html>
+
+### XML representation of JSON
+
+This package uses an extended version of the JSON representation defined by XSLT 3.0. The package refers to the namespace "http://www.w3.org/2005/xpath-functions" with the prefix "j".
+
+Extensions:
+
+* Existing elements j:map, j:string, etc:
+  * @key-style: if value is "qname", then the value of @key is interprted as a
+    xs:QName that refers to a component.
+* New element j:ref:
+  * @key: works like above, using @key-style
+  * @qname: the content of the value
+  * @ref-style: interprets the above:
+    - "definition": ref to #/definitions/$component-name, with the component name as an href.
+    - otherwise, href to the named component.
+* New element j:note: Contains HTML content that describes something about the result. Does not affect the resulting JSON, but provides a note that is displayed with the JSON.

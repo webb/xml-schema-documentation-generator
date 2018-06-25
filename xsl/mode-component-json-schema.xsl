@@ -13,6 +13,12 @@
     <xsl:apply-templates select="$content" mode="json-to-html"/>
   </xsl:function>
 
+  <xsl:function name="f:json-xml-notes-to-html">
+    <xsl:param name="content"/>
+  </xsl:function>
+
+  <xsl:function name="f:get-json-schema"></xsl:function>
+
   <!-- ============================================================================= 
 
        mode component-json-schema 
@@ -25,34 +31,78 @@
     match="/xs:schema/xs:complexType[@name]"
     mode="component-json-schema">
     <xsl:variable name="this-qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
-    <xsl:variable name="result">
-      <j:map key="{$this-qname}" key-style="qname">
-        <xsl:namespace name="{prefix-from-QName($this-qname)}"
-                       select="namespace-uri-from-QName($this-qname)"/>
-        <j:string key="type">object</j:string>
-        <j:map key="properties">
-          <xsl:apply-templates mode="component-json-schema-properties"/>
-        </j:map>
-        <j:array key="required">
-          <xsl:apply-templates mode="component-json-schema-required"/>
-        </j:array>
+    <j:note><p>The JSON above should be added to the <code>definitions</code> section of a JSON Schema document.</p>
+    </j:note>
+    <j:map key="{$this-qname}" key-style="qname">
+      <xsl:namespace name="{prefix-from-QName($this-qname)}"
+                     select="namespace-uri-from-QName($this-qname)"/>
+      <j:string key="type">object</j:string>
+      <j:map key="properties">
+        <xsl:apply-templates mode="component-json-schema-properties"/>
       </j:map>
-    </xsl:variable>
-    <xsl:sequence select="f:json-xml-to-html($result)"/>
+      <xsl:variable name="required" as="xs:QName*">
+        <xsl:apply-templates mode="component-json-schema-required"/>
+      </xsl:variable>
+      <xsl:if test="exists($required)">
+        <j:array key="required">
+          <xsl:for-each select="$required">
+            <j:ref qname="{.}">
+              <xsl:namespace name="{prefix-from-QName(.)}"
+                             select="namespace-uri-from-QName(.)"/>
+            </j:ref>
+          </xsl:for-each>
+        </j:array>
+      </xsl:if>
+      <xsl:variable name="all-of" as="xs:QName*">
+        <xsl:apply-templates mode="component-json-schema-all-of"/>
+      </xsl:variable>
+      <xsl:if test="count($all-of) gt 0">
+        <j:array key="allOf">
+          <xsl:for-each select="$all-of">
+            <j:ref qname="{.}">
+              <xsl:namespace name="{prefix-from-QName(.)}"
+                             select="namespace-uri-from-QName(.)"/>
+            </j:ref>
+          </xsl:for-each>
+        </j:array>
+      </xsl:if>
+      <xsl:apply-templates mode="#current"/>
+    </j:map>
   </xsl:template>
 
   <xsl:template
     match="/xs:schema/xs:*[@name]"
     mode="component-json-schema"
     priority="-1">
-    <p>JSON Schema for this component has not been defined.</p>
+    <j:note>
+      <p>JSON Schema for this component has not been defined.</p>
+    </j:note>
   </xsl:template>
 
-  <xsl:template
-    match="@*|node()"
-    mode="component-xml-schema"
-    priority="-2">
-    <xsl:message terminate="yes">Unexpected content (mode=component-xml-schema; name()=<xsl:value-of select="name()"/>)</xsl:message>
+  <!-- terminal -->
+  <xsl:template match="text()
+                       | xs:annotation"
+                mode="component-json-schema"
+                priority="-1"/>
+
+  <!-- pass-through -->
+  <xsl:template match="xs:complexContent |
+                       xs:extension[@base] |
+                       xs:element[@ref] |
+                       xs:simpleContent |
+                       xs:attribute[@ref] |
+                       xs:attributeGroup[@ref] |
+                       xs:anyAttribute |
+                       xs:sequence"
+                mode="component-json-schema"
+                priority="-1">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+
+  <xsl:template match="@*|node()"
+                mode="component-json-schema"
+                priority="-2">
+    <xsl:message terminate="yes">Unexpected content (mode=component-json-schema; name()=<xsl:value-of select="name()"/>)</xsl:message>
   </xsl:template>
 
   <!-- 
@@ -84,10 +134,10 @@
           <j:string key="type">array</j:string>
           <xsl:if test="exists($element-type)">
             <j:map key="items">
-              <j:ref-to-definition key="$ref" qname="{$element-type-qname}">
+              <j:ref key="$ref" qname="{$element-type-qname}" ref-style="definition">
                 <xsl:namespace name="{prefix-from-QName($element-type-qname)}"
                                select="namespace-uri-from-QName($element-type-qname)"/>
-              </j:ref-to-definition>
+              </j:ref>
             </j:map>
           </xsl:if>
           <xsl:if test="($min cast as xs:integer) gt 0">
@@ -104,10 +154,10 @@
         <!-- single item -->
         <xsl:otherwise>
           <xsl:if test="exists($element/@type)">
-            <j:ref-to-definition key="$ref" qname="{$element-type-qname}">
+            <j:ref key="$ref" qname="{$element-type-qname}" ref-style="definition">
               <xsl:namespace name="{prefix-from-QName($element-type-qname)}"
                              select="namespace-uri-from-QName($element-type-qname)"/>
-            </j:ref-to-definition>
+            </j:ref>
           </xsl:if>
         </xsl:otherwise>
       </xsl:choose>
@@ -125,14 +175,22 @@
       <xsl:if test="exists($attribute/@type)">
         <xsl:variable name="attribute-type-qname" as="xs:QName"
                       select="f:attribute-get-qname($attribute/@type)"/>
-        <j:ref-to-definition key="$ref" qname="{$attribute-type-qname}">
+        <j:ref key="$ref" qname="{$attribute-type-qname}" ref-style="definition">
           <xsl:namespace name="{prefix-from-QName($attribute-type-qname)}"
                          select="namespace-uri-from-QName($attribute-type-qname)"/>
-        </j:ref-to-definition>
+        </j:ref>
       </xsl:if>
     </j:map>
   </xsl:template>
 
+  <xsl:template match="xs:anyAttribute"
+                mode="component-json-schema-properties">
+    <j:note>
+      <p xmlns="http://www.w3.org/1999/xhtml">
+        <xsl:text>There is no JSON representation for xs:anyAttribute.</xsl:text>
+      </p>
+    </j:note>
+  </xsl:template>
 
   <xsl:template match="
                        xs:complexContent |
@@ -159,10 +217,95 @@
   <!-- 
        =============================================================================       
        mode component-json-schema-required
+       as="xs:QName*"
+       Yield qnames for required components
     -->
 
+  <xsl:template match="xs:element[@ref]"
+                mode="component-json-schema-required"
+                as="xs:QName*">
+    <xsl:sequence select="if (f:element-use-get-min-occurs(.) gt 0)
+                          then f:attribute-get-qname(@ref)
+                          else ()"/>
+  </xsl:template>
+
+  <xsl:template match="xs:attribute[@ref]"
+                mode="component-json-schema-required"
+                as="xs:QName*">
+    <xsl:sequence select="if (f:attribute-use-get-min-occurs(.) gt 0)
+                          then f:attribute-get-qname(@ref)
+                          else ()"/>
+  </xsl:template>
+
+  <xsl:template match="
+                       xs:complexContent |
+                       xs:simpleContent |
+                       xs:sequence |
+                       xs:attributeGroup |
+                       xs:anyAttribute |
+                       xs:extension"
+                mode="component-json-schema-required"
+                as="xs:QName*"
+                priority="-1">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+
+  <xsl:template match="text() | comment() |
+                       xs:annotation"
+                mode="component-json-schema-required"
+                as="xs:QName*"
+                priority="-1"/>
+
   <xsl:template match="@*|node()"
-                mode="component-json-schema-required"/>
+                mode="component-json-schema-required"
+                as="xs:QName*"
+                priority="-2">
+    <xsl:message terminate="yes">Unexpected content (mode=component-json-schema-required; name()=<xsl:value-of select="name()"/>)</xsl:message>
+  </xsl:template>
+
+  <!-- 
+       =============================================================================       
+       mode component-json-schema-all-of
+    -->
+
+  <xsl:template match="xs:extension[@base] | xs:restriction[@base]"
+                mode="component-json-schema-all-of"
+                as="xs:QName*">
+    <xsl:sequence select="f:attribute-get-qname(@base)"/>
+  </xsl:template>
+
+  <xsl:template match="xs:attributeGroup[@ref]"
+                mode="component-json-schema-all-of"
+                as="xs:QName*">
+    <xsl:sequence select="f:attribute-get-qname(@ref)"/>
+  </xsl:template>
+
+  <!-- pass-through -->
+  <xsl:template match="xs:complexContent |
+                       xs:sequence |
+                       xs:simpleContent"
+                mode="component-json-schema-all-of"
+                priority="-1">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+
+  <!-- terminal -->
+  <xsl:template match="text() | comment() |
+                       xs:element[@ref] |
+                       xs:attribute[@ref] |
+                       xs:anyAttribute |
+                       xs:annotation"
+                as="xs:QName*"
+                mode="component-json-schema-all-of"
+                priority="-1"/>
+
+  <xsl:template match="@*|node()"
+                mode="component-json-schema-all-of"
+                as="xs:QName*"
+                priority="-2">
+    <xsl:message terminate="yes">Unexpected content (mode=component-json-schema-all-of; name()=<xsl:value-of select="name()"/>)</xsl:message>
+  </xsl:template>
+
 
 
   <!-- 
@@ -193,7 +336,7 @@
 
   <xsl:function name="f:json-put-comma">
     <xsl:param name="context" as="element()"/>
-    <xsl:if test="exists($context/following-sibling::*)">,</xsl:if>
+    <xsl:if test="exists($context/following-sibling::*[not(self::j:note)])">,</xsl:if>
   </xsl:function>
 
   <xsl:template match="j:map"
@@ -240,13 +383,16 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="j:ref-to-definition"
+  <xsl:template match="j:ref"
                 mode="json-to-html">
     <xsl:variable name="qname" select="f:attribute-get-qname(@qname)"/>
     <div class="block">
       <div class="line">
         <xsl:sequence select="f:json-key-to-html(.)"/>
-        <xsl:text>&quot;#/definitions/</xsl:text>
+        <xsl:text>&quot;</xsl:text>
+        <xsl:if test="@ref-style = 'definition'">
+          <xsl:text>#/definitions/</xsl:text>
+        </xsl:if>
         <a href="{f:qname-get-href('../..', $qname)}#json-schema">
           <xsl:value-of select="$qname"/>
         </a>
@@ -256,12 +402,15 @@
     </div>
   </xsl:template>
 
+  <!-- squash -->
+  <xsl:template match="j:note" mode="json-to-html">
+  </xsl:template>
+
   <xsl:template
     match="@*|node()"
     mode="json-to-html"
     priority="-2">
     <xsl:message terminate="yes">Unexpected content (mode=json-to-html; name()=<xsl:value-of select="name()"/>)</xsl:message>
   </xsl:template>
-  
 
 </xsl:stylesheet>

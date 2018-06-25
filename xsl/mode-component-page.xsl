@@ -2,6 +2,7 @@
   exclude-result-prefixes="xs f"
   version="2.0"
   xmlns:f="http://example.org/functions"
+  xmlns:j="http://www.w3.org/2005/xpath-functions"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   
@@ -148,13 +149,18 @@
         </a>
 
         <h2>JSON Schema</h2>
+        <xsl:variable name="json-schema-results">
+          <xsl:apply-templates select="." mode="component-json-schema"/>
+        </xsl:variable>
         <a name="json-schema">
           <div class="json-schema">
-            <xsl:apply-templates select="."
-                                 mode="component-json-schema"/>
+            <xsl:sequence select="f:json-xml-to-html($json-schema-results)"/>
           </div>
         </a>
-
+        <xsl:if test="$json-schema-results//j:note">
+          <h3>Notes</h3>
+          <xsl:copy-of select="$json-schema-results//j:note/*"/>
+        </xsl:if>
       </body>
     </html>
   </xsl:template>

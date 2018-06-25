@@ -183,17 +183,36 @@
                                 else concat(' [', $min, '-', $max, ']'))"/>
   </xsl:function>
 
+  <!-- attribute use -->
+
+  <!-- attribute use cardinality:
+       empty, 'optional': 0-1
+       'prohibited': 0
+       'required': 1
+    -->
+
+  <xsl:function name="f:attribute-use-get-min-occurs" as="xs:integer">
+    <xsl:param name="context" as="element(xs:attribute)"/>
+    <xsl:sequence select="if ($context/@use = 'required') then 1 else 0"/>
+  </xsl:function>
+
+  <xsl:function name="f:attribute-use-get-max-occurs" as="xs:integer">
+    <xsl:param name="context" as="element(xs:attribute)"/>
+    <xsl:sequence select="if ($context/@use = 'prohibited') then 0 else 1"/>
+  </xsl:function>
+
   <xsl:function name="f:attribute-use-get-cardinality" as="xs:string">
     <xsl:param name="context" as="element(xs:attribute)"/>
-    <xsl:value-of>
-      <xsl:choose>
-        <xsl:when test="$context/@use = 'required'"></xsl:when>
-        <xsl:when test="$context/@use = 'prohibited'"> [0]</xsl:when>
-        <xsl:when test="$context/@use = 'optional'"> [0-1]</xsl:when>
-        <xsl:otherwise> [0-1]</xsl:otherwise>
-      </xsl:choose>
-    </xsl:value-of>
+    <xsl:variable name="min" select="string(f:attribute-use-get-min-occurs($context))"/>
+    <xsl:variable name="max" select="string(f:attribute-use-get-max-occurs($context))"/>
+    <xsl:value-of select="if ($min = '1' and $max = '1')
+                          then ''
+                          else (if ($min = $max)
+                                then concat(' [', $min, ']')
+                                else concat(' [', $min, '-', $max, ']'))"/>
   </xsl:function>
+
+  <!-- sequence -->
 
   <xsl:function name="f:sequence-as-text-list" as="xs:string">
     <xsl:param name="list"/>
