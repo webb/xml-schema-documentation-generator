@@ -1,8 +1,8 @@
 <xsl:stylesheet 
-  exclude-result-prefixes="f xs"
+  exclude-result-prefixes="f xs json"
   version="2.0"
   xmlns:f="http://example.org/functions"
-  xmlns:j="http://www.w3.org/2005/xpath-functions"
+  xmlns:json="http://www.w3.org/2005/xpath-functions"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -31,83 +31,83 @@
     match="/xs:schema/xs:complexType[@name]"
     mode="component-json-schema">
     <xsl:variable name="this-qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
-    <j:note><p>The JSON above should be added to the <code>definitions</code> section of a JSON Schema document.</p>
-    </j:note>
-    <j:map key="{$this-qname}" key-style="qname">
+    <json:note><p>The JSON above should be added to the <code>definitions</code> section of a JSON Schema document.</p>
+    </json:note>
+    <json:map key="{$this-qname}" key-style="qname">
       <xsl:namespace name="{prefix-from-QName($this-qname)}"
                      select="namespace-uri-from-QName($this-qname)"/>
-      <j:string key="type">object</j:string>
-      <j:map key="properties">
+      <json:string key="type">object</json:string>
+      <json:map key="properties">
         <xsl:apply-templates mode="component-json-schema-properties"/>
-      </j:map>
+      </json:map>
       <xsl:variable name="required" as="xs:QName*">
         <xsl:apply-templates mode="component-json-schema-required"/>
       </xsl:variable>
       <xsl:if test="exists($required)">
-        <j:array key="required">
+        <json:array key="required">
           <xsl:for-each select="$required">
-            <j:ref qname="{.}">
+            <json:ref qname="{.}">
               <xsl:namespace name="{prefix-from-QName(.)}"
                              select="namespace-uri-from-QName(.)"/>
-            </j:ref>
+            </json:ref>
           </xsl:for-each>
-        </j:array>
+        </json:array>
       </xsl:if>
       <xsl:variable name="all-of" as="xs:QName*">
         <xsl:apply-templates mode="component-json-schema-all-of"/>
       </xsl:variable>
       <xsl:if test="count($all-of) gt 0">
-        <j:array key="allOf">
+        <json:array key="allOf">
           <xsl:for-each select="$all-of">
-            <j:ref qname="{.}">
+            <json:ref qname="{.}">
               <xsl:namespace name="{prefix-from-QName(.)}"
                              select="namespace-uri-from-QName(.)"/>
-            </j:ref>
+            </json:ref>
           </xsl:for-each>
-        </j:array>
+        </json:array>
       </xsl:if>
       <xsl:apply-templates mode="#current"/>
-    </j:map>
+    </json:map>
   </xsl:template>
 
   <xsl:template
     match="/xs:schema/xs:element[@name]"
     mode="component-json-schema">
     <xsl:variable name="this-qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
-    <j:note><p>The JSON above should be added to the <code>definitions</code> section of a JSON Schema document.</p>
-    </j:note>
-    <j:map key="{$this-qname}" key-style="qname">
+    <json:note><p>The JSON above should be added to the <code>definitions</code> section of a JSON Schema document.</p>
+    </json:note>
+    <json:map key="{$this-qname}" key-style="qname">
       <xsl:namespace name="{prefix-from-QName($this-qname)}"
                      select="namespace-uri-from-QName($this-qname)"/>
       <xsl:if test="exists(f:backlinks-get-substitutable-elements($this-qname))">
-        <j:note><p>There are elements that are substitutable for this element. There is no JSON Schema representation for element substitutions.</p>
-        </j:note>
+        <json:note><p>There are elements that are substitutable for this element. There is no JSON Schema representation for element substitutions.</p>
+        </json:note>
       </xsl:if>
       <xsl:choose>
         <xsl:when test="exists(@type)">
           <xsl:variable name="type-qname" as="xs:QName" select="f:attribute-get-qname(@type)"/>
-          <j:ref key="$ref" qname="{$type-qname}" ref-style="definition">
+          <json:ref key="$ref" qname="{$type-qname}" ref-style="definition">
             <xsl:namespace name="{prefix-from-QName($type-qname)}"
                            select="namespace-uri-from-QName($type-qname)"/>
-          </j:ref>
+          </json:ref>
         </xsl:when>
         <xsl:otherwise>
-          <j:note>
+          <json:note>
             <p>This element has no type. Its content model will be very permissive.</p>
-          </j:note>
-          <j:string key="type">object</j:string>
+          </json:note>
+          <json:string key="type">object</json:string>
         </xsl:otherwise>
       </xsl:choose>
-    </j:map>
+    </json:map>
   </xsl:template>  
 
   <xsl:template
     match="/xs:schema/xs:*[@name]"
     mode="component-json-schema"
     priority="-1">
-    <j:note>
+    <json:note>
       <p>JSON Schema for this component has not been defined.</p>
-    </j:note>
+    </json:note>
   </xsl:template>
 
   <!-- terminal -->
@@ -154,7 +154,7 @@
                   select="if (exists($element-type-qname)) 
                           then f:qname-resolve-type($element-type-qname)
                           else ()"/>
-    <j:map key="{$element-qname}" key-style="qname">
+    <json:map key="{$element-qname}" key-style="qname">
       <xsl:namespace name="{prefix-from-QName($element-qname)}"
                      select="namespace-uri-from-QName($element-qname)"/>
       <xsl:variable name="min" select="f:element-use-get-min-occurs(.)" as="xs:integer"/>
@@ -162,43 +162,43 @@
       <xsl:choose>
         <!-- arrays -->
         <xsl:when test="$max = 'n' or ($max cast as xs:integer) gt 1">
-          <j:string key="type">array</j:string>
+          <json:string key="type">array</json:string>
           <xsl:if test="exists($element-type)">
-            <j:map key="items">
-              <j:ref key="$ref" qname="{$element-type-qname}" ref-style="definition">
+            <json:map key="items">
+              <json:ref key="$ref" qname="{$element-type-qname}" ref-style="definition">
                 <xsl:namespace name="{prefix-from-QName($element-type-qname)}"
                                select="namespace-uri-from-QName($element-type-qname)"/>
-              </j:ref>
-            </j:map>
+              </json:ref>
+            </json:map>
           </xsl:if>
           <xsl:if test="($min cast as xs:integer) gt 0">
-            <j:number key="minItems">
+            <json:number key="minItems">
               <xsl:value-of select="$min"/>
-            </j:number>
+            </json:number>
           </xsl:if>
           <xsl:if test="$max != 'n'">
-            <j:number key="maxItems">
+            <json:number key="maxItems">
               <xsl:value-of select="$max"/>
-            </j:number>
+            </json:number>
           </xsl:if>
         </xsl:when>
         <!-- single item -->
         <xsl:otherwise>
           <xsl:if test="exists($element/@type)">
-            <j:ref key="$ref" qname="{$element-type-qname}" ref-style="definition">
+            <json:ref key="$ref" qname="{$element-type-qname}" ref-style="definition">
               <xsl:namespace name="{prefix-from-QName($element-type-qname)}"
                              select="namespace-uri-from-QName($element-type-qname)"/>
-            </j:ref>
+            </json:ref>
           </xsl:if>
         </xsl:otherwise>
       </xsl:choose>
-    </j:map>
+    </json:map>
   </xsl:template>
 
   <xsl:template match="xs:attribute[@ref]"
                 mode="component-json-schema-properties">
     <xsl:variable name="ref-qname" as="xs:QName" select="f:attribute-get-qname(@ref)"/>
-    <j:map key="{$ref-qname}" key-style="qname">
+    <json:map key="{$ref-qname}" key-style="qname">
       <xsl:namespace name="{prefix-from-QName($ref-qname)}"
                      select="namespace-uri-from-QName($ref-qname)"/>
       <xsl:variable name="attribute" as="element(xs:attribute)?"
@@ -206,21 +206,21 @@
       <xsl:if test="exists($attribute/@type)">
         <xsl:variable name="attribute-type-qname" as="xs:QName"
                       select="f:attribute-get-qname($attribute/@type)"/>
-        <j:ref key="$ref" qname="{$attribute-type-qname}" ref-style="definition">
+        <json:ref key="$ref" qname="{$attribute-type-qname}" ref-style="definition">
           <xsl:namespace name="{prefix-from-QName($attribute-type-qname)}"
                          select="namespace-uri-from-QName($attribute-type-qname)"/>
-        </j:ref>
+        </json:ref>
       </xsl:if>
-    </j:map>
+    </json:map>
   </xsl:template>
 
   <xsl:template match="xs:anyAttribute"
                 mode="component-json-schema-properties">
-    <j:note>
+    <json:note>
       <p xmlns="http://www.w3.org/1999/xhtml">
         <xsl:text>There is no JSON representation for xs:anyAttribute.</xsl:text>
       </p>
-    </j:note>
+    </json:note>
   </xsl:template>
 
   <xsl:template match="
@@ -367,10 +367,10 @@
 
   <xsl:function name="f:json-put-comma">
     <xsl:param name="context" as="element()"/>
-    <xsl:if test="exists($context/following-sibling::*[not(self::j:note)])">,</xsl:if>
+    <xsl:if test="exists($context/following-sibling::*[not(self::json:note)])">,</xsl:if>
   </xsl:function>
 
-  <xsl:template match="j:map"
+  <xsl:template match="json:map"
                 mode="json-to-html">
 
     <div class="block">
@@ -386,7 +386,7 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="j:array"
+  <xsl:template match="json:array"
                 mode="json-to-html">
     <div class="block">
       <div class="line">
@@ -401,7 +401,7 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="j:string"
+  <xsl:template match="json:string"
                 mode="json-to-html">
     <div class="block">
       <div class="line">
@@ -414,7 +414,7 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="j:ref"
+  <xsl:template match="json:ref"
                 mode="json-to-html">
     <xsl:variable name="qname" select="f:attribute-get-qname(@qname)"/>
     <div class="block">
@@ -434,7 +434,7 @@
   </xsl:template>
 
   <!-- squash -->
-  <xsl:template match="j:note" mode="json-to-html">
+  <xsl:template match="json:note" mode="json-to-html">
   </xsl:template>
 
   <xsl:template
