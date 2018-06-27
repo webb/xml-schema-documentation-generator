@@ -100,7 +100,8 @@ endif
 #  ${build_dir}/index.html
 #  ${namespaces:%=${build_dir}/index.html}
 all_files = \
-  ${components:%=${build_dir}/%/index.html}
+  ${build_dir}/index.html \
+  ${components:%=${build_dir}/%/index.html} \
 
 install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 
@@ -109,13 +110,19 @@ install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 #HELP:        Default xml_catalog=@xml_catalog@
 # all: ${generate_pages_token}
 # all: ${all_files}
-all: ${components:%=${build_dir}/%/index.html}
+all: ${all_files}
 
 ${backlinks_file}: ${xml_catalog} | ${prefixes_file} ${xml_catalog} ${all_sources}
 	${MKDIR_P} ${dir $@}
 	${saxon} -s:$< -o:$@ -xsl:xsl/collect-backlinks.xsl \
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog}
+
+${build_dir}/index.html: ${xml_catalog} ${prefixes_file}
+	${MKDIR_P} ${dir $@}
+	${saxon} -s:${xml_catalog} -o:$@ -xsl:xsl/root-index.xsl \
+	+prefixes-file=${prefixes_file} \
+	+xml-catalog-file=${xml_catalog}
 
 ${build_dir}/%/index.html: ${build_dir}/%/diagram.png.base64 ${build_dir}/%/diagram.map
 	${saxon} -s:inputs/empty.xml -o:$@ -xsl:xsl/mode-component-page.xsl \

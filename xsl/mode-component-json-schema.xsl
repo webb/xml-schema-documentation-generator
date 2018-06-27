@@ -71,6 +71,37 @@
   </xsl:template>
 
   <xsl:template
+    match="/xs:schema/xs:element[@name]"
+    mode="component-json-schema">
+    <xsl:variable name="this-qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <j:note><p>The JSON above should be added to the <code>definitions</code> section of a JSON Schema document.</p>
+    </j:note>
+    <j:map key="{$this-qname}" key-style="qname">
+      <xsl:namespace name="{prefix-from-QName($this-qname)}"
+                     select="namespace-uri-from-QName($this-qname)"/>
+      <xsl:if test="exists(f:backlinks-get-substitutable-elements($this-qname))">
+        <j:note><p>There are elements that are substitutable for this element. There is no JSON Schema representation for element substitutions.</p>
+        </j:note>
+      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="exists(@type)">
+          <xsl:variable name="type-qname" as="xs:QName" select="f:attribute-get-qname(@type)"/>
+          <j:ref key="$ref" qname="{$type-qname}" ref-style="definition">
+            <xsl:namespace name="{prefix-from-QName($type-qname)}"
+                           select="namespace-uri-from-QName($type-qname)"/>
+          </j:ref>
+        </xsl:when>
+        <xsl:otherwise>
+          <j:note>
+            <p>This element has no type. Its content model will be very permissive.</p>
+          </j:note>
+          <j:string key="type">object</j:string>
+        </xsl:otherwise>
+      </xsl:choose>
+    </j:map>
+  </xsl:template>  
+
+  <xsl:template
     match="/xs:schema/xs:*[@name]"
     mode="component-json-schema"
     priority="-1">

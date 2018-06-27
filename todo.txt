@@ -1,0 +1,2 @@
+
+* note in complex type json schema that substitutable elements aren't represented.
