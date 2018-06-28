@@ -138,7 +138,10 @@ ${tokens_dir}/built-indexes:
 	${touch} $@
 
 ${build_dir}/%/index.html: ${build_dir}/%/diagram.png.base64 ${build_dir}/%/diagram.map
-	${saxon} -s:${srcdir}/inputs/empty.xml -o:$@ -xsl:${srcdir}/xsl/mode-component-page.xsl \
+	${saxon} \
+	  -s:${srcdir}/inputs/empty.xml \
+	  -o:$@ \
+	  -xsl:${srcdir}/xsl/mode-component-page.xsl \
 	  -im:"{}component-page" \
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog} \
@@ -159,7 +162,9 @@ ${tokens_dir}/build-graphics/%: ${build_dir}/%/diagram.dot
 	@ touch $@
 
 ${build_dir}/%/diagram.dot: | ${backlinks_file} ${build_dir}/%/dir-exists-token
-	${saxon} -s:${srcdir}/inputs/empty.xml -o:$@ \
+	${saxon} \
+	  -s:${srcdir}/inputs/empty.xml \
+	  -o:$@ \
 	  -xsl:${srcdir}/xsl/mode-component-diagram.xsl \
 	  -im:"{}component-diagram" \
 	  +prefixes-file=${prefixes_file} \
