@@ -414,6 +414,17 @@
     </div>
   </xsl:template>
 
+  <xsl:template match="json:number"
+                mode="json-to-html">
+    <div class="block">
+      <div class="line">
+        <xsl:sequence select="f:json-key-to-html(.)"/>
+        <xsl:value-of select="."/>
+        <xsl:value-of select="f:json-put-comma(.)"/>
+      </div>
+    </div>
+  </xsl:template>
+
   <xsl:template match="json:ref"
                 mode="json-to-html">
     <xsl:variable name="qname" select="f:attribute-get-qname(@qname)"/>
