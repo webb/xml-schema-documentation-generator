@@ -36,6 +36,21 @@
     </xsl:for-each>
     <xsl:text>&#10;</xsl:text>
     
+    <xsl:for-each select="$prefixes">
+
+      <xsl:text>${build_dir}/</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>/index.html</xsl:text>
+      <xsl:text>:</xsl:text>
+      <xsl:text>&#10;</xsl:text>
+      
+      <xsl:text>&#9;${call run_build_namespace_index,</xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>}&#10;</xsl:text>
+
+      <xsl:text>&#10;</xsl:text>
+    </xsl:for-each>
+    
     <xsl:text>components = \&#10;</xsl:text>
     <xsl:for-each select="$components-sorted">
       <xsl:text>  </xsl:text>
@@ -45,13 +60,28 @@
       <xsl:text> \&#10;</xsl:text>
     </xsl:for-each>
     <xsl:text>&#10;</xsl:text>
-    
-    <!--
-    <xsl:text>namespaces = \&#10;</xsl:text>
-    <xsl:apply-templates mode="namespaces" select="."/>
-    <xsl:text>&#10;</xsl:text>
-    -->
-    
+
+    <xsl:for-each select="$components-sorted">
+      <xsl:variable name="path" as="xs:string" select="concat(prefix-from-QName(.), '/', local-name-from-QName(.))"/>
+      <xsl:text>${build_dir}/</xsl:text>
+      <xsl:value-of select="$path"/>
+      <xsl:text>/index.html</xsl:text>
+      <xsl:text>: </xsl:text>
+      <xsl:text>${build_dir}/</xsl:text>
+      <xsl:value-of select="$path"/>
+      <xsl:text>/diagram.png.base64</xsl:text>
+      <xsl:text> </xsl:text>
+      <xsl:text>${build_dir}/</xsl:text>
+      <xsl:value-of select="$path"/>
+      <xsl:text>/diagram.map</xsl:text>
+      <xsl:text>&#10;</xsl:text>
+      
+      <xsl:text>&#9;${call run_build_component_index,</xsl:text>
+      <xsl:value-of select="$path"/>
+      <xsl:text>}&#10;</xsl:text>
+
+      <xsl:text>&#10;</xsl:text>
+    </xsl:for-each>
   </xsl:template>
 
   <!-- ============================================================================= -->

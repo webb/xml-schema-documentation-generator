@@ -29,6 +29,9 @@ xml_catalog = @xml_catalog@
 # autoconf stuff
 MKDIR_P = @MKDIR_P@
 INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_DATA = @INSTALL_DATA@
 SED = @SED@
 # unix stuff
 find = @find@
@@ -96,17 +99,40 @@ ifeq (${namespaces},)
 ${warning Prequisites/dependencies not present. Run "make depend=true"}
 endif
 
-#  ${build_dir}/index.html
-#  ${namespaces:%=${build_dir}/index.html}
+define run_install =
+${MKDIR_P} ${install_dir}/$1
+${INSTALL_DATA} ${build_dir}/$1/index.html ${install_dir}/$1/index.html 
+endef
 
-index_files = \
-  ${build_dir}/index.html \
-  ${namespaces:%=${build_dir}/%/index.html} \
+define run_build_namespace_index =
+${MKDIR_P} ${build_dir}/$1
+${saxon} \
+  -s:${srcdir}/inputs/empty.xml \
+  -o:$@ \
+  -xsl:${srcdir}/xsl/generate-namespace-index.xsl \
+  +prefixes-file=${prefixes_file} \
+  +xml-catalog-file=${xml_catalog} \
+  prefix=$1
+endef
 
-targets = ${tokens_dir}/built-indexes  ${components:%=${build_dir}/%/index.html} \
+define run_build_component_index =
+${MKDIR_P} ${build_dir}/$1
+${saxon} \
+  -s:${srcdir}/inputs/empty.xml \
+  -o:${build_dir}/$1/index.html \
+  -xsl:${srcdir}/xsl/mode-component-page.xsl \
+  -im:"{}component-page" \
+  +prefixes-file=${prefixes_file} \
+  +xml-catalog-file=${xml_catalog} \
+  +backlinks-file=${backlinks_file} \
+  root-path=${realpath ${build_dir}} \
+  prefix=${word 1,${subst /, ,$1}} \
+  local-name=${word 2,${subst /, ,$1}}
+endef
 
 all_files = \
-  ${index_files} \
+  ${build_dir}/index.html \
+  ${namespaces:%=${build_dir}/%/index.html} \
   ${components:%=${build_dir}/%/index.html} \
 
 install_files = ${all_files:${build_dir}/%=${install_dir}/%}
@@ -114,8 +140,7 @@ install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 #############################################################################
 .PHONY: all #    build everything from $xml_catalog
 #HELP:        Default xml_catalog=@xml_catalog@
-# all: ${all_files}
-all: ${targets}
+all: ${all_files}
 
 ${backlinks_file}: ${xml_catalog} | ${prefixes_file} ${xml_catalog} ${all_sources}
 	${MKDIR_P} ${dir $@}
@@ -123,45 +148,23 @@ ${backlinks_file}: ${xml_catalog} | ${prefixes_file} ${xml_catalog} ${all_source
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog}
 
-${index_files}: ${tokens_dir}/built-indexes
-
-${tokens_dir}/built-indexes: 
-	${MKDIR_P} ${index_files:%/index.html=%}
-	${saxon} \
-	  -s:${xml_catalog} \
-	  -o:build/build-index-files.txt \
-	  -xsl:${srcdir}/xsl/generate-indexes.xsl \
-	  +prefixes-file=${prefixes_file} \
-	  +xml-catalog-file=${xml_catalog} \
-	  root-path=${realpath ${build_dir}}
-	${MKDIR_P} ${dir $@}
-	${touch} $@
-
-${build_dir}/%/index.html: ${build_dir}/%/diagram.png.base64 ${build_dir}/%/diagram.map
+${build_dir}/index.html:
+	${MKDIR_P} ${build_dir}
 	${saxon} \
 	  -s:${srcdir}/inputs/empty.xml \
 	  -o:$@ \
-	  -xsl:${srcdir}/xsl/mode-component-page.xsl \
-	  -im:"{}component-page" \
+	  -xsl:${srcdir}/xsl/generate-root-index.xsl \
 	  +prefixes-file=${prefixes_file} \
-	  +xml-catalog-file=${xml_catalog} \
-	  +backlinks-file=${backlinks_file} \
-	  root-path=${realpath ${build_dir}} \
-	  prefix=${word 1,${subst /, ,$*}} \
-	  local-name=${word 2,${subst /, ,$*}}
+	  +xml-catalog-file=${xml_catalog}
 
 ${build_dir}/%/diagram.png.base64: ${build_dir}/%/diagram.png
 	base64 --wrap=0 $< > $@
 
-${build_dir}/%/diagram.png ${build_dir}/%/diagram.map: ${tokens_dir}/build-graphics/%
-	true
-
-${tokens_dir}/build-graphics/%: ${build_dir}/%/diagram.dot
+${build_dir}/%/diagram.png ${build_dir}/%/diagram.map: ${build_dir}/%/diagram.dot
 	dot -Tpng -o${build_dir}/$*/diagram.png -Tcmapx -o${build_dir}/$*/diagram.map $<
-	@ ${MKDIR_P} ${dir $@}
-	@ touch $@
 
-${build_dir}/%/diagram.dot: | ${backlinks_file} ${build_dir}/%/dir-exists-token
+${build_dir}/%/diagram.dot: | ${backlinks_file}
+	${MKDIR_P} ${dir $@}
 	${saxon} \
 	  -s:${srcdir}/inputs/empty.xml \
 	  -o:$@ \
@@ -174,19 +177,14 @@ ${build_dir}/%/diagram.dot: | ${backlinks_file} ${build_dir}/%/dir-exists-token
 	  prefix=${word 1,${subst /, ,$*}} \
 	  local-name=${word 2,${subst /, ,$*}}
 
-${build_dir}/%/dir-exists-token:
-	@ echo $@
-	${MKDIR_P} ${dir $@}
-	${touch} $@
-
 #############################################################################
 .PHONY: install #    install everything to $install_dir
 #HELP:        Default install_dir=@install_dir@
 install: ${install_files}
 
 ${install_dir}/%: ${build_dir}/%
-	[[ -d ${dir $@} ]] || mkdir -p ${dir $@}
-	cp $< $@
+	${MKDIR_P} ${dir $@}
+	${INSTALL_DATA} $< $@
 
 endif
 
