@@ -10,6 +10,7 @@
   xmlns="http://www.w3.org/1999/xhtml">
 
   <xsl:include href="common.xsl"/>
+  <xsl:include href="mode-components.xsl"/>
 
   <xsl:output method="xml" version="1.0" encoding="UTF-8"/>
 
@@ -18,14 +19,6 @@
   <!-- ================================================================== -->
 
   <xsl:template match="/">
-    <xsl:apply-templates select="$xml-catalog-file" mode="root-index"/>
-  </xsl:template>
-
-  <!-- ================================================================== -->
-  <!-- mode: root-index -->
-  <!-- ================================================================== -->
-
-  <xsl:template match="catalog:catalog" mode="root-index">
     <html>
       <head>
         <title>Index</title>
@@ -33,16 +26,27 @@
       </head>
       <body>
         <ul>
-          <xsl:variable name="context" as="element(catalog:catalog)"
-                        select="."/>
-          <xsl:for-each select="$prefixes">
-            <xsl:variable name="namespace" select="@uri" as="xs:string"/>
-            <xsl:variable name="catalog-uri" as="element(catalog:uri)?"
-                          select="$context/catalog:uri[@name = $namespace]"/>
-            <xsl:if test="exists($catalog-uri)">
-              <xsl:apply-templates mode="#current"
-                                   select="doc(resolve-uri($catalog-uri/@uri, base-uri($catalog-uri)))"/>
-            </xsl:if>
+          <xsl:for-each select="f:get-component-prefixes()">
+            <xsl:variable name="uri" as="xs:anyURI"
+                          select="f:prefix-get-uri(.)"/>
+            <xsl:variable name="schema" as="element(xs:schema)?"
+                          select="f:resolve-namespace($uri)"/>
+            <xsl:choose>
+              <xsl:when test="exists($schema)">
+                <xsl:apply-templates select="$schema" mode="root-index"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <li>
+                  <p>
+                    <a href="{.}/index.html">
+                      <xsl:value-of select="."/>
+                    </a>
+                    <xsl:text>: </xsl:text>
+                    <xsl:value-of select="$uri"/>
+                  </p>
+                </li>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:for-each>
         </ul>
       </body>

@@ -88,7 +88,10 @@ ${prefixes_file}: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
 
 ${definitions_mk}: ${xml_catalog} ${prefixes_file} ${all_sources}
 	${MKDIR_P} ${dir $@}
-	${saxon} -s:$< -o:$@ -xsl:${srcdir}/xsl/generate-makefile.xsl \
+	${saxon} \
+	  -s:${srcdir}/inputs/empty.xml \
+	  -o:$@ \
+	  -xsl:${srcdir}/xsl/generate-makefile.xsl \
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog}
 
