@@ -10,6 +10,7 @@
   xmlns="http://www.w3.org/1999/xhtml">
 
   <xsl:include href="common.xsl"/>
+  <xsl:include href="mode-components.xsl"/>
 
   <xsl:param name="prefix" as="xs:string" required="yes"/>
 
@@ -19,38 +20,34 @@
   <!-- default mode -->
   <!-- ================================================================== -->
 
-  <xsl:template match="/">
-    <xsl:variable name="uri" as="xs:anyURI" select="f:prefix-get-uri($prefix)"/>
-    <xsl:apply-templates select="$schema" mode="namespace-index"/>
-  </xsl:template>
-
-  <!-- ================================================================== -->
-  <!-- mode: namespace-index -->
-  <!-- ================================================================== -->
-
-  <xsl:template match="xs:schema" mode="namespace-index">
-    <html>
-      <head>
-        <title>Index for namespace <code><xsl:value-of select="f:get-target-namespace(.)"/></code></title>
+  <xsl:template match="/"> 
+    <xsl:variable name="uri" as="xs:anyURI"
+                  select="f:prefix-get-uri($prefix)"/>
+    <xsl:variable name="schema" as="element(xs:schema)?"
+                  select="f:resolve-namespace($uri)"/>
+     <head>
+        <title>Index for prefix <code><xsl:value-of select="$prefix"/></code></title>
         <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
       </head>
       <body>
         <p><a href="../index.html">All namespaces</a></p>
         <ul>
-          <xsl:apply-templates select="xs:*[@name]" mode="#current">
-            <xsl:sort select="@name"/>
-          </xsl:apply-templates>
+          <xsl:for-each select="f:get-components-with-prefix($prefix)">
+            <li>
+              <a href="{local-name-from-QName(.)}/index.html">
+                <xsl:value-of select="."/>
+                <xsl:variable name="component" as="element()?" select="f:qname-resolve(.)"/>
+                <xsl:if test="exists($component)">
+                  <xsl:text> (</xsl:text>
+                  <xsl:value-of select="local-name($component)"/>
+                  <xsl:text>)</xsl:text>
+                </xsl:if>
+                
+              </a>
+            </li>
+          </xsl:for-each>
         </ul>
       </body>
-    </html>
-  </xsl:template>
-
-  <xsl:template match="/xs:schema/xs:*[@name]" mode="namespace-index">
-    <li><a href="{@name}/index.html"><xsl:value-of select="@name"/> (<xsl:value-of select="local-name()"/>)</a></li>
-  </xsl:template>
-
-  <xsl:template match="*" mode="namespace-index" priority="-1">
-    <xsl:message terminate="yes">Unexpected element <xsl:value-of select="name()"/></xsl:message>
   </xsl:template>
 
 </xsl:stylesheet>
