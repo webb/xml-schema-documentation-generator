@@ -10,13 +10,15 @@
   <xsl:include href="backlinks.xsl"/>
   <xsl:include href="mode-htmlify.xsl"/>
   <xsl:include href="mode-component-xml-schema.xsl"/>
+  <!--
   <xsl:include href="mode-component-json-schema.xsl"/>
+  -->
 
   <xsl:param name="root-path" as="xs:string" required="yes"/>
   <xsl:param name="prefix" as="xs:string" required="yes"/>
   <xsl:param name="local-name" as="xs:string" required="yes"/>
 
-  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="no"/>
+  <xsl:output method="html" version="5.0" encoding="UTF-8" indent="no"/>
 
   <xsl:template match="/" mode="component-page">
     <xsl:variable name="qname" as="xs:QName"
@@ -150,6 +152,7 @@
           </div>
         </a>
 
+<!--
         <h2>JSON Schema</h2>
         <xsl:variable name="json-schema-results">
           <xsl:apply-templates select="." mode="component-json-schema"/>
@@ -163,6 +166,7 @@
           <h3>Notes</h3>
           <xsl:copy-of select="$json-schema-results//j:note/*"/>
         </xsl:if>
+-->
           </div>
         </div>
       </body>

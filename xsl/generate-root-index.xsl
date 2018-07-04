@@ -12,7 +12,7 @@
   <xsl:include href="common.xsl"/>
   <xsl:include href="mode-components.xsl"/>
 
-  <xsl:output method="xml" version="1.0" encoding="UTF-8"/>
+  <xsl:output method="html" version="5.0" encoding="UTF-8" indent="no"/>
 
   <!-- ================================================================== -->
   <!-- default mode -->

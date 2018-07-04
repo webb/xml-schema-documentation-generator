@@ -14,7 +14,7 @@
 
   <xsl:param name="prefix" as="xs:string" required="yes"/>
 
-  <xsl:output method="xml" version="1.0" encoding="UTF-8"/>
+  <xsl:output method="html" version="5.0" encoding="UTF-8" indent="no"/>
 
   <!-- ================================================================== -->
   <!-- default mode -->
