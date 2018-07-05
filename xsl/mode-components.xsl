@@ -18,7 +18,7 @@
   </xsl:variable>
 
   <xsl:function name="f:get-components" as="xs:QName*">
-    <xsl:sequence select="$components"></xsl:sequence>
+    <xsl:sequence select="$components"/>
   </xsl:function>
 
   <xsl:function name="f:get-components-with-prefix" as="xs:QName*">

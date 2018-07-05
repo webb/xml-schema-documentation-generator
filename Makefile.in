@@ -135,6 +135,7 @@ endef
 
 all_files = \
   ${build_dir}/index.html \
+  ${build_dir}/json-schema.json \
   ${namespaces:%=${build_dir}/%/index.html} \
   ${components:%=${build_dir}/%/index.html} \
 
@@ -151,7 +152,7 @@ ${backlinks_file}: ${xml_catalog} | ${prefixes_file} ${xml_catalog} ${all_source
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog}
 
-${build_dir}/index.html:
+${build_dir}/index.html: | ${prefixes_file} ${xml_catalog}
 	${MKDIR_P} ${build_dir}
 	${saxon} \
 	  -s:${srcdir}/inputs/empty.xml \
@@ -159,6 +160,15 @@ ${build_dir}/index.html:
 	  -xsl:${srcdir}/xsl/generate-root-index.xsl \
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog}
+
+${build_dir}/json-schema.json: | ${backlinks_file} ${xml_catalog}
+	${saxon} \
+	  -s:${srcdir}/inputs/empty.xml \
+	  -o:$@ \
+	  -xsl:${srcdir}/xsl/generate-json-schema.xsl \
+	  +prefixes-file=${prefixes_file} \
+	  +xml-catalog-file=${xml_catalog} \
+	  +backlinks-file=${backlinks_file}
 
 ${build_dir}/%/diagram.png.base64: ${build_dir}/%/diagram.png
 	base64 --wrap=0 $< > $@
