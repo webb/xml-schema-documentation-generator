@@ -202,6 +202,22 @@ ${install_dir}/%: ${build_dir}/%
 endif
 
 #############################################################################
+.PHONY: valid
+valid: \
+  ${patsubst ${srcdir}/%,${tokens_dir}/xsd-valid/%,${wildcard ${srcdir}/inputs/person/instance-*.xml}} \
+  ${patsubst ${srcdir}/%,${tokens_dir}/json-valid/%,${wildcard ${srcdir}/inputs/person/instance-*.json}}
+
+${tokens_dir}/xsd-valid/inputs/person/%.xml: ${srcdir}/inputs/person/%.xml ${srcdir}/inputs/person/subset/niem/xml-catalog.xml
+	xs-validate --catalog=${srcdir}/inputs/person/subset/niem/xml-catalog.xml $<
+	${MKDIR_P} ${dir $@}
+	touch $@
+
+${tokens_dir}/json-valid/inputs/person/%.json: ${srcdir}/inputs/person/%.json ${build_dir}/json-schema.json
+	ajv validate -s ${build_dir}/json-schema.json -d $<
+	${MKDIR_P} ${dir $@}
+	touch $@
+
+#############################################################################
 # convenience targets
 
 .PHONY: clean #    clean regular build products

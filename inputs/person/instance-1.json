@@ -1,0 +1,32 @@
+{
+  "nc:Person": {
+    "nc:PersonBirthDate" : {
+      "nc:Date" : "1984-01-24"
+    },
+    "nc:PersonBirthLocation" : {
+      "nc:Address" : {
+        "nc:LocationCityName" : "Cupertino",
+        "nc:LocationState" : {
+          "nc:LocationStateUSPostalServiceCode" : "GA"
+        }
+      }
+    },
+    "nc:PersonHeightMeasure" : {
+      "nc:MeasureDecimalValue" : 13.6,
+      "nc:LengthUnitCode" : "INH"
+    },
+    "nc:PersonName" : {
+      "nc:PersonGivenName" : "Mac",
+      "nc:PersonMiddleName" : {
+        "nc:personNameInitialIndicator" : true
+        "rdf:value" : "N"
+      }
+      "nc:PersonSurName" : "Tosh",
+    }
+    "j:PersonSexCode" : "U",
+    "nc:PersonWeightMeasure" : {
+      "nc:MeasureDecimalValue" : 16.5,
+      "nc:WeightUnitCode" : "LBR"
+    }
+  }
+}

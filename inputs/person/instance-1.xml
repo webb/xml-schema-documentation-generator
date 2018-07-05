@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nc:Person
+  xmlns:nc="http://release.niem.gov/niem/niem-core/4.0/"
+  xmlns:j="http://release.niem.gov/niem/domains/jxdm/6.0/">
+  <nc:PersonBirthDate>
+    <nc:Date>1984-01-24</nc:Date>
+  </nc:PersonBirthDate>
+  <nc:PersonBirthLocation>
+    <nc:Address>
+      <nc:LocationCityName>Cupertino</nc:LocationCityName>
+      <nc:LocationState>
+        <nc:LocationStateUSPostalServiceCode>GA</nc:LocationStateUSPostalServiceCode>
+      </nc:LocationState>
+    </nc:Address>
+  </nc:PersonBirthLocation>
+  <nc:PersonHeightMeasure>
+    <nc:MeasureDecimalValue>13.6</nc:MeasureDecimalValue>
+    <nc:LengthUnitCode>INH</nc:LengthUnitCode>
+  </nc:PersonHeightMeasure>
+  <nc:PersonName>
+    <nc:PersonGivenName>Mac</nc:PersonGivenName>
+    <nc:PersonMiddleName nc:personNameInitialIndicator="true">N</nc:PersonMiddleName>
+    <nc:PersonSurName>Tosh</nc:PersonSurName>
+  </nc:PersonName>
+  <j:PersonSexCode>U</j:PersonSexCode>
+  <nc:PersonWeightMeasure>
+    <nc:MeasureDecimalValue>16.5</nc:MeasureDecimalValue>
+    <nc:WeightUnitCode>LBR</nc:WeightUnitCode>
+  </nc:PersonWeightMeasure>
+</nc:Person>

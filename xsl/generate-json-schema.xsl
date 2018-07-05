@@ -24,10 +24,29 @@
   <xsl:template match="/">
     <xsl:variable name="json-xml-custom">
       <json:map>
-        <xsl:for-each select="f:get-components()">
-          <xsl:apply-templates select="f:qname-resolve(.)"
-                               mode="component-json-schema"/>
-        </xsl:for-each>
+        <json:string key="$schema">http://json-schema.org/draft-04/schema#</json:string>
+        <json:string key="type">object</json:string>
+        <json:boolean key="additionalProperties">false</json:boolean>
+        <json:map key="definitions">
+          <xsl:for-each select="f:get-components()">
+            <xsl:apply-templates select="f:qname-resolve(.)"
+                                 mode="component-json-schema"/>
+          </xsl:for-each>
+        </json:map>
+        <json:map key="properties">
+          <xsl:for-each select="f:get-components()">
+            <xsl:variable name="resolved" as="element()?"
+                          select="f:qname-resolve(.)"/>
+            <xsl:if test="exists($resolved[self::xs:element])">
+              <json:map key="{.}">
+                <json:string key="$ref">
+                  <xsl:text>#/definitions/</xsl:text>
+                  <xsl:value-of select="."/>
+                </json:string>
+              </json:map>
+            </xsl:if>
+          </xsl:for-each>
+        </json:map>
       </json:map>
     </xsl:variable>
     <xsl:variable name="json-xml-clean">

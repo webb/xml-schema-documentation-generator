@@ -146,4 +146,126 @@ http://www.unece.org/tradewelcome/areas-of-work/un-centre-for-trade-facilitation
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
+  <xs:simpleType name="MassCodeSimpleType">
+    <xs:annotation>
+      <xs:documentation>A data type for units of measurement for a weight value.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="2U">
+        <xs:annotation>
+          <xs:documentation>megagram</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="APZ">
+        <xs:annotation>
+          <xs:documentation>troy ounce or apothecary ounce</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="CGM">
+        <xs:annotation>
+          <xs:documentation>centigram</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="CWA">
+        <xs:annotation>
+          <xs:documentation>hundred pounds (cwt) / hundred weight (US)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="CWI">
+        <xs:annotation>
+          <xs:documentation>hundred weight (UK)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="DG">
+        <xs:annotation>
+          <xs:documentation>decigram</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="DJ">
+        <xs:annotation>
+          <xs:documentation>decagram</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="DTN">
+        <xs:annotation>
+          <xs:documentation>decitonne</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="GRM">
+        <xs:annotation>
+          <xs:documentation>gram</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="GRN">
+        <xs:annotation>
+          <xs:documentation>grain</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="HGM">
+        <xs:annotation>
+          <xs:documentation>hectogram</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="KGM">
+        <xs:annotation>
+          <xs:documentation>kilogram</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="KTN">
+        <xs:annotation>
+          <xs:documentation>kilotonne</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="LBR">
+        <xs:annotation>
+          <xs:documentation>pound</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="LTN">
+        <xs:annotation>
+          <xs:documentation>ton (UK) or long ton (US)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MC">
+        <xs:annotation>
+          <xs:documentation>microgram</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MGM">
+        <xs:annotation>
+          <xs:documentation>milligram</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="ONZ">
+        <xs:annotation>
+          <xs:documentation>ounce (avoirdupois)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="STI">
+        <xs:annotation>
+          <xs:documentation>stone (UK)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="STN">
+        <xs:annotation>
+          <xs:documentation>ton (US) or short ton (UK/US)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="TNE">
+        <xs:annotation>
+          <xs:documentation>tonne (metric ton)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="MassCodeType">
+    <xs:annotation>
+      <xs:documentation>A data type for units of measurement for a weight value.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="unece:MassCodeSimpleType">
+        <xs:attributeGroup ref="structures:SimpleObjectAttributeGroup"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 </xs:schema>
