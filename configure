@@ -2116,7 +2116,7 @@ $as_echo "$as_me: WARNING: install_dir ${install_dir} does not exist" >&2;}
      fi
 fi
 
-default_xml_catalog=${srcdir}/inputs/person-subset/niem/xml-catalog.xml
+default_xml_catalog=${srcdir}/inputs/person/subset/niem/xml-catalog.xml
 if test "x$xml_catalog" = "x"
 then { $as_echo "$as_me:${as_lineno-$LINENO}: Variable xml_catalog not set. Using default ($default_xml_catalog)" >&5
 $as_echo "$as_me: Variable xml_catalog not set. Using default ($default_xml_catalog)" >&6;}
