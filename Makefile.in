@@ -161,7 +161,7 @@ ${build_dir}/index.html: | ${prefixes_file} ${xml_catalog}
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog}
 
-${build_dir}/json-schema.json: | ${backlinks_file} ${xml_catalog}
+${build_dir}/json-schema-unformatted.json: | ${backlinks_file} ${xml_catalog}
 	${saxon} \
 	  -s:${srcdir}/inputs/empty.xml \
 	  -o:$@ \
@@ -169,6 +169,9 @@ ${build_dir}/json-schema.json: | ${backlinks_file} ${xml_catalog}
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog} \
 	  +backlinks-file=${backlinks_file}
+
+${build_dir}/json-schema.json: ${build_dir}/json-schema-unformatted.json
+	jq . $< > $@
 
 ${build_dir}/%/diagram.png.base64: ${build_dir}/%/diagram.png
 	base64 --wrap=0 $< > $@

@@ -8,6 +8,8 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml">
 
+  <xsl:variable name="rdf-namespace">http://www.w3.org/1999/02/22-rdf-syntax-ns#</xsl:variable>
+
   <xsl:function name="f:json-xml-to-html">
     <xsl:param name="content"/>
     <xsl:apply-templates select="$content" mode="json-to-html"/>
@@ -59,10 +61,12 @@
       <xsl:if test="count($all-of) gt 0">
         <json:array key="allOf">
           <xsl:for-each select="$all-of">
-            <json:ref qname="{.}">
-              <xsl:namespace name="{prefix-from-QName(.)}"
-                             select="namespace-uri-from-QName(.)"/>
-            </json:ref>
+            <json:map>
+              <json:ref key="$ref" qname="{.}" ref-style="definition">
+                <xsl:namespace name="{prefix-from-QName(.)}"
+                               select="namespace-uri-from-QName(.)"/>
+              </json:ref>
+            </json:map>
           </xsl:for-each>
         </json:array>
       </xsl:if>
@@ -74,13 +78,14 @@
     match="/xs:schema/xs:element[@name]"
     mode="component-json-schema">
     <xsl:variable name="this-qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
-    <json:note><p>The JSON above should be added to the <code>definitions</code> section of a JSON Schema document.</p>
+    <json:note><p>The JSON above should be added to the <q>definitions</q>
+        section of a JSON Schema document.</p>
     </json:note>
     <json:map key="{$this-qname}" key-style="qname">
       <xsl:namespace name="{prefix-from-QName($this-qname)}"
                      select="namespace-uri-from-QName($this-qname)"/>
       <xsl:if test="exists(f:backlinks-get-substitutable-elements($this-qname))">
-        <json:note><p>There are elements that are substitutable for this element. There is no JSON Schema representation for element substitutions.</p>
+        <json:note><p>There are elements that are substitutable for element <q><xsl:value-of select="$this-qname"/></q>. There is no JSON Schema representation for element substitutions.</p>
         </json:note>
       </xsl:if>
       <xsl:choose>
@@ -93,13 +98,58 @@
         </xsl:when>
         <xsl:otherwise>
           <json:note>
-            <p>This element has no type. Its content model will be very permissive.</p>
+            <p>Element <q><xsl:value-of select="$this-qname"/></q> has no type. Its content model will be very permissive.</p>
           </json:note>
           <json:string key="type">object</json:string>
         </xsl:otherwise>
       </xsl:choose>
     </json:map>
   </xsl:template>  
+
+  <xsl:template
+    match="/xs:schema/xs:simpleType[@name]"
+    mode="component-json-schema">
+    <xsl:variable name="this-qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
+    <json:note><p>The JSON above should be added to the <code>definitions</code> section of a JSON Schema document.</p>
+    </json:note>
+    <json:map key="{$this-qname}" key-style="qname">
+      <xsl:namespace name="{prefix-from-QName($this-qname)}"
+                     select="namespace-uri-from-QName($this-qname)"/>
+      <json:string key="type">object</json:string>
+      <json:map key="properties">
+        <xsl:apply-templates mode="component-json-schema-properties"/>
+      </json:map>
+      <xsl:variable name="required" as="xs:QName*">
+        <xsl:apply-templates mode="component-json-schema-required"/>
+      </xsl:variable>
+      <xsl:if test="exists($required)">
+        <json:array key="required">
+          <xsl:for-each select="$required">
+            <json:ref qname="{.}">
+              <xsl:namespace name="{prefix-from-QName(.)}"
+                             select="namespace-uri-from-QName(.)"/>
+            </json:ref>
+          </xsl:for-each>
+        </json:array>
+      </xsl:if>
+      <xsl:variable name="all-of" as="xs:QName*">
+        <xsl:apply-templates mode="component-json-schema-all-of"/>
+      </xsl:variable>
+      <xsl:if test="count($all-of) gt 0">
+        <json:array key="allOf">
+          <xsl:for-each select="$all-of">
+            <json:map>
+              <json:ref key="$ref" qname="{.}" ref-style="definition">
+                <xsl:namespace name="{prefix-from-QName(.)}"
+                               select="namespace-uri-from-QName(.)"/>
+              </json:ref>
+            </json:map>
+          </xsl:for-each>
+        </json:array>
+      </xsl:if>
+      <xsl:apply-templates mode="#current"/>
+    </json:map>
+  </xsl:template>
 
   <xsl:template
     match="/xs:schema/xs:*[@name]"
@@ -223,12 +273,25 @@
     </json:note>
   </xsl:template>
 
+  <xsl:template match="xs:extension[@base]" mode="component-json-schema-properties">
+    <xsl:variable name="base-qname" as="xs:QName" select="f:attribute-get-qname(@base)"/>
+    <xsl:variable name="base-resolved" as="element()?" select="f:qname-resolve-type($base-qname)"/>
+    <xsl:if test="$base-resolved/self::xs:simpleType">
+    <json:map key="rdf:value">
+      <xsl:namespace name="rdf" select="$rdf-namespace"/>
+      <json:ref key="$ref" ref-style="definition" qname="{$base-qname}">
+        <xsl:namespace name="{prefix-from-QName($base-qname)}"
+                       select="namespace-uri-from-QName($base-qname)"/>
+      </json:ref>
+    </json:map>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:template match="
                        xs:complexContent |
                        xs:simpleContent |
                        xs:sequence |
-                       xs:attributeGroup |
-                       xs:extension"
+                       xs:attributeGroup"
                 mode="component-json-schema-properties"
                 priority="-1">
     <xsl:apply-templates mode="#current"/>
