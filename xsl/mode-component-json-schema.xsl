@@ -115,23 +115,6 @@
     <json:map key="{$this-qname}" key-style="qname">
       <xsl:namespace name="{prefix-from-QName($this-qname)}"
                      select="namespace-uri-from-QName($this-qname)"/>
-      <json:string key="type">object</json:string>
-      <json:map key="properties">
-        <xsl:apply-templates mode="component-json-schema-properties"/>
-      </json:map>
-      <xsl:variable name="required" as="xs:QName*">
-        <xsl:apply-templates mode="component-json-schema-required"/>
-      </xsl:variable>
-      <xsl:if test="exists($required)">
-        <json:array key="required">
-          <xsl:for-each select="$required">
-            <json:ref qname="{.}">
-              <xsl:namespace name="{prefix-from-QName(.)}"
-                             select="namespace-uri-from-QName(.)"/>
-            </json:ref>
-          </xsl:for-each>
-        </json:array>
-      </xsl:if>
       <xsl:variable name="all-of" as="xs:QName*">
         <xsl:apply-templates mode="component-json-schema-all-of"/>
       </xsl:variable>
@@ -169,11 +152,14 @@
   <!-- pass-through -->
   <xsl:template match="xs:complexContent |
                        xs:extension[@base] |
+                       xs:restriction[@base] |
                        xs:element[@ref] |
                        xs:simpleContent |
                        xs:attribute[@ref] |
                        xs:attributeGroup[@ref] |
                        xs:anyAttribute |
+                       xs:minLength |
+                       xs:enumeration |
                        xs:sequence"
                 mode="component-json-schema"
                 priority="-1">
@@ -273,7 +259,7 @@
     </json:note>
   </xsl:template>
 
-  <xsl:template match="xs:extension[@base]" mode="component-json-schema-properties">
+  <xsl:template match="xs:complexType//xs:extension[@base]" mode="component-json-schema-properties">
     <xsl:variable name="base-qname" as="xs:QName" select="f:attribute-get-qname(@base)"/>
     <xsl:variable name="base-resolved" as="element()?" select="f:qname-resolve-type($base-qname)"/>
     <xsl:if test="$base-resolved/self::xs:simpleType">
