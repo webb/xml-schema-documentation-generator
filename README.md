@@ -14,7 +14,8 @@ The home for this package is on GitHub:
   Set up the build process for your local environment.  Variables you can set include:
   
   * `install_dir`: directory to where files will be copied for `make install`
-  * `xml_catalog`: An XML catalog file identifying the schemas to be processed.
+  * `xml_catalog`: an XML catalog file identifying the schemas to be processed.
+  * `build_json`: has value <q>true</q> if you want JSON Schema to be generated in the output.
   
   Command-line would look like:
   
@@ -55,6 +56,26 @@ The home for this package is on GitHub:
     - `#json-schema`
 1. Each component is a single page. What we put on each page is TBD, as much detail as is useful, but no more.
 1. Graphviz images use maps for hotlinks to other component pages.
+
+## Additional software
+
+- Processing is run on **Java**.
+
+- The **Saxon** XSLT processor does most of the processing for this package. The
+  Saxon XSLT processor jar file is included in `/lib/jars`. See
+  <http://saxon.sourceforge.net/#F9.8HE> for more info on Saxon.
+
+- *Apache XML Commons Resolver* handles XML Catalog resolution for working with
+   XML Catalogs offline. The jar file is included in `/lib/jars`. The jar may be
+   obtained as part of Xerces, available from
+   <http://xerces.apache.org/mirrors.cgi>.
+
+- JSON is pretty-printed with *jq*, which is available from package
+   managers such as [MacPorts](https://www.macports.org) and
+   [Apt](https://wiki.debian.org/Apt).
+
+- Diagrams are generated using *graphviz*, which is available from package
+  managers.
 
 ## Miscellaneous notes
 

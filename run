@@ -9,9 +9,17 @@ shift 1
 
 case $command in
     rebuild )
-        rm -rf build
+        ./config.status
+        make clean
         make depend=true
         make "$@"
+        make "$@" install
+        ;;
+    "continue" )
+        ./config.status
+        make depend=true
+        make "$@"
+        make "$@" install
         ;;
     release )
         rm -rf build
