@@ -16,8 +16,19 @@
   <!-- a TD is a table cell for a graphviz box -->
   <xsl:function name="f:qname-get-td">
     <xsl:param name="qname" as="xs:QName"/>
-    <xsl:apply-templates select="f:qname-resolve($qname)"
-                         mode="component-diagram-td"/>
+    <xsl:variable name="resolved" as="element()?" select="f:qname-resolve($qname)"/>
+    <xsl:choose>
+      <xsl:when test="exists($resolved)">
+        <xsl:apply-templates select="$resolved" mode="component-diagram-td"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <TD xmlns=""
+            ALIGN="LEFT"
+            HREF="{f:qname-get-href('../..', $qname)}#diagram">
+          <xsl:value-of select="$qname"/>
+        </TD>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:function>
 
   <xsl:function name="f:qname-get-td-brief">

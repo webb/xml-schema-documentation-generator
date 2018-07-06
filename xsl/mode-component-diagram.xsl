@@ -446,6 +446,8 @@
       AttributeGroups:top -&gt; <xsl:value-of select="f:enquote(string($this-attribute-qname))"/>:w [label="has-a"];
     </xsl:if>
 
+    <xsl:apply-templates select="@type" mode="#current"/>
+
     <xsl:text>}&#10;</xsl:text>
   </xsl:template>
 
@@ -471,9 +473,9 @@
     <xsl:text>}&#10;</xsl:text>
   </xsl:template>
 
-
-
-  <xsl:template match="xs:element/@type" mode="component-diagram">
+  <xsl:template match="xs:element/@type 
+                       | xs:attribute/@type" mode="component-diagram">
+    <!-- "element" is used here, but it could be element or attribute. -->
     <xsl:variable name="element-qname" as="xs:QName"
                   select="f:xs-component-get-qname(..)"/>
     <xsl:variable name="type-qname" as="xs:QName"
