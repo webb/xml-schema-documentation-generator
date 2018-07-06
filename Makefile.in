@@ -22,6 +22,7 @@ srcdir = @srcdir@
 builddir = @builddir@
 install_dir = @install_dir@
 xml_catalog = @xml_catalog@
+build_json = @build_json@
 
 #############################################################################
 # COMMANDS
@@ -46,7 +47,8 @@ saxon = java \
   -r:org.apache.xml.resolver.tools.CatalogResolver \
   -x:org.apache.xml.resolver.tools.ResolvingXMLReader \
   -y:org.apache.xml.resolver.tools.ResolvingXMLReader \
-  --suppressXsltNamespaceCheck:on \
+  --suppressXsltNamespaceCheck:on
+
 # additional params to ${saxon}:
 #  -s:inputs/empty.xml \
 #  -xsl:xsl/mode-component-diagram.xsl \
@@ -58,6 +60,12 @@ saxon = java \
 #  root-path=/Users/wr/r/niem/release/model/src/build \
 #  prefix=nc \
 #  local-name=PersonType
+
+ifeq (${build_json},true)
+saxon_build_json_arg = build_json=true
+else
+saxon_build_json_arg = build_json=false
+endif
 
 #############################################################################
 # variables
@@ -130,14 +138,18 @@ ${saxon} \
   +backlinks-file=${backlinks_file} \
   root-path=${realpath ${build_dir}} \
   prefix=${word 1,${subst /, ,$1}} \
-  local-name=${word 2,${subst /, ,$1}}
+  local-name=${word 2,${subst /, ,$1}} \
+  ${saxon_build_json_arg}
 endef
 
 all_files = \
   ${build_dir}/index.html \
-  ${build_dir}/json-schema.json \
   ${namespaces:%=${build_dir}/%/index.html} \
   ${components:%=${build_dir}/%/index.html} \
+
+ifeq (${build_json},true)
+all_files += ${build_dir}/json-schema.json
+endif
 
 install_files = ${all_files:${build_dir}/%=${install_dir}/%}
 
@@ -159,7 +171,8 @@ ${build_dir}/index.html: | ${prefixes_file} ${xml_catalog}
 	  -o:$@ \
 	  -xsl:${srcdir}/xsl/generate-root-index.xsl \
 	  +prefixes-file=${prefixes_file} \
-	  +xml-catalog-file=${xml_catalog}
+	  +xml-catalog-file=${xml_catalog} \
+	  ${saxon_build_json_arg}
 
 ${build_dir}/json-schema-unformatted.json: | ${backlinks_file} ${xml_catalog}
 	${saxon} \
@@ -237,5 +250,7 @@ distclean: clean
 .PHONY: help #    Print this help
 help:
 	@ ${SED} -e '/^\.PHONY:/s/^\.PHONY: *\([^ #]*\) *\#\( *\)\([^ ].*\)/\2\1: \3/p;/^[^#]*#HELP:/s/[^#]*#HELP:\(.*\)/\1/p;d' ${this_makefile}
+
+#HELP:Set variable build_json to 'false' to omit JSON Schema artifacts (default is @build_json@).
 
 # don't put anything after this

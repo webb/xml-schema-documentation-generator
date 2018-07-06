@@ -41,7 +41,7 @@ else AC_MSG_RESULT([install_dir set to ${install_dir}])
      fi
 fi
 
-default_xml_catalog=${srcdir}/inputs/person/subset/niem/xml-catalog.xml
+default_xml_catalog='${srcdir}/inputs/person/subset/niem/xml-catalog.xml'
 if test "x$xml_catalog" = "x"
 then AC_MSG_NOTICE([Variable xml_catalog not set. Using default ($default_xml_catalog)])
   xml_catalog=$default_xml_catalog
@@ -50,6 +50,14 @@ else AC_MSG_RESULT([xml_catalog set to ${xml_catalog}])
      if ! test -f "${xml_catalog}"
      then AC_MSG_ERROR([xml_catalog ${xml_catalog} does not exist])
      fi
+fi
+
+default_build_json=true
+if test "x$build_json" = "x"
+then AC_MSG_NOTICE([Variable build_json not set. Using default ($default_build_json)])
+  build_json=$default_build_json
+else AC_MSG_RESULT([build_json set to ${build_json}])
+     AC_SUBST([build_json],[$build_json])
 fi
 
 AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])

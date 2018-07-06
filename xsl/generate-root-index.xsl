@@ -12,6 +12,8 @@
   <xsl:include href="common.xsl"/>
   <xsl:include href="mode-components.xsl"/>
 
+  <xsl:param name="build_json" as="xs:boolean" select="true()"/>
+
   <xsl:output method="html" version="5.0" encoding="UTF-8" indent="no"/>
 
   <!-- ================================================================== -->
@@ -25,6 +27,7 @@
         <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
       </head>
       <body>
+        <h2>Namespaces</h2>
         <ul>
           <xsl:for-each select="f:get-component-prefixes()">
             <xsl:variable name="uri" as="xs:anyURI"
@@ -49,6 +52,15 @@
             </xsl:choose>
           </xsl:for-each>
         </ul>
+        <xsl:if test="$build_json">
+          <h2>Other artifacts</h2>
+          <ul>
+            <li>
+              <p>JSON Schema: <a href="json-schema.json">json-schema.json</a>
+              </p>
+            </li>
+          </ul>
+        </xsl:if>
       </body>
     </html>
   </xsl:template>

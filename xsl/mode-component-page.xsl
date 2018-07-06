@@ -15,12 +15,13 @@
   <xsl:param name="root-path" as="xs:string" required="yes"/>
   <xsl:param name="prefix" as="xs:string" required="yes"/>
   <xsl:param name="local-name" as="xs:string" required="yes"/>
+  <xsl:param name="build_json" as="xs:boolean" select="true()"/>
 
   <xsl:output method="html" version="5.0" encoding="UTF-8" indent="no"/>
 
   <xsl:template match="/" mode="component-page">
     <xsl:variable name="qname" as="xs:QName"
-              select="f:get-qname($prefix, $local-name)"/>
+                  select="f:get-qname($prefix, $local-name)"/>
     <xsl:variable name="component" as="element()?"
                   select="f:qname-resolve($qname)"/>
     <xsl:choose>
@@ -93,76 +94,78 @@
       <body>
         <div id="page">
           <div id="content">
-        <h1>
-          <a href="../index.html">
-            <xsl:value-of select="prefix-from-QName($qname)"/>
-          </a>
-          <xsl:text>:</xsl:text>
-          <xsl:value-of select="local-name-from-QName($qname)"/>
-        </h1>
+            <h1>
+              <a href="../index.html">
+                <xsl:value-of select="prefix-from-QName($qname)"/>
+              </a>
+              <xsl:text>:</xsl:text>
+              <xsl:value-of select="local-name-from-QName($qname)"/>
+            </h1>
 
-        <p><xsl:value-of select="local-name()"/><xsl:text> </xsl:text><xsl:value-of select="local-name-from-QName($qname)"/> in namespace <xsl:value-of select="namespace-uri-from-QName($qname)"/></p>
-        
-        <h2>Definition</h2>
-        <p><xsl:value-of select="f:xs-component-get-definition(.)"/></p>
-        <h2>Diagram</h2>
-        <a name="diagram">
-          <div style="text-align: center;">
-            <img src="data:image/png;base64,{unparsed-text(concat($root-path, '/', prefix-from-QName($qname), '/', local-name-from-QName($qname), '/diagram.png.base64'))}" usemap="#graphic"/>
-          </div>
-        </a>
-        <xsl:apply-templates
-          mode="htmlify"
-          select="doc(concat($root-path, '/', prefix-from-QName($qname),
-                  '/', local-name-from-QName($qname), '/diagram.map'))"/>
+            <p><xsl:value-of select="local-name()"/><xsl:text> </xsl:text><xsl:value-of select="local-name-from-QName($qname)"/> in namespace <xsl:value-of select="namespace-uri-from-QName($qname)"/></p>
+            
+            <h2>Definition</h2>
+            <p><xsl:value-of select="f:xs-component-get-definition(.)"/></p>
+            <h2>Diagram</h2>
+            <a name="diagram">
+              <div style="text-align: center;">
+                <img src="data:image/png;base64,{unparsed-text(concat($root-path, '/', prefix-from-QName($qname), '/', local-name-from-QName($qname), '/diagram.png.base64'))}" usemap="#graphic"/>
+              </div>
+            </a>
+            <xsl:apply-templates
+              mode="htmlify"
+              select="doc(concat($root-path, '/', prefix-from-QName($qname),
+                      '/', local-name-from-QName($qname), '/diagram.map'))"/>
 
-        <xsl:if test="self::xs:simpleType[@name]//xs:enumeration">
-          <h2>Enumerations</h2>
-          <a name="enumerations">
-            <table>
-              <thead>
-                <tr>
-                  <td>Value</td>
-                  <td>Definition</td>
-                </tr>
-              </thead>
-              <tbody>
-                <xsl:for-each select=".//xs:enumeration[@value]">
-                  <tr>
-                    <td>
-                      <xsl:value-of select="@value"/>
-                    </td>
-                    <td>
-                      <xsl:value-of select="f:xs-component-get-definition(.)"/>
-                    </td>
-                  </tr>
-                </xsl:for-each>
-              </tbody>
-            </table>
-          </a>
-        </xsl:if>
+            <xsl:if test="self::xs:simpleType[@name]//xs:enumeration">
+              <h2>Enumerations</h2>
+              <a name="enumerations">
+                <table>
+                  <thead>
+                    <tr>
+                      <td>Value</td>
+                      <td>Definition</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <xsl:for-each select=".//xs:enumeration[@value]">
+                      <tr>
+                        <td>
+                          <xsl:value-of select="@value"/>
+                        </td>
+                        <td>
+                          <xsl:value-of select="f:xs-component-get-definition(.)"/>
+                        </td>
+                      </tr>
+                    </xsl:for-each>
+                  </tbody>
+                </table>
+              </a>
+            </xsl:if>
 
-        <h2>XML Schema</h2>
-        <a name="xml-schema">
-          <div class="xml-schema">
-            <xsl:apply-templates select="."
-                                 mode="component-xml-schema"/>
-          </div>
-        </a>
+            <h2>XML Schema</h2>
+            <a name="xml-schema">
+              <div class="xml-schema">
+                <xsl:apply-templates select="."
+                                     mode="component-xml-schema"/>
+              </div>
+            </a>
 
-        <h2>JSON Schema</h2>
-        <xsl:variable name="json-schema-results">
-          <xsl:apply-templates select="." mode="component-json-schema"/>
-        </xsl:variable>
-        <a name="json-schema">
-          <div class="json-schema">
-            <xsl:sequence select="f:json-xml-to-html($json-schema-results)"/>
-          </div>
-        </a>
-        <xsl:if test="$json-schema-results//j:note">
-          <h3>Notes</h3>
-          <xsl:copy-of select="$json-schema-results//j:note/*"/>
-        </xsl:if>
+            <xsl:if test="$build_json">
+              <h2>JSON Schema</h2>
+              <xsl:variable name="json-schema-results">
+                <xsl:apply-templates select="." mode="component-json-schema"/>
+              </xsl:variable>
+              <a name="json-schema">
+                <div class="json-schema">
+                  <xsl:sequence select="f:json-xml-to-html($json-schema-results)"/>
+                </div>
+              </a>
+              <xsl:if test="$json-schema-results//j:note">
+                <h3>Notes</h3>
+                <xsl:copy-of select="$json-schema-results//j:note/*"/>
+              </xsl:if>
+            </xsl:if>
           </div>
         </div>
       </body>
