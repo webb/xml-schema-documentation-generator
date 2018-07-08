@@ -40,6 +40,14 @@
     
        From an XML catalog, yield all the components that are defined or mentioned.  -->
 
+  <!-- ignore appinfo namespaces -->
+  <xsl:template mode="components" priority="1"
+                match="catalog:uri[@name=(
+                       'http://release.niem.gov/niem/appinfo/4.0/',
+                       'http://reference.niem.gov/niem/specification/code-lists/4.0/code-lists-schema-appinfo/'
+                       )]">
+  </xsl:template>
+
   <xsl:template match="catalog:catalog" as="xs:QName*"
                 mode="components">
     <xsl:apply-templates select="*" mode="#current"/>

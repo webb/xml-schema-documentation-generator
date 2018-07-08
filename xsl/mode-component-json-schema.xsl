@@ -19,6 +19,66 @@
     <xsl:param name="content"/>
   </xsl:function>
 
+  <xsl:function name="f:qname-get-json-schema">
+    <xsl:param name="qname" as="xs:QName"/>
+    <xsl:variable name="component" as="element()?" select="f:qname-resolve($qname)"/>
+    <xsl:choose>
+      <xsl:when test="exists($component)">
+        <xsl:apply-templates select="$component" mode="component-json-schema"/>
+      </xsl:when>
+      <xsl:when test="$qname = (
+                      xs:QName('xs:ID'),
+                      xs:QName('xs:IDREF'),
+                      xs:QName('xs:IDREFS'),
+                      xs:QName('xs:string'),
+                      xs:QName('xs:token') 
+                      )">
+        <json:map key="{$qname}" key-style="qname">
+          <xsl:namespace name="{prefix-from-QName($qname)}"
+                         select="namespace-uri-from-QName($qname)"/>
+          <json:string key="type">string</json:string>
+        </json:map>
+      </xsl:when>
+      <xsl:when test="$qname = xs:QName('xs:anyURI')">
+        <json:map key="{$qname}" key-style="qname">
+          <xsl:namespace name="{prefix-from-QName($qname)}"
+                         select="namespace-uri-from-QName($qname)"/>
+          <json:string key="type">string</json:string>
+          <json:string key="format">uri-reference</json:string>
+        </json:map>
+      </xsl:when>
+      <xsl:when test="$qname = xs:QName('xs:date')">
+        <json:map key="{$qname}" key-style="qname">
+          <xsl:namespace name="{prefix-from-QName($qname)}"
+                         select="namespace-uri-from-QName($qname)"/>
+          <json:string key="type">string</json:string>
+          <json:string key="format">date</json:string>
+        </json:map>
+      </xsl:when>
+      <xsl:when test="$qname = xs:QName('xs:decimal')">
+        <json:map key="{$qname}" key-style="qname">
+          <xsl:namespace name="{prefix-from-QName($qname)}"
+                         select="namespace-uri-from-QName($qname)"/>
+          <json:string key="type">number</json:string>
+        </json:map>
+      </xsl:when>
+      <xsl:when test="$qname = xs:QName('xs:boolean')">
+        <json:map key="{$qname}" key-style="qname">
+          <xsl:namespace name="{prefix-from-QName($qname)}"
+                         select="namespace-uri-from-QName($qname)"/>
+          <json:string key="type">boolean</json:string>
+        </json:map>
+      </xsl:when>
+      <!-- known components to ignore
+      <xsl:when test="$qname = (xs:QName('appinfo:SourceText'))">
+      </xsl:when>
+      -->
+      <xsl:otherwise>
+        <xsl:message terminate="yes">No JSON Schema defined for component <xsl:value-of select="$qname"/>.</xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+
   <xsl:function name="f:get-json-schema"></xsl:function>
 
   <!-- ============================================================================= 
