@@ -83,7 +83,12 @@ The home for this package is on GitHub:
 
 JSON Schema Validation specification: <http://json-schema.org/latest/json-schema-validation.html>
 
+Validation is being run with <q>AJV</q>. Current version of AJV does not support
+format "iri-reference".
+
 ### XML Schema specification
+
+XML Schema built-in datatypes: <https://www.w3.org/TR/xmlschema-2/#built-in-datatypes>
 
 Documentation for xs:string <https://www.w3.org/TR/xmlschema-2/#string>
 
@@ -107,3 +112,41 @@ Extensions:
     - "definition": ref to #/definitions/$component-name, with the component name as an href.
     - otherwise, href to the named component.
 * New element j:note: Contains HTML content that describes something about the result. Does not affect the resulting JSON, but provides a note that is displayed with the JSON.
+
+## JSON Schema rendering of NIEM content as reusable components
+
+We're producing JSON Schema that is intended to be *reusable* at the component
+level. That means that additional JSON Schema definitions will add to & reuse
+these JSON Schema definitions. This means that these definitions *must* validate
+all valid instances.
+
+Express type derivation with 'allOf'. 
+
+There's no expression for element derivation.
+
+Substitutable elements nerf `required`:
+
+* You don't know what the substitutable elements will be.
+* To serialize, you need to know what the substitable elements are.
+* Even when an element is required, it is just a slot, which may be filled by
+  another element that is substitutable for that element.
+* So, because of substitutable elements, you can't make any elements *required*.
+
+Substitutable elements make arrays weak:
+
+* suppose you have an element A with m-n required occurrences.
+* you might think you could represent this with a property A with a value of an
+  array of m-n occurrences.
+* However, you may substitute element B for A.
+* This means that there may be 0-n occurrences of A, and may be 0-n occurences
+  of B.
+* Minimum array size does not indicate anything
+* There's no way for a JSON Schema to indicate minimum cardinality of a
+  property.
+
+Typeless elements cause problems:
+
+* We use typeless, abstract elements to define slots for substitutable elements.
+* Typeless elements allow any content
+* This isn't very useful.
+

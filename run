@@ -8,6 +8,11 @@ command=$1
 shift 1
 
 case $command in
+    # jv = json validate
+    jv )
+        rm -f build/json-schema.json build/json-schema-unformatted.json
+        make valid
+        ;;
     rebuild )
         ./config.status
         make clean

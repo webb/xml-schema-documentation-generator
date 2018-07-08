@@ -24,13 +24,12 @@
   <xsl:template match="/">
     <xsl:variable name="json-xml-custom">
       <json:map>
-        <json:string key="$schema">http://json-schema.org/draft-04/schema#</json:string>
+        <json:string key="$schema">http://json-schema.org/draft-07/schema#</json:string>
         <json:string key="type">object</json:string>
         <json:boolean key="additionalProperties">false</json:boolean>
         <json:map key="definitions">
           <xsl:for-each select="f:get-components()">
-            <xsl:apply-templates select="f:qname-resolve(.)"
-                                 mode="component-json-schema"/>
+            <xsl:sequence select="f:qname-get-json-schema(.)"/>
           </xsl:for-each>
         </json:map>
         <json:map key="properties">

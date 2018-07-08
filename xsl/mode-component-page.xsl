@@ -45,6 +45,8 @@
         <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
       </head>
       <body>
+        <div id="page">
+          <div id="content">
         <h1>
           <a href="../index.html">
             <xsl:value-of select="prefix-from-QName($qname)"/>
@@ -79,6 +81,22 @@
           select="doc(concat($root-path, '/', prefix-from-QName($qname),
                   '/', local-name-from-QName($qname), '/diagram.map'))"/>
 
+        <xsl:if test="$build_json">
+          <h2>JSON Schema</h2>
+          <xsl:variable name="json-schema-results"
+                        select="f:qname-get-json-schema($qname)"/>
+          <a name="json-schema">
+            <div class="json-schema">
+              <xsl:sequence select="f:json-xml-to-html($json-schema-results)"/>
+            </div>
+          </a>
+          <xsl:if test="$json-schema-results//j:note">
+            <h3>Notes</h3>
+            <xsl:copy-of select="$json-schema-results//j:note/*"/>
+          </xsl:if>
+        </xsl:if>
+          </div>
+        </div>
       </body>
     </html>
   </xsl:template>
@@ -153,9 +171,8 @@
 
             <xsl:if test="$build_json">
               <h2>JSON Schema</h2>
-              <xsl:variable name="json-schema-results">
-                <xsl:apply-templates select="." mode="component-json-schema"/>
-              </xsl:variable>
+              <xsl:variable name="json-schema-results"
+                            select="f:qname-get-json-schema($qname)"/>
               <a name="json-schema">
                 <div class="json-schema">
                   <xsl:sequence select="f:json-xml-to-html($json-schema-results)"/>
