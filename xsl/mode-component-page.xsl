@@ -17,7 +17,7 @@
   <xsl:param name="local-name" as="xs:string" required="yes"/>
   <xsl:param name="build_json" as="xs:boolean" select="true()"/>
 
-  <xsl:output method="html" version="5.0" encoding="UTF-8" indent="no"/>
+  <xsl:output method="xhtml" html-version="5.0" encoding="UTF-8" indent="no"/>
 
   <xsl:template match="/" mode="component-page">
     <xsl:variable name="qname" as="xs:QName"
