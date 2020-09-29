@@ -20,7 +20,7 @@ depend = false
 
 srcdir = @srcdir@
 builddir = @builddir@
-install_dir = @install_dir@
+publish_dir = @publish_dir@
 xml_catalog = @xml_catalog@
 build_json = @build_json@
 
@@ -111,8 +111,8 @@ ${warning Prequisites/dependencies not present. Run "make depend=true"}
 endif
 
 define run_install =
-${MKDIR_P} ${install_dir}/$1
-${INSTALL_DATA} ${build_dir}/$1/index.html ${install_dir}/$1/index.html 
+${MKDIR_P} ${publish_dir}/$1
+${INSTALL_DATA} ${build_dir}/$1/index.html ${publish_dir}/$1/index.html 
 endef
 
 define run_build_namespace_index =
@@ -151,7 +151,7 @@ ifeq (${build_json},true)
 all_files += ${build_dir}/json-schema.json
 endif
 
-install_files = ${all_files:${build_dir}/%=${install_dir}/%}
+install_files = ${all_files:${build_dir}/%=${publish_dir}/%}
 
 #############################################################################
 .PHONY: all #    build everything from $xml_catalog
@@ -207,11 +207,11 @@ ${build_dir}/%/diagram.dot: | ${backlinks_file}
 	  local-name=${word 2,${subst /, ,$*}}
 
 #############################################################################
-.PHONY: install #    install everything to $install_dir
-#HELP:        Default install_dir=@install_dir@
-install: ${install_files}
+.PHONY: publish #    install everything to $publish_dir
+#HELP:        Default publish_dir=@publish_dir@
+publish: ${install_files}
 
-${install_dir}/%: ${build_dir}/%
+${publish_dir}/%: ${build_dir}/%
 	${MKDIR_P} ${dir $@}
 	${INSTALL_DATA} $< $@
 

@@ -13,14 +13,14 @@ The home for this package is on GitHub:
 
   Set up the build process for your local environment.  Variables you can set include:
   
-  * `install_dir`: directory to where files will be copied for `make install`
+  * `publish_dir` : (required) directory to where files will be published
   * `xml_catalog`: an XML catalog file identifying the schemas to be processed.
   * `build_json`: has value <q>true</q> if you want JSON Schema to be generated in the output.
   
   Command-line would look like:
   
   ```
-  $ ./configure install_dir=$PWD/../publish xml_catalog=$PWD/../NIEM-Releases/niem/xml-catalog.xml
+  $ ./configure publish_dir=$PWD/../publish xml_catalog=$PWD/../NIEM-Releases/niem/xml-catalog.xml
   ```
 
 2. `make`
@@ -31,7 +31,7 @@ The home for this package is on GitHub:
 3. `make install`
 
   Copy result files into directory for publication. You may want to set variable
-  `install_dir` to be the directory for a git repository.
+  `publish_dir` to be the directory for a git repository.
 
 ## What this software does
 

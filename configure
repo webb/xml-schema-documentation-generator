@@ -591,7 +591,7 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 build_json
 xml_catalog
-install_dir
+publish_dir
 saxon
 touch
 find
@@ -2102,40 +2102,36 @@ fi
 
   test "x$saxon" = "x" && as_fn_error $? "saxon not found" "$LINENO" 5
 
-default_install_dir=\${builddir}/build/publish
-if test "x$install_dir" = "x"
-then { $as_echo "$as_me:${as_lineno-$LINENO}: Variable install_dir not set. Using default ($default_install_dir)" >&5
-$as_echo "$as_me: Variable install_dir not set. Using default ($default_install_dir)" >&6;}
-  install_dir=$default_install_dir
-else { $as_echo "$as_me:${as_lineno-$LINENO}: result: install_dir set to ${install_dir}" >&5
-$as_echo "install_dir set to ${install_dir}" >&6; }
-     install_dir=$install_dir
+if test "x$publish_dir" = "x"
+then as_fn_error $? "Variable publish_dir not set; set it to the folder of the published model website." "$LINENO" 5
+else { $as_echo "$as_me:${as_lineno-$LINENO}: result: publish_dir set to ${publish_dir}" >&5
+$as_echo "publish_dir set to ${publish_dir}" >&6; }
+     publish_dir=$publish_dir
 
-     if ! test -d "${install_dir}"
-     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: install_dir ${install_dir} does not exist" >&5
-$as_echo "$as_me: WARNING: install_dir ${install_dir} does not exist" >&2;}
+     if ! test -d "${publish_dir}"
+     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: publish_dir ${publish_dir} does not exist" >&5
+$as_echo "$as_me: WARNING: publish_dir ${publish_dir} does not exist" >&2;}
      fi
 fi
 
-default_xml_catalog='${srcdir}/inputs/person/subset/niem/xml-catalog.xml'
 if test "x$xml_catalog" = "x"
-then { $as_echo "$as_me:${as_lineno-$LINENO}: Variable xml_catalog not set. Using default ($default_xml_catalog)" >&5
-$as_echo "$as_me: Variable xml_catalog not set. Using default ($default_xml_catalog)" >&6;}
-  xml_catalog=$default_xml_catalog
-else { $as_echo "$as_me:${as_lineno-$LINENO}: result: xml_catalog set to ${xml_catalog}" >&5
+then as_fn_error $? "Variable xml_catalog not set; set it to the root XML catalog of your data model." "$LINENO" 5
+else
+  if ! test -f "${xml_catalog}"
+  then as_fn_error $? "File xml_catalog=${xml_catalog} does not exist." "$LINENO" 5
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: xml_catalog set to ${xml_catalog}" >&5
 $as_echo "xml_catalog set to ${xml_catalog}" >&6; }
-     xml_catalog=$xml_catalog
+    xml_catalog=$xml_catalog
 
-     if ! test -f "${xml_catalog}"
-     then as_fn_error $? "xml_catalog ${xml_catalog} does not exist" "$LINENO" 5
-     fi
+  fi
 fi
 
 default_build_json=true
 if test "x$build_json" = "x"
 then { $as_echo "$as_me:${as_lineno-$LINENO}: Variable build_json not set. Using default ($default_build_json)" >&5
 $as_echo "$as_me: Variable build_json not set. Using default ($default_build_json)" >&6;}
-  build_json=$default_build_json
+     build_json=$default_build_json
 else { $as_echo "$as_me:${as_lineno-$LINENO}: result: build_json set to ${build_json}" >&5
 $as_echo "build_json set to ${build_json}" >&6; }
      build_json=$build_json
@@ -2143,6 +2139,8 @@ $as_echo "build_json set to ${build_json}" >&6; }
 fi
 
 ac_config_files="$ac_config_files Makefile"
+
+ac_config_files="$ac_config_files reconfigure"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -2852,6 +2850,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "reconfigure") CONFIG_FILES="$CONFIG_FILES reconfigure" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -3279,6 +3278,7 @@ which seems to be undefined.  Please make sure it is defined" >&2;}
 
   case $ac_file$ac_mode in
     "Makefile":F) chmod 444 Makefile ;;
+    "reconfigure":F) chmod 555 reconfigure ;;
 
   esac
 done # for ac_tag

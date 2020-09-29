@@ -30,35 +30,34 @@ WR_check_prog_options(touch,gtouch touch)
 # webb stuff
 WR_check_prog(saxon)
 
-default_install_dir=\${builddir}/build/publish
-if test "x$install_dir" = "x"
-then AC_MSG_NOTICE([Variable install_dir not set. Using default ($default_install_dir)])
-  install_dir=$default_install_dir
-else AC_MSG_RESULT([install_dir set to ${install_dir}])
-     AC_SUBST([install_dir],[$install_dir])
-     if ! test -d "${install_dir}"
-     then AC_MSG_WARN([install_dir ${install_dir} does not exist])
+if test "x$publish_dir" = "x"
+then AC_MSG_ERROR([Variable publish_dir not set; set it to the folder of the published model website.])
+else AC_MSG_RESULT([publish_dir set to ${publish_dir}])
+     AC_SUBST([publish_dir],[$publish_dir])
+     if ! test -d "${publish_dir}"
+     then AC_MSG_WARN([publish_dir ${publish_dir} does not exist])
      fi
 fi
 
-default_xml_catalog='${srcdir}/inputs/person/subset/niem/xml-catalog.xml'
 if test "x$xml_catalog" = "x"
-then AC_MSG_NOTICE([Variable xml_catalog not set. Using default ($default_xml_catalog)])
-  xml_catalog=$default_xml_catalog
-else AC_MSG_RESULT([xml_catalog set to ${xml_catalog}])
-     AC_SUBST([xml_catalog],[$xml_catalog])
-     if ! test -f "${xml_catalog}"
-     then AC_MSG_ERROR([xml_catalog ${xml_catalog} does not exist])
-     fi
+then AC_MSG_ERROR([Variable xml_catalog not set; set it to the root XML catalog of your data model.])
+else
+  if ! test -f "${xml_catalog}"
+  then AC_MSG_ERROR([File xml_catalog=${xml_catalog} does not exist.])
+  else
+    AC_MSG_RESULT([xml_catalog set to ${xml_catalog}])
+    AC_SUBST([xml_catalog],[$xml_catalog])
+  fi
 fi
 
 default_build_json=true
 if test "x$build_json" = "x"
 then AC_MSG_NOTICE([Variable build_json not set. Using default ($default_build_json)])
-  build_json=$default_build_json
+     build_json=$default_build_json
 else AC_MSG_RESULT([build_json set to ${build_json}])
      AC_SUBST([build_json],[$build_json])
 fi
 
 AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])
+AC_CONFIG_FILES([reconfigure], [chmod 555 reconfigure])
 AC_OUTPUT
