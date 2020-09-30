@@ -60,6 +60,11 @@ do
         clean-component-html )
             find build -mindepth 3 -type f -name '*.html' -delete;;
 
+        #HELP:    log: Log all the following commands to log.txt
+        #HELP:        e.g., "run log oc nc:PersonType"
+        log )
+            exec script -a log.txt "$0" -j "$number_of_jobs" "$@";;
+
         #HELP:    oc: open component: build and open a component page
         #HELP:        e.g., "run oc nc:PersonType"
         oc )
@@ -76,7 +81,6 @@ do
             make -j "$number_of_jobs" "$page"
             open "$page"
             shift;;
-
 
         # jv = json validate
         jv )
