@@ -59,5 +59,5 @@ else AC_MSG_RESULT([build_json set to ${build_json}])
 fi
 
 AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])
-AC_CONFIG_FILES([reconfigure], [chmod 555 reconfigure])
+AC_CONFIG_FILES([run], [chmod 555 run])
 AC_OUTPUT

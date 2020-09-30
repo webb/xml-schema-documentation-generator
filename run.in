@@ -1,0 +1,89 @@
+#!@bash@
+
+. "$HOME"/share/wrtools-core/fail.bash
+. "$HOME"/share/wrtools-core/opt_help.bash
+
+#HELP:Default command is "all"
+if (( $# == 0 ))
+then set -- all
+fi
+
+while (( $# > 0 ))
+do
+    command=$1
+    shift
+
+    case $command in
+
+        #HELP:  help: print this help
+        help ) opt_help;;
+        
+        #HELP:  reconfigure: re-run "configure" with current options
+        reconfigure )
+            exec @srcdir@/configure publish_dir=@publish_dir@ xml_catalog=@xml_catalog@ build_json=@build_json@;;
+
+        #HELP:  d: Build dependencies
+        d ) make -j 8 depend=true;;
+        
+        # jv = json validate
+        jv )
+            rm -f build/json-schema.json build/json-schema-unformatted.json
+            make valid
+            ;;
+
+        rebuild )
+            ./config.status
+            make clean
+            make depend=true
+            make "$@"
+            make "$@" install
+            shift $#
+            ;;
+        "continue" )
+            ./config.status
+            make depend=true
+            make "$@"
+            make "$@" install
+            shift $#
+            ;;
+        release )
+            rm -rf build
+            rm -rf .../repo/*
+            ./configure install_dir=../repo xml_catalog=../../niem-releases/niem/xml-catalog.xml
+            make depend=true
+            make -k -j -l 50
+            make -k -j -l 50 install
+            date
+            ;;
+
+        backlinks )
+            rm -f build/backlinks.xml
+            make build/backlinks.xml
+            ;;
+
+        show )
+            remove=(rm -rf)
+            build=(make -j 8)
+            for path in "$@"
+            do remove+=( "build/$path" )
+               build+=( "build/$path/index.html" )
+            done
+            "${remove[@]}"
+            "${build[@]}"
+            if (( $# > 0 ))
+            then open "${build[3]}"
+            fi
+            ;;
+        * )
+            fail "unknown command $1"
+            ;;
+    esac
+done
+
+# Local Variables:
+# mode: shell-script
+# eval: (sh-set-shell "bash")
+# indent-tabs-mode: nil
+# fill-column: 9999
+# End:
+
