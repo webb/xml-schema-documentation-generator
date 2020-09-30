@@ -3,10 +3,36 @@
 . "$HOME"/share/wrtools-core/fail.bash
 . "$HOME"/share/wrtools-core/opt_help.bash
 
+number_of_jobs=$(nproc)
+
+#HELP:Options:
+#HELP:    --help | -h: print this help
+#HELP:    -j ${number of jobs}: run this many jobs in parallel
+#HELP:        default = number of processing units available
+
+OPTIND=1
+while getopts :hj:-: option
+do case "$option" in
+       h ) opt_help;;
+       j ) printf -v number_of_jobs '%d' "$OPTARG";;
+       - ) case "$OPTARG" in
+               help ) opt_help;;
+               help=* ) fail "Long option \"${OPTARG%%=*}\" has unexpected argument";;
+               * ) fail "Unknown long option \"${OPTARG%%=*}\"";;
+            esac;;
+        '?' ) fail "Unknown short option \"$OPTARG\"";;
+        : ) fail "Short option \"$OPTARG\" missing argument";;
+        * ) fail_assert "Bad state in getopts (OPTARG=\"$OPTARG\")";;
+   esac
+done
+shift $((OPTIND-1))
+
 #HELP:Default command is "all"
 if (( $# == 0 ))
 then set -- all
 fi
+
+#HELP:Commands:
 
 while (( $# > 0 ))
 do
@@ -15,16 +41,33 @@ do
 
     case $command in
 
-        #HELP:  help: print this help
+        #HELP:    help: print this help
         help ) opt_help;;
         
-        #HELP:  reconfigure: re-run "configure" with current options
+        #HELP:    reconfigure: re-run "configure" with current parameters
         reconfigure )
             exec @srcdir@/configure publish_dir=@publish_dir@ xml_catalog=@xml_catalog@ build_json=@build_json@;;
 
-        #HELP:  d: Build dependencies
-        d ) make -j 8 depend=true;;
+        #HELP:    d: Build dependencies
+        d ) make -j "$number_of_jobs" depend=true;;
+
+        #HELP:    all: build everything
+        all )
+            "$0" d
+            time make -j "$number_of_jobs" all;;
         
+        #HELP:    clean-component-html: Remove all the schema component pages
+        clean-component-html )
+            find build -mindepth 3 -type f -name '*.html' -delete;;
+
+        #HELP:    oc: open component: build and open a component page
+        #HELP:        e.g., "run oc nc:PersonType"
+        oc )
+            page=build/${1%:*}/${1#*:}/index.html
+            make -j "$number_of_jobs" "$page"
+            open "$page"
+            shift;;
+
         # jv = json validate
         jv )
             rm -f build/json-schema.json build/json-schema-unformatted.json
@@ -79,6 +122,13 @@ do
             ;;
     esac
 done
+
+#HELP:current parameters:
+#HELP:    srcdir=@srcdir@
+#HELP:    publish_dir=@publish_dir@
+#HELP:    xml_catalog=@xml_catalog@
+#HELP:    build_json=@build_json@
+
 
 # Local Variables:
 # mode: shell-script
