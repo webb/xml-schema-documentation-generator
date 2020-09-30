@@ -63,10 +63,20 @@ do
         #HELP:    oc: open component: build and open a component page
         #HELP:        e.g., "run oc nc:PersonType"
         oc )
-            page=build/${1%:*}/${1#*:}/index.html
+            clean=false
+            case $1 in
+                -c ) clean=true
+                     shift;;
+            esac
+            folder=build/${1%:*}/${1#*:}
+            if [[ $clean = true ]]
+            then rm -rf "$folder"
+            fi
+            page=${folder}/index.html
             make -j "$number_of_jobs" "$page"
             open "$page"
             shift;;
+
 
         # jv = json validate
         jv )
