@@ -46,7 +46,7 @@ do
         
         #HELP:    reconfigure: re-run "configure" with current parameters
         reconfigure )
-            exec @srcdir@/configure publish_dir=@publish_dir@ xml_catalog=@xml_catalog@ build_json=@build_json@;;
+            exec @srcdir@/configure publish_dir=@publish_dir@ xml_catalog=@xml_catalog@ build_json=@build_json@ link_to_dirs=@link_to_dirs@;;
 
         #HELP:    d: Build dependencies
         d ) make -j "$number_of_jobs" depend=true;;
@@ -142,6 +142,7 @@ done
 #HELP:    publish_dir=@publish_dir@
 #HELP:    xml_catalog=@xml_catalog@
 #HELP:    build_json=@build_json@
+#HELP:    link_to_dirs=@link_to_dirs@
 
 
 # Local Variables:

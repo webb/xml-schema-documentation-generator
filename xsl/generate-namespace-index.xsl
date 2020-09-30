@@ -30,11 +30,11 @@
         <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
       </head>
       <body>
-        <p><a href="../index.html">All namespaces</a></p>
+        <p><a href="..{$maybe-index.html}">All namespaces</a></p>
         <ul>
           <xsl:for-each select="f:get-components-with-prefix($prefix)">
             <li>
-              <a href="{local-name-from-QName(.)}/index.html">
+              <a href="{local-name-from-QName(.)}{$maybe-index.html}">
                 <xsl:value-of select="."/>
                 <xsl:variable name="component" as="element()?" select="f:qname-resolve(.)"/>
                 <xsl:if test="exists($component)">

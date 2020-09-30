@@ -589,6 +589,7 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+link_to_dirs
 build_json
 xml_catalog
 publish_dir
@@ -2138,6 +2139,19 @@ $as_echo "build_json set to ${build_json}" >&6; }
      build_json=$build_json
 
 else as_fn_error $? "\$build_json should be true or false (got $build_json)" "$LINENO" 5
+fi
+
+default_link_to_dirs=false
+if test "x$link_to_dirs" = "x"
+then { $as_echo "$as_me:${as_lineno-$LINENO}: Variable link_to_dirs not set. Using default ($default_link_to_dirs)" >&5
+$as_echo "$as_me: Variable link_to_dirs not set. Using default ($default_link_to_dirs)" >&6;}
+     link_to_dirs=$default_link_to_dirs
+elif test \( "$link_to_dirs" = true \) -o \( "$link_to_dirs" = false \)
+then { $as_echo "$as_me:${as_lineno-$LINENO}: result: link_to_dirs set to ${link_to_dirs}" >&5
+$as_echo "link_to_dirs set to ${link_to_dirs}" >&6; }
+     link_to_dirs=$link_to_dirs
+
+else as_fn_error $? "\$link_to_dirs should be true or false (got $link_to_dirs)" "$LINENO" 5
 fi
 
 ac_config_files="$ac_config_files Makefile"

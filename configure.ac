@@ -60,6 +60,16 @@ then AC_MSG_RESULT([build_json set to ${build_json}])
 else AC_MSG_ERROR([\$build_json should be true or false (got $build_json)])
 fi
 
+default_link_to_dirs=false
+if test "x$link_to_dirs" = "x"
+then AC_MSG_NOTICE([Variable link_to_dirs not set. Using default ($default_link_to_dirs)])
+     link_to_dirs=$default_link_to_dirs
+elif test \( "$link_to_dirs" = true \) -o \( "$link_to_dirs" = false \)
+then AC_MSG_RESULT([link_to_dirs set to ${link_to_dirs}])
+     AC_SUBST([link_to_dirs],[$link_to_dirs])
+else AC_MSG_ERROR([\$link_to_dirs should be true or false (got $link_to_dirs)])
+fi
+
 AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])
 AC_CONFIG_FILES([run], [chmod 555 run])
 AC_OUTPUT

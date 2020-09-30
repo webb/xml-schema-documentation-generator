@@ -84,7 +84,7 @@
     <xsl:variable name="prefix" select="f:xs-get-prefix(.)"/>
     <li>
       <p>
-      <a href="{$prefix}/index.html">
+      <a href="{$prefix}{$maybe-index.html}">
         <xsl:value-of select="$prefix"/>
       </a>
       <xsl:text>: </xsl:text>
@@ -120,7 +120,7 @@
           <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
         </head>
         <body>
-          <p><a href="../index.html">All namespaces</a></p>
+          <p><a href="..{$maybe-index.html}">All namespaces</a></p>
           <ul>
             <xsl:apply-templates select="xs:*[@name]" mode="#current">
               <xsl:sort select="@name"/>
@@ -132,7 +132,7 @@
   </xsl:template>
 
   <xsl:template match="/xs:schema/xs:*[@name]" mode="namespace-index">
-    <li><a href="{@name}/index.html"><xsl:value-of select="@name"/> (<xsl:value-of select="local-name()"/>)</a></li>
+    <li><a href="{@name}{$maybe-index.html}"><xsl:value-of select="@name"/> (<xsl:value-of select="local-name()"/>)</a></li>
   </xsl:template>
 
   <xsl:template match="*" mode="namespace-index" priority="-1">

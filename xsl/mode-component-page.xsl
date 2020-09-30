@@ -48,7 +48,7 @@
         <div id="page">
           <div id="content">
         <h1>
-          <a href="../index.html">
+          <a href="..{$maybe-index.html}">
             <xsl:value-of select="prefix-from-QName($qname)"/>
           </a>
           <xsl:text>:</xsl:text>
@@ -113,7 +113,7 @@
         <div id="page">
           <div id="content">
             <h1>
-              <a href="../index.html">
+              <a href="..{$maybe-index.html}">
                 <xsl:value-of select="prefix-from-QName($qname)"/>
               </a>
               <xsl:text>:</xsl:text>

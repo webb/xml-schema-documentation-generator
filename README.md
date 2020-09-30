@@ -15,7 +15,8 @@ The home for this package is on GitHub:
   
   * `publish_dir` : (required) directory to where files will be published
   * `xml_catalog`: an XML catalog file identifying the schemas to be processed.
-  * `build_json`: has value <q>true</q> if you want JSON Schema to be generated in the output.
+  * `build_json`: "true" if you want JSON Schema to be generated in the output, "false" otherwise.
+  * `link_to_dirs`: "true" if you want references to go to directories (for hosting on a website), "false" if you want to link directly to HTML files (for browsing locally). 
   
   Command-line would look like:
   

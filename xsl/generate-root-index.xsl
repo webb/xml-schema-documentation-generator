@@ -41,7 +41,7 @@
               <xsl:otherwise>
                 <li>
                   <p>
-                    <a href="{.}/index.html">
+                    <a href="{.}{$maybe-index.html}">
                       <xsl:value-of select="."/>
                     </a>
                     <xsl:text>: </xsl:text>
@@ -69,7 +69,7 @@
     <xsl:variable name="prefix" select="f:xs-get-prefix(.)"/>
     <li>
       <p>
-        <a href="{$prefix}/index.html">
+        <a href="{$prefix}{$maybe-index.html}">
           <xsl:value-of select="$prefix"/>
         </a>
         <xsl:text>: </xsl:text>

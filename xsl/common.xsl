@@ -16,6 +16,15 @@
 
   <xsl:param name="xml-catalog-file" required="yes"/>
 
+  <xsl:param name="link-to-dirs" as="xs:boolean" select="true()"/>
+  <xsl:variable name="maybe-index.html">
+    <xsl:choose>
+      <xsl:when test="$link-to-dirs"></xsl:when>
+      <xsl:otherwise>/index.html</xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+  
+
   <!-- ================================================================== -->
   <!-- functions -->
   <!-- ================================================================== -->
@@ -134,7 +143,7 @@
     <xsl:param name="path-to-root" as="xs:string"/>
     <xsl:param name="qname" as="xs:QName"/>
     <xsl:value-of select="concat($path-to-root, '/', prefix-from-QName($qname), '/', 
-                          local-name-from-QName($qname), '/index.html')"/>
+                          local-name-from-QName($qname), $maybe-index.html)"/>
   </xsl:function>
 
   <xsl:function name="f:safe-string" as="xs:string">
