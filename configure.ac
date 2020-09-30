@@ -50,12 +50,14 @@ else
   fi
 fi
 
-default_build_json=true
+default_build_json=false
 if test "x$build_json" = "x"
 then AC_MSG_NOTICE([Variable build_json not set. Using default ($default_build_json)])
      build_json=$default_build_json
-else AC_MSG_RESULT([build_json set to ${build_json}])
+elif test \( "$build_json" = true \) -o \( "$build_json" = false \)
+then AC_MSG_RESULT([build_json set to ${build_json}])
      AC_SUBST([build_json],[$build_json])
+else AC_MSG_ERROR([\$build_json should be true or false (got $build_json)])
 fi
 
 AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])
