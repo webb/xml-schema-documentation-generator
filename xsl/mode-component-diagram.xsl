@@ -21,6 +21,13 @@
   <xsl:output method="text" encoding="UTF-8"/>
 
   <!-- ================================================================== -->
+  <!-- variables -->
+  <!-- ================================================================== -->
+
+  <xsl:variable name="font-size">8</xsl:variable>
+  <xsl:variable name="cell-padding">1</xsl:variable>
+
+  <!-- ================================================================== -->
   <!-- mode: component-diagram -->
   <!-- ================================================================== -->
 
@@ -55,8 +62,12 @@
     </xsl:variable>
 
     <xsl:text>digraph graphic {&#10;</xsl:text>
-    <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
-    <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+    <xsl:text>edge [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, dir = forward];&#10;</xsl:text>
+    <xsl:text>node [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, shape = plain];&#10;</xsl:text>
     <xsl:text>rankdir=LR;&#10;</xsl:text>
 
     <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
@@ -138,8 +149,12 @@
     </xsl:variable>
 
     <xsl:text>digraph graphic {&#10;</xsl:text>
-    <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
-    <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+    <xsl:text>edge [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, dir = forward];&#10;</xsl:text>
+    <xsl:text>node [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, shape = plain];&#10;</xsl:text>
     <xsl:text>rankdir=LR;&#10;</xsl:text>
 
     <xsl:value-of select="f:enquote(string($qname))"/>
@@ -262,8 +277,12 @@
     </xsl:variable>
 
     <xsl:text>digraph graphic {&#10;</xsl:text>
-    <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
-    <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+    <xsl:text>edge [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, dir = forward];&#10;</xsl:text>
+    <xsl:text>node [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, shape = plain];&#10;</xsl:text>
     <xsl:text>rankdir=LR;&#10;</xsl:text>
 
     <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
@@ -314,8 +333,12 @@
     </xsl:variable>
     <xsl:text>
       digraph graphic {
-      edge [fontname = "Helvetica", fontsize = 12, dir = forward];
-      node [fontname = "Helvetica", fontsize = 12, shape = plain];
+      edge [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, dir = forward];
+      node [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, shape = plain];
       rankdir=LR;
     </xsl:text>
     
@@ -398,8 +421,12 @@
     </xsl:variable>
 
     <xsl:text>digraph graphic {&#10;</xsl:text>
-    <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
-    <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+    <xsl:text>edge [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, dir = forward];&#10;</xsl:text>
+    <xsl:text>node [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, shape = plain];&#10;</xsl:text>
     <xsl:text>rankdir=LR;&#10;</xsl:text>
 
     <xsl:value-of select="f:enquote(string($this-attribute-qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
@@ -464,8 +491,12 @@
     </xsl:variable>
 
     <xsl:text>digraph graphic {&#10;</xsl:text>
-    <xsl:text>edge [fontname = "Helvetica", fontsize = 12, dir = forward];&#10;</xsl:text>
-    <xsl:text>node [fontname = "Helvetica", fontsize = 12, shape = plain];&#10;</xsl:text>
+    <xsl:text>edge [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, dir = forward];&#10;</xsl:text>
+    <xsl:text>node [fontname = "Helvetica", fontsize=</xsl:text>
+    <xsl:value-of select="$font-size"/>
+    <xsl:text>, shape = plain];&#10;</xsl:text>
     <xsl:text>rankdir=LR;&#10;</xsl:text>
 
     <xsl:value-of select="f:enquote(string($qname))"/> [shape=plain, label=<xsl:value-of select="f:to-dot-html($object)"/>];
