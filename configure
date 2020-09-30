@@ -2140,7 +2140,7 @@ fi
 
 ac_config_files="$ac_config_files Makefile"
 
-ac_config_files="$ac_config_files reconfigure"
+ac_config_files="$ac_config_files run"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -2850,7 +2850,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "reconfigure") CONFIG_FILES="$CONFIG_FILES reconfigure" ;;
+    "run") CONFIG_FILES="$CONFIG_FILES run" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -3278,7 +3278,7 @@ which seems to be undefined.  Please make sure it is defined" >&2;}
 
   case $ac_file$ac_mode in
     "Makefile":F) chmod 444 Makefile ;;
-    "reconfigure":F) chmod 555 reconfigure ;;
+    "run":F) chmod 555 run ;;
 
   esac
 done # for ac_tag

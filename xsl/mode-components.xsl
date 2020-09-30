@@ -4,7 +4,7 @@
   xmlns:catalog="urn:oasis:names:tc:entity:xmlns:xml:catalog"   
   xmlns:f="http://example.org/functions"
   xmlns:ns="http://example.org/namespaces"
-  xmlns:appinfo="http://release.niem.gov/niem/appinfo/4.0/"
+  xmlns:appinfo="http://release.niem.gov/niem/appinfo/5.0/"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xsl:variable name="components" as="xs:QName*">
@@ -123,11 +123,11 @@
   </xsl:template>
 
   <xsl:template match="@*" priority="-2" mode="components" as="xs:QName*">
-    <xsl:message terminate="yes">Unknown attribute <xsl:value-of select="name(..)"/>/@<xsl:value-of select="name()"/></xsl:message>
+    <xsl:message terminate="no">Unknown attribute <xsl:value-of select="name(..)"/>/@<xsl:value-of select="name()"/></xsl:message>
   </xsl:template>
 
   <xsl:template match="*" priority="-2" mode="components" as="xs:QName*">
-    <xsl:message terminate="yes">Unknown element <xsl:value-of select="name()"/> in <xsl:value-of select="base-uri(.)"/></xsl:message>
+    <xsl:message terminate="no">Unknown element <xsl:value-of select="name()"/> in <xsl:value-of select="base-uri(.)"/></xsl:message>
   </xsl:template>
 
   <xsl:template match="@*|node()" priority="-3" mode="components" as="xs:QName*">

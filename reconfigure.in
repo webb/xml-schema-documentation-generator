@@ -1,3 +1,0 @@
-#!@bash@
-
-@srcdir@/configure publish_dir=@publish_dir@ xml_catalog=@xml_catalog@ build_json=@build_json@
