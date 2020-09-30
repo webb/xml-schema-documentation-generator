@@ -24,7 +24,7 @@
   <!-- variables -->
   <!-- ================================================================== -->
 
-  <xsl:variable name="font-size">8</xsl:variable>
+  <xsl:variable name="font-size">12</xsl:variable>
   <xsl:variable name="cell-padding">1</xsl:variable>
 
   <!-- ================================================================== -->
@@ -52,7 +52,7 @@
     <xsl:param name="qname" as="xs:QName" required="yes"/>
 
     <xsl:variable name="object" as="item()*" xmlns="">
-      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
+      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" COLOR="RED">
         <TR>
           <TD ALIGN="LEFT" PORT="top">
             <B><xsl:value-of select="$qname"/></B>
@@ -78,7 +78,7 @@
                   select="f:backlinks-get-attributes-of-type($qname)"/>
     <xsl:if test="exists($elements-of-this-type) or exists($attributes-of-this-type)">
       <xsl:variable name="properties-object">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <TD ALIGN="LEFT" PORT="top">
               <B>Properties</B>
@@ -107,7 +107,7 @@
                   select="f:backlinks-get-types-derived-from-type($qname)"/>
     <xsl:if test="exists($derived-types)">
       <xsl:variable name="derived-types-object">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <TD ALIGN="LEFT">
               <B>Derived types</B>
@@ -137,7 +137,7 @@
   <xsl:template match="/xs:schema/xs:complexType[@name]" mode="component-diagram">
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="object" as="item()*" xmlns="">
-      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
+      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" COLOR="RED">
         <TR>
           <TD ALIGN="LEFT" PORT="top">
             <B><xsl:value-of select="$qname"/></B>
@@ -170,7 +170,7 @@
         <xsl:variable name="element" as="element(xs:element)"
                       select="f:qname-resolve-element($element-qname)"/>
         <xsl:variable name="substitutable-elements">
-          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
             <TR>
               <TD ALIGN="LEFT" PORT="top"
                   HREF="{f:qname-get-href('../..', $element-qname)}#diagram">
@@ -206,7 +206,7 @@
                   select="f:backlinks-get-attributes-of-type($qname)"/>
     <xsl:if test="exists($elements-of-this-type) or exists($attributes-of-this-type)">
       <xsl:variable name="properties-object">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <TD ALIGN="LEFT" PORT="top">
               <B>Properties</B>
@@ -235,7 +235,7 @@
                   select="f:backlinks-get-types-derived-from-type($qname)"/>
     <xsl:if test="exists($derived-types)">
       <xsl:variable name="derived-types-object">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <TD ALIGN="LEFT">
               <B>Derived types</B>
@@ -267,7 +267,7 @@
   <xsl:template match="/xs:schema/xs:simpleType[@name]" mode="component-diagram">
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="object" as="item()*" xmlns="">
-      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
+      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" COLOR="RED">
         <TR>
           <TD ALIGN="LEFT" PORT="top">
             <B><xsl:value-of select="$qname"/></B>
@@ -291,7 +291,7 @@
                   select="f:backlinks-get-types-derived-from-type($qname)"/>
     <xsl:if test="exists($derived-types)">
       <xsl:variable name="derived-types-object">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <TD ALIGN="LEFT">
               <B>Derived types</B>
@@ -323,7 +323,7 @@
   <xsl:template match="/xs:schema/xs:element[@name]" mode="component-diagram">
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="element" as="item()*" xmlns="">
-      <TABLE BORDER="5" COLOR="red" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0">
+      <TABLE BORDER="5" COLOR="red" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0">
         <TR>
           <TD ALIGN="LEFT">
             <B><xsl:value-of select="$qname"/></B>
@@ -351,7 +351,7 @@
                   select="f:backlinks-get-types-having-element($qname)"/>
     <xsl:if test="exists($types-having-this-element)">
       <xsl:variable name="types-having-this-element-object">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <TD ALIGN="LEFT" PORT="top">
               <B>Types</B>
@@ -370,7 +370,7 @@
     
     <xsl:if test="exists(@substitutionGroup)">
       <xsl:variable name="subst">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <xsl:sequence select="f:qname-get-td(f:attribute-get-qname(@substitutionGroup))"/>
           </TR>
@@ -386,7 +386,7 @@
                   select="f:backlinks-get-substitutable-elements($qname)"/>
     <xsl:if test="exists($substitutable-elements)">
       <xsl:variable name="substitutable-elements">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <TD ALIGN="LEFT" PORT="top">
               <B>Substitutable elements</B>
@@ -411,7 +411,7 @@
   <xsl:template match="/xs:schema/xs:attribute[@name]" mode="component-diagram">
     <xsl:variable name="this-attribute-qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="object" as="item()*" xmlns="">
-      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
+      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" COLOR="RED">
         <TR>
           <TD ALIGN="LEFT" PORT="top">
             <B><xsl:value-of select="$this-attribute-qname"/></B>
@@ -435,7 +435,7 @@
                   select="f:backlinks-get-types-having-attribute($this-attribute-qname)"/>
     <xsl:if test="exists($types-having-this-attribute)">
       <xsl:variable name="types-having-this-attribute-object">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <TD ALIGN="LEFT" PORT="top">
               <B>Types</B>
@@ -456,7 +456,7 @@
                   select="f:backlinks-get-attribute-groups-having-attribute($this-attribute-qname)"/>
     <xsl:if test="exists($attribute-groups-having-this-attribute)">
       <xsl:variable name="attribute-groups-having-this-attribute-object">
-        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+        <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
           <TR>
             <TD ALIGN="LEFT" PORT="top">
               <B>Attribute Groups</B>
@@ -481,7 +481,7 @@
   <xsl:template match="/xs:schema/xs:attributeGroup[@name]" mode="component-diagram">
     <xsl:variable name="qname" as="xs:QName" select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="object" as="item()*" xmlns="">
-      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" COLOR="RED">
+      <TABLE BORDER="5" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" COLOR="RED">
         <TR>
           <TD ALIGN="LEFT" PORT="top">
             <B><xsl:value-of select="$qname"/></B>
@@ -512,7 +512,7 @@
     <xsl:variable name="type-qname" as="xs:QName"
                   select="f:attribute-get-qname(.)"/>
     <xsl:variable name="type-object">
-      <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+      <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
         <TR><xsl:sequence select="f:qname-get-td($type-qname)"/></TR>
       </TABLE>
     </xsl:variable>
@@ -659,7 +659,7 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:variable name="object">
-          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+          <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
             <TR>
               <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $base-qname)}#diagram">
                 <xsl:value-of select="$base-qname"/>
@@ -680,7 +680,7 @@
     <xsl:variable name="qname" as="xs:QName"
                   select="f:xs-component-get-qname(.)"/>
     <xsl:variable name="object">
-      <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0" CELLSPACING="0" xmlns="">
+      <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
         <TR><xsl:sequence select="f:qname-get-td($qname)"/></TR>
       </TABLE>
     </xsl:variable>
