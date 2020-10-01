@@ -65,10 +65,10 @@ do
         log )
             exec script -a log.txt "$0" -j "$number_of_jobs" "$@";;
 
-        #HELP:    c: build a component
-        #HELP:        e.g., "run c nc:PersonType"
+        #HELP:    build-component: build a component
+        #HELP:        e.g., "run build-component nc:PersonType"
         #HELP:        Option '-c': clean: start by removing built products for the component
-        c )
+        build-component )
             clean=false
             case $1 in
                 -c ) clean=true
@@ -90,7 +90,7 @@ do
                 -c ) nargs=2;;
                 * ) nargs=1;;
             esac
-            set -- c "${@:1:nargs}" oc.open-page "${@:nargs+1}"
+            set -- build-component "${@:1:nargs}" oc.open-page "${@:nargs+1}"
             ;;
 
         oc.open-page )
@@ -146,7 +146,7 @@ do
             fi
             ;;
         * )
-            fail "unknown command $1"
+            fail "unknown command \"$command\""
             ;;
     esac
 done
