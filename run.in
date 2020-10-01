@@ -65,22 +65,36 @@ do
         log )
             exec script -a log.txt "$0" -j "$number_of_jobs" "$@";;
 
-        #HELP:    oc: open component: build and open a component page
-        #HELP:        e.g., "run oc nc:PersonType"
-        oc )
+        #HELP:    c: build a component
+        #HELP:        e.g., "run c nc:PersonType"
+        #HELP:        Option '-c': clean: start by removing built products for the component
+        c )
             clean=false
             case $1 in
                 -c ) clean=true
                      shift;;
             esac
             folder=build/${1%:*}/${1#*:}
+            shift
             if [[ $clean = true ]]
             then rm -rf "$folder"
             fi
-            page=${folder}/index.html
-            make -j "$number_of_jobs" "$page"
-            open "$page"
-            shift;;
+            component_page=${folder}/index.html
+            make -j "$number_of_jobs" "$component_page"
+            ;;
+
+        #HELP:    oc: open component: build and open a component page
+        #HELP:        e.g., "run oc nc:PersonType"
+        oc ) 
+            case $1 in
+                -c ) nargs=2;;
+                * ) nargs=1;;
+            esac
+            set -- c "${@:1:nargs}" oc.open-page "${@:nargs+1}"
+            ;;
+
+        oc.open-page )
+            open "$component_page";;
 
         # jv = json validate
         jv )
