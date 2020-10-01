@@ -1,0 +1,3 @@
+[submodule "submodules/schema-for-xml-catalog"]
+	path = submodules/schema-for-xml-catalog
+	url = https://github.com/webb/schema-for-xml-catalog.git
