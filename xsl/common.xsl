@@ -167,14 +167,14 @@
 
   <xsl:function name="f:element-use-get-min-occurs" as="xs:integer">
     <xsl:param name="context" as="element(xs:element)"/>
-    <xsl:value-of select="if ($context/@minOccurs) 
+    <xsl:sequence select="if ($context/@minOccurs) 
                           then $context/@minOccurs cast as xs:integer
                           else 1"/>
   </xsl:function>
 
   <xsl:function name="f:element-use-get-max-occurs">
     <xsl:param name="context" as="element(xs:element)"/>
-    <xsl:value-of select="if ($context/@maxOccurs)
+    <xsl:sequence select="if ($context/@maxOccurs)
                           then (if ($context/@maxOccurs = 'unbounded')
                                 then 'n'
                                 else $context/@maxOccurs cast as xs:integer)
