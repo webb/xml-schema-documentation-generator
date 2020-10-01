@@ -38,15 +38,13 @@ SED = @SED@
 find = @find@
 touch = @touch@
 
+# get with:
+# $ find lib -type f -name '*.jar' | sed -e 's|^|${srcdir}/|' | xargs tokenize-strings --output-separator=: | pbcopy
+classpath = ${srcdir}/lib/SaxonHE10-2J/saxon-he-10.2.jar:${srcdir}/lib/SaxonHE10-2J/jline-2.9.jar:${srcdir}/lib/SaxonHE10-2J/saxon-xqj-10.2.jar:${srcdir}/lib/SaxonHE10-2J/saxon-he-test-10.2.jar:${srcdir}/lib/xml-commons-resolver-1.2/resolver.jar
+
 # webb stuff
-saxon = java \
-  -classpath ${srcdir}/lib/jars/Saxon-HE-9.7.0-7.jar:${srcdir}/lib/jars/xml-resolver-1.2.jar \
-  -Dxml.catalog.files=${srcdir}/lib/xml-catalog/xml-catalog.xml \
-  -Dxml.catalog.verbosity=999 \
-  net.sf.saxon.Transform \
-  -r:org.apache.xml.resolver.tools.CatalogResolver \
-  -x:org.apache.xml.resolver.tools.ResolvingXMLReader \
-  -y:org.apache.xml.resolver.tools.ResolvingXMLReader \
+saxon = java -classpath ${classpath} net.sf.saxon.Transform \
+  -catalog:${srcdir}/lib/schema-for-xml-catalog/xml-catalog.xml \
   --suppressXsltNamespaceCheck:on
 
 # additional params to ${saxon}:
