@@ -65,6 +65,8 @@ The home for this package is on GitHub:
 - The **Saxon** XSLT processor does most of the processing for this package. The
   Saxon XSLT processor jar file is included in `/lib/jars`. See
   <http://saxon.sourceforge.net/#F9.8HE> for more info on Saxon.
+  
+  Saxon is downloaded from <https://iweb.dl.sourceforge.net/project/saxon/Saxon-HE/10/Java/SaxonHE10-2J.zip>
 
 - *Apache XML Commons Resolver* handles XML Catalog resolution for working with
    XML Catalogs offline. The jar file is included in `/lib/jars`. The jar may be
