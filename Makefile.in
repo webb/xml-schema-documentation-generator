@@ -71,7 +71,6 @@ endif
 build_dir = ${builddir}/build
 
 prefixes_file = ${build_dir}/prefixes.xml
-all_sources = ${wildcard ${srcdir}/xsl/*.xsl}
 definitions_mk = ${build_dir}/definitions.mk
 backlinks_file = ${build_dir}/backlinks.xml
 
@@ -92,7 +91,7 @@ ${prefixes_file}: ${xml_catalog} ${srcdir}/xsl/collect-prefixes.xsl
 	${MKDIR_P} ${dir $@}
 	${saxon} -s:$< -o:$@ -xsl:${srcdir}/xsl/collect-prefixes.xsl
 
-${definitions_mk}: ${xml_catalog} ${prefixes_file} ${all_sources}
+${definitions_mk}: ${xml_catalog} ${prefixes_file}
 	${MKDIR_P} ${dir $@}
 	${saxon} \
 	  -s:${srcdir}/inputs/empty.xml \
@@ -124,6 +123,7 @@ ${saxon} \
   prefix=$1
 endef
 
+# example: $1 = nc/PersonType
 define run_build_component_index =
 ${MKDIR_P} ${build_dir}/$1
 ${saxon} \
@@ -141,9 +141,11 @@ ${saxon} \
 endef
 
 all_files = \
+  ${build_dir}/default.css \
   ${build_dir}/index.html \
   ${namespaces:%=${build_dir}/%/index.html} \
-  ${components:%=${build_dir}/%/index.html} \
+  ${components:%=${build_dir}/%/index.html}
+  ${components:%=${build_dir}/%/diagram.svg}
 
 ifeq (${build_json},true)
 all_files += ${build_dir}/json-schema.json
@@ -156,7 +158,7 @@ install_files = ${all_files:${build_dir}/%=${publish_dir}/%}
 #HELP:        Default xml_catalog=@xml_catalog@
 all: ${all_files}
 
-${backlinks_file}: ${xml_catalog} | ${prefixes_file} ${xml_catalog} ${all_sources}
+${backlinks_file}: ${xml_catalog} ${prefixes_file}
 	${MKDIR_P} ${dir $@}
 	${saxon} -s:$< -o:$@ -xsl:${srcdir}/xsl/collect-backlinks.xsl \
 	  +prefixes-file=${prefixes_file} \
@@ -184,13 +186,10 @@ ${build_dir}/json-schema-unformatted.json: | ${backlinks_file} ${xml_catalog}
 ${build_dir}/json-schema.json: ${build_dir}/json-schema-unformatted.json
 	jq . $< > $@
 
-${build_dir}/%/diagram.png.base64: ${build_dir}/%/diagram.png
-	base64 --wrap=0 $< > $@
+${build_dir}/%/diagram.svg: ${build_dir}/%/diagram.dot
+	dot -Tsvg -o${build_dir}/$*/diagram.svg $<
 
-${build_dir}/%/diagram.png ${build_dir}/%/diagram.map: ${build_dir}/%/diagram.dot
-	dot -Tpng -o${build_dir}/$*/diagram.png -Tcmapx -o${build_dir}/$*/diagram.map $<
-
-${build_dir}/%/diagram.dot: | ${backlinks_file}
+${build_dir}/%/diagram.dot: | ${backlinks_file} ${xml_catalog}
 	${MKDIR_P} ${dir $@}
 	${saxon} \
 	  -s:${srcdir}/inputs/empty.xml \
