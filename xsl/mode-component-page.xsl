@@ -73,13 +73,9 @@
         <h2>Diagram</h2>
         <a name="diagram">
           <div style="text-align: center;">
-            <img src="data:image/png;base64,{unparsed-text(concat($root-path, '/', prefix-from-QName($qname), '/', local-name-from-QName($qname), '/diagram.png.base64'))}" usemap="#graphic"/>
+            <object type="image/svg+xml" data="diagram.svg"/>
           </div>
         </a>
-        <xsl:apply-templates
-          mode="htmlify"
-          select="doc(concat($root-path, '/', prefix-from-QName($qname),
-                  '/', local-name-from-QName($qname), '/diagram.map'))"/>
 
         <xsl:if test="$build_json">
           <h2>JSON Schema</h2>
@@ -127,13 +123,9 @@
             <h2>Diagram</h2>
             <a name="diagram">
               <div style="text-align: center;">
-                <img src="data:image/png;base64,{unparsed-text(concat($root-path, '/', prefix-from-QName($qname), '/', local-name-from-QName($qname), '/diagram.png.base64'))}" usemap="#graphic"/>
+                <object type="image/svg+xml" data="diagram.svg"/>
               </div>
             </a>
-            <xsl:apply-templates
-              mode="htmlify"
-              select="doc(concat($root-path, '/', prefix-from-QName($qname),
-                      '/', local-name-from-QName($qname), '/diagram.map'))"/>
 
             <xsl:if test="self::xs:simpleType[@name]//xs:enumeration">
               <h2>Enumerations</h2>
