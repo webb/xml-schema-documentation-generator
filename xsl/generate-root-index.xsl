@@ -24,7 +24,7 @@
     <html>
       <head>
         <title>Index</title>
-        <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
+        <link rel="stylesheet" type="text/css" href="style.css"/>
       </head>
       <body>
         <h2>Namespaces</h2>

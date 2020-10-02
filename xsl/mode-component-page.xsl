@@ -8,7 +8,6 @@
   
   <xsl:include href="common.xsl"/>
   <xsl:include href="backlinks.xsl"/>
-  <xsl:include href="mode-htmlify.xsl"/>
   <xsl:include href="mode-component-xml-schema.xsl"/>
   <xsl:include href="mode-component-json-schema.xsl"/>
 
@@ -42,7 +41,7 @@
       <head>
         <meta charset="UTF-8"/>
         <title><xsl:value-of select="$qname"/></title>
-        <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
+        <link rel="stylesheet" type="text/css" href="../../style.css"/>
       </head>
       <body>
         <div id="page">
@@ -103,7 +102,7 @@
       <head>
         <meta charset="UTF-8"/>
         <title><xsl:value-of select="$qname"/></title>
-        <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
+        <link rel="stylesheet" type="text/css" href="../../style.css"/>
       </head>
       <body>
         <div id="page">

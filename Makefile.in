@@ -144,8 +144,8 @@ all_files = \
   ${build_dir}/style.css \
   ${build_dir}/index.html \
   ${namespaces:%=${build_dir}/%/index.html} \
-  ${components:%=${build_dir}/%/index.html}
-  ${components:%=${build_dir}/%/diagram.svg}
+  ${components:%=${build_dir}/%/index.html} \
+  ${components:%=${build_dir}/%/diagram.svg} \
 
 ifeq (${build_json},true)
 all_files += ${build_dir}/json-schema.json

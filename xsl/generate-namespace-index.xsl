@@ -27,7 +27,7 @@
                   select="f:resolve-namespace($uri)"/>
      <head>
         <title>Index for prefix <code><xsl:value-of select="$prefix"/></code></title>
-        <style type="text/css"><xsl:value-of select="normalize-space(unparsed-text('../style.css'))"/></style>
+        <link rel="stylesheet" type="text/css" href="../style.css"/>
       </head>
       <body>
         <p><a href="..{$maybe-index.html}">All namespaces</a></p>
