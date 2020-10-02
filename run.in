@@ -10,6 +10,14 @@ number_of_jobs=$(nproc)
 #HELP:    -j ${number of jobs}: run this many jobs in parallel
 #HELP:        default = number of processing units available
 
+
+# call: page_for_component nc:PersonType
+# yields build/nc/PersonType/index.html
+page_for_component () {
+    (( $# == 1 )) || { printf "Error: page_for_component takes only 1 argument (got %d)" $# >&2; return 1; }
+    printf 'build/%s/%s/index.html' "${component%:*}" "${component#*:}"
+}
+
 OPTIND=1
 while getopts :hj:-: option
 do case "$option" in
@@ -65,22 +73,26 @@ do
         log )
             exec script -a log.txt "$0" -j "$number_of_jobs" "$@";;
 
-        #HELP:    build-component: build a component
-        #HELP:        e.g., "run build-component nc:PersonType"
+        #HELP:    build-components: build any number of components
+        #HELP:        e.g., "run build-components nc:PersonType xs:token ..."
         #HELP:        Option '-c': clean: start by removing built products for the component
-        build-component )
+        build-components )
             clean=false
             case $1 in
                 -c ) clean=true
                      shift;;
             esac
-            folder=build/${1%:*}/${1#*:}
-            shift
+            pages_to_build=()
+            for component in "$@"
+            do page=$( page_for_component "$component" )
+               pages_to_build+=( "$page" )
+            done
             if [[ $clean = true ]]
-            then rm -rf "$folder"
+            then for page in "${pages_to_build[@]}"
+                 do rm -rf "$(dirname "$page")"
+                 done
             fi
-            component_page=${folder}/index.html
-            make -j "$number_of_jobs" "$component_page"
+            exec make -j "$number_of_jobs" "${pages_to_build[@]}"
             ;;
 
         #HELP:    oc: open component: build and open a component page
@@ -90,11 +102,12 @@ do
                 -c ) nargs=2;;
                 * ) nargs=1;;
             esac
-            set -- build-component "${@:1:nargs}" oc.open-page "${@:nargs+1}"
+            component=${@:nargs:1}
+            "$0" build-components "${@:1:nargs}"
+            page=$( page_for_component "$component" )
+            open "$page"
+            shift "$nargs"
             ;;
-
-        oc.open-page )
-            open "$component_page";;
 
         # jv = json validate
         jv )
@@ -103,12 +116,9 @@ do
             ;;
 
         rebuild )
-            ./config.status
+            "$0" reconfigure
             make clean
-            make depend=true
-            make "$@"
-            make "$@" install
-            shift $#
+            set -- log all "$@"
             ;;
         "continue" )
             ./config.status
