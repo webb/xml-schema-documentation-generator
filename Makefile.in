@@ -16,27 +16,31 @@ depend = false
 .DEFAULT_GOAL = all
 
 #############################################################################
-# AUTOCONF inputs
+# autoconf/configure standard stuff
 
 srcdir = @srcdir@
 builddir = @builddir@
-publish_dir = @publish_dir@
-xml_catalog = @xml_catalog@
-build_json = @build_json@
 
-#############################################################################
-# COMMANDS
-
-# autoconf stuff
 MKDIR_P = @MKDIR_P@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_DATA = @INSTALL_DATA@
 SED = @SED@
-# unix stuff
+
+#############################################################################
+# local autoconf/configure stuff
+
+# unix
 find = @find@
 touch = @touch@
+
+# parameters
+publish_dir = @publish_dir@
+xml_catalog = @xml_catalog@
+build_json = @build_json@
+
+#############################################################################
 
 # get with:
 # $ find lib -type f -name '*.jar' | sed -e 's|^|${srcdir}/|' | xargs tokenize-strings --output-separator=: | pbcopy
@@ -69,6 +73,7 @@ endif
 # variables
 
 build_dir = ${builddir}/build
+css_file = ${build_dir}/style.css
 
 prefixes_file = ${build_dir}/prefixes.xml
 definitions_mk = ${build_dir}/definitions.mk
@@ -141,7 +146,7 @@ ${saxon} \
 endef
 
 all_files = \
-  ${build_dir}/style.css \
+  ${css_file} \
   ${build_dir}/index.html \
   ${namespaces:%=${build_dir}/%/index.html} \
   ${components:%=${build_dir}/%/index.html} \
@@ -158,7 +163,7 @@ install_files = ${all_files:${build_dir}/%=${publish_dir}/%}
 #HELP:        Default xml_catalog=@xml_catalog@
 all: ${all_files}
 
-${build_dir}/style.css: ${srcdir}/style.css
+${css_file}: ${srcdir}/style.css
 	${MKDIR_P} ${dir $@}
 	${INSTALL_DATA} $< $@
 
@@ -168,7 +173,7 @@ ${backlinks_file}: ${xml_catalog} ${prefixes_file}
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog}
 
-${build_dir}/index.html: | ${prefixes_file} ${xml_catalog}
+${build_dir}/index.html: | ${prefixes_file} ${xml_catalog} ${css_file}
 	${MKDIR_P} ${build_dir}
 	${saxon} \
 	  -s:${srcdir}/inputs/empty.xml \

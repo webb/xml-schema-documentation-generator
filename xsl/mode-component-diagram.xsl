@@ -172,7 +172,7 @@
         <xsl:variable name="substitutable-elements">
           <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
             <TR>
-              <TD ALIGN="LEFT" PORT="top"
+              <TD ALIGN="LEFT" PORT="top" TARGET="_top"
                   HREF="{f:qname-get-href('../..', $element-qname)}#diagram">
                 <B>Substitution group <xsl:value-of select="$element-qname"/></B>
               </TD>
@@ -661,7 +661,7 @@
         <xsl:variable name="object">
           <TABLE BORDER="1" CELLBORDER="0" CELLPADDING="{$cell-padding}" CELLSPACING="0" xmlns="">
             <TR>
-              <TD ALIGN="LEFT" HREF="{f:qname-get-href('../..', $base-qname)}#diagram">
+              <TD ALIGN="LEFT" TARGET="_top" HREF="{f:qname-get-href('../..', $base-qname)}#diagram">
                 <xsl:value-of select="$base-qname"/>
               </TD>
             </TR>

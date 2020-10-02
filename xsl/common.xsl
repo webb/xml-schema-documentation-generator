@@ -19,7 +19,7 @@
   <xsl:param name="link-to-dirs" as="xs:boolean" select="true()"/>
   <xsl:variable name="maybe-index.html">
     <xsl:choose>
-      <xsl:when test="$link-to-dirs"></xsl:when>
+      <xsl:when test="$link-to-dirs">/</xsl:when>
       <xsl:otherwise>/index.html</xsl:otherwise>
     </xsl:choose>
   </xsl:variable>

@@ -27,8 +27,7 @@
       <xsl:text>${build_dir}/</xsl:text>
       <xsl:value-of select="."/>
       <xsl:text>/index.html</xsl:text>
-      <xsl:text>:</xsl:text>
-      <xsl:text>&#10;</xsl:text>
+      <xsl:text>: | ${css_file}&#10;</xsl:text>
       
       <xsl:text>&#9;${call run_build_namespace_index,</xsl:text>
       <xsl:value-of select="."/>
@@ -54,7 +53,7 @@
       <xsl:text>/index.html</xsl:text>
       <xsl:text>: | ${build_dir}/</xsl:text>
       <xsl:value-of select="$path"/>
-      <xsl:text>/diagram.svg&#10;</xsl:text>
+      <xsl:text>/diagram.svg ${css_file}&#10;</xsl:text>
       
       <xsl:text>&#9;${call run_build_component_index,</xsl:text>
       <xsl:value-of select="$path"/>
