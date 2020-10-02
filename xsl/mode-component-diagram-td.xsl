@@ -22,8 +22,7 @@
         <xsl:apply-templates select="$resolved" mode="component-diagram-td"/>
       </xsl:when>
       <xsl:otherwise>
-        <TD xmlns=""
-            ALIGN="LEFT"
+        <TD xmlns="" ALIGN="LEFT" TARGET="_top"
             HREF="{f:qname-get-href('../..', $qname)}#diagram">
           <xsl:value-of select="$qname"/>
         </TD>
@@ -45,8 +44,7 @@
                        | /xs:schema/xs:attributeGroup[@name]"
                 mode="component-diagram-td">
     <xsl:variable name="qname" select="f:xs-component-get-qname(.)"/>
-    <TD xmlns=""
-        ALIGN="LEFT"
+    <TD xmlns="" ALIGN="LEFT" TARGET="_top"
         HREF="{f:qname-get-href('../..', $qname)}#diagram"
         PORT="{generate-id(.)}">
       <xsl:variable name="definition" as="xs:string"
@@ -129,7 +127,7 @@
         </xsl:if>
       </xsl:value-of>
     </xsl:variable>
-    <TD xmlns="" ALIGN="LEFT" HREF="#diagram" TOOLTIP="{$documentation}">anyAttribute</TD>
+    <TD xmlns="" ALIGN="LEFT" TARGET="_top" HREF="#diagram" TOOLTIP="{$documentation}">anyAttribute</TD>
   </xsl:template>
 
   <xsl:template match="xs:element[@name]"
@@ -138,8 +136,7 @@
     <xsl:param name="brief" as="xs:boolean" select="false()" tunnel="yes"/>
     <xsl:variable name="element-qname" as="xs:QName"
                   select="f:xs-component-get-qname(.)"/>
-    <TD xmlns=""
-        ALIGN="LEFT"
+    <TD xmlns="" ALIGN="LEFT" TARGET="_top"
         HREF="{f:qname-get-href('../..', $element-qname)}#diagram"
         PORT="{generate-id(.)}">
       <xsl:variable name="definition" as="xs:string"
