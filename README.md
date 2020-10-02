@@ -153,3 +153,29 @@ Typeless elements cause problems:
 * Typeless elements allow any content
 * This isn't very useful.
 
+# Using SVG instead of PNG
+
+We can use SVG instead of PNG.
+
+1. They handle the big diagrams (like `xs:token`), which break when Graphviz tries to render big bitmaps.
+1. They're much smaller than PNGs.
+1. This obviates maps; the SVGs have HREFs embedded in them. Also, Graphviz has an issue where maps don't align with SVG graphics, and that problem goes away.
+1. To make HREFs work in SVG, you have to include them as `<object>` instead of `<img>`. If you make them `<img>`, then they're just static images with no hot links. Use:
+
+   `<object type="image/svg+xml" data="diagram.svg"/>`
+   
+   (via [W3](https://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html#SVG_in_HTML))
+1. When links in SVG are clicked, they load the target page into the *object*'s frame instead of the entire page. To get the right behavior, you need to add `TARGET="_top"` to your Graphviz file:
+
+   ```
+<TD ALIGN="LEFT" 
+    TARGET="_top" 
+    HREF="../../cbrn/unitsText#diagram" 
+    PORT="d11e3668" 
+    TOOLTIP="A unit of measure for a value element. If used, the unit of 
+             measure shall be as stated in the documentation for the element."     
+    BGCOLOR="gray92">@cbrn:unitsText</TD>
+```
+1. You can't use data URIs with SVG, so no more embedding. The HREFs don't link to the right pages. I'm guessing something about the data URIs means the linker isn't starting from the location of the page.
+1. As long as we're breaking the "page is a thing you can drag & drop" thing, we might as well link to the CSS instead of embedding it.
+1. I can't get compressed SVG (`*.svgz`) to work. There's talk on the internet of setting MIME types in browsers to get it to work, but I can't get it to work *locally* in any browser.
