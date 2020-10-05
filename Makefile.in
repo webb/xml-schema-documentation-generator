@@ -39,6 +39,7 @@ touch = @touch@
 publish_dir = @publish_dir@
 xml_catalog = @xml_catalog@
 build_json = @build_json@
+link_to_dirs = @link_to_dirs@
 
 #############################################################################
 
@@ -50,18 +51,6 @@ classpath = ${srcdir}/lib/SaxonHE10-2J/saxon-he-10.2.jar:${srcdir}/lib/SaxonHE10
 saxon = java -classpath ${classpath} net.sf.saxon.Transform \
   -catalog:${srcdir}/lib/schema-for-xml-catalog/xml-catalog.xml \
   --suppressXsltNamespaceCheck:on
-
-# additional params to ${saxon}:
-#  -s:inputs/empty.xml \
-#  -xsl:xsl/mode-component-diagram.xsl \
-#  -o:build/nc/PersonType/diagram.dot \
-#  -im:"{}component-diagram" \
-#  +prefixes-file=./build/prefixes.xml \
-#  +xml-catalog-file=./inputs/person-subset/niem/xml-catalog.xml \
-#  +backlinks-file=./build/backlinks.xml \
-#  root-path=/Users/wr/r/niem/release/model/src/build \
-#  prefix=nc \
-#  local-name=PersonType
 
 ifeq (${build_json},true)
 saxon_build_json_arg = build_json=true
@@ -125,7 +114,8 @@ ${saxon} \
   -xsl:${srcdir}/xsl/generate-namespace-index.xsl \
   +prefixes-file=${prefixes_file} \
   +xml-catalog-file=${xml_catalog} \
-  prefix=$1
+  prefix=$1 \
+  build_json=${build_json} link-to-dirs=${link_to_dirs}
 endef
 
 # example: $1 = nc/PersonType
@@ -142,7 +132,7 @@ ${saxon} \
   root-path=${realpath ${build_dir}} \
   prefix=${word 1,${subst /, ,$1}} \
   local-name=${word 2,${subst /, ,$1}} \
-  ${saxon_build_json_arg}
+  build_json=${build_json} link-to-dirs=${link_to_dirs}
 endef
 
 all_files = \
@@ -181,7 +171,7 @@ ${build_dir}/index.html: | ${prefixes_file} ${xml_catalog} ${css_file}
 	  -xsl:${srcdir}/xsl/generate-root-index.xsl \
 	  +prefixes-file=${prefixes_file} \
 	  +xml-catalog-file=${xml_catalog} \
-	  ${saxon_build_json_arg}
+	  build_json=${build_json} link-to-dirs=${link_to_dirs}
 
 ${build_dir}/json-schema-unformatted.json: | ${backlinks_file} ${xml_catalog}
 	${saxon} \
@@ -210,7 +200,8 @@ ${build_dir}/%/diagram.dot: | ${backlinks_file} ${xml_catalog}
 	  +backlinks-file=${backlinks_file} \
 	  root-path=${realpath ${build_dir}} \
 	  prefix=${word 1,${subst /, ,$*}} \
-	  local-name=${word 2,${subst /, ,$*}}
+	  local-name=${word 2,${subst /, ,$*}} \
+	  build_json=${build_json} link-to-dirs=${link_to_dirs}
 
 #############################################################################
 .PHONY: publish #    install everything to $publish_dir
