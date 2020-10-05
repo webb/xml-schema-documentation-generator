@@ -109,6 +109,19 @@ do
             shift "$nargs"
             ;;
 
+        #HELP:   remake: remove a list of things, and then re-make them
+        remake )
+            for file
+            do if [[ ( $file != build/${file#build/} ) && ( $file != ./build/${file#./build/} ) ]]
+               then fail_later "file is not in build dir: $file"
+               fi
+            done
+            maybe_fail_now
+            rm -f "$@"
+            make -j "$number_of_jobs" "$@"
+            shift $#
+            ;;
+
         # jv = json validate
         jv )
             rm -f build/json-schema.json build/json-schema-unformatted.json
