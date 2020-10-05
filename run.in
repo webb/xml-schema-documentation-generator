@@ -155,6 +155,11 @@ do
             then open "${build[3]}"
             fi
             ;;
+        #HELP:    serve: run a webserver in the build directory
+        serve )
+            cd build
+            exec sudo python -m SimpleHTTPServer 80
+            ;;
         * )
             fail "unknown command \"$command\""
             ;;
