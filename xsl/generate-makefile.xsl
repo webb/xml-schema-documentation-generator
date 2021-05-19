@@ -26,8 +26,7 @@
 
       <xsl:text>${build_dir}/</xsl:text>
       <xsl:value-of select="."/>
-      <xsl:text>/index.html</xsl:text>
-      <xsl:text>: | ${css_file}&#10;</xsl:text>
+      <xsl:text>/index.html:&#10;</xsl:text>
       
       <xsl:text>&#9;${call run_build_namespace_index,</xsl:text>
       <xsl:value-of select="."/>
